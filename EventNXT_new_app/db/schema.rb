@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_24_165312) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_13_072833) do
   create_table "email_services", force: :cascade do |t|
     t.string "to"
     t.string "subject"
@@ -63,6 +63,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_24_165312) do
     t.string "email"
     t.string "rsvp_link"
     t.index ["event_id"], name: "index_guests_on_event_id"
+  end
+
+  create_table "referrals", force: :cascade do |t|
+    t.integer "referrer_id"
+    t.string "referred_email"
+    t.string "status"
+    t.integer "event_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "seats", force: :cascade do |t|

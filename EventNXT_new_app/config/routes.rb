@@ -6,7 +6,8 @@ Rails.application.routes.draw do
   get '/email_services/email_template/:id', to: 'email_services#edit_email_template', as: 'edit_email_template'
   get '/email_services/render_email_template', to: 'email_services#render_template', as: 'render_email_template'
   get 'destroy_email_template/:id', to: 'email_services#destroy_email_template', as: 'destroy_email_template'
-  
+  get 'refer_friend', to: 'events#refer_friend'
+
   resources :email_services do
     member do
       get 'send_email'
@@ -36,6 +37,8 @@ Rails.application.routes.draw do
     resources :seats
     resources :guests
   end
+
+  resources :referrals, only: [:create]
 
   #resources :seats
   #resources :guests

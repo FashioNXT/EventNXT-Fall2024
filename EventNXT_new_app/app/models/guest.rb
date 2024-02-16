@@ -52,6 +52,7 @@ class Guest < ApplicationRecord
   private
 
   def generate_rsvp_link
-    self.rsvp_link = SecureRandom.hex(6) # You can adjust the length as needed
+    random_string = SecureRandom.hex(6)
+    self.rsvp_link = Rails.application.routes.url_helpers.book_seats_url(rsvp_link: random_string) # You can adjust the length as needed
   end
 end

@@ -15,6 +15,7 @@ class ApplicationMailer < ActionMailer::Base
     @event = event
     @guest = guest
     @rsvp_url = rsvp_url
+    @refer_url = refer_url
 
 
     mail(to: to, subject: subject) do |format|
