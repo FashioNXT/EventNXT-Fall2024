@@ -1,2 +1,2 @@
-guest_id,first_name,last_name,affiliation,category,allocated seats,commited seats,guest_commited,status,event_id
-1,xx,xx,xx,xx,1,1,1,,1
+event id,title,address,description,datetime,created at,updated at,event avatar,event box office,user id,guest id,first name,last name,affiliation,category,alloted seats,commited seats,guest commited,status,event id,created at,updated at,email,rsvp link
+1,zz,zzz,zzz,04-01-2011 14:00:00 UTC,02-01-2011 14:00:00 UTC,02-01-2011 14:00:00 UTC,aaa,aaa,,1,xx,xx,xx,xx,1,1,1,,1,02-01-2011 14:02:00 UTC,02-01-2011 14:02:00 UTC,xxxxxxx@xxxxxxx.com,yyyyyyy
