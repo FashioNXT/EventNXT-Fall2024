@@ -82,6 +82,49 @@ class EventsController < ApplicationController
       format.json { head :no_content }
     end
   end
+ 
+  def import_previous_guest_information
+    previous_guest_csv_file = params[:documentation]
+    if previous_guest_csv_file.present?
+      if previous_guest_csv_file.reponse_to?(:read)
+        previous_guest_csv_file_data = CSV.read(previous_guest_csv_file, headers: true) do
+          row_number=0
+          l=0
+          while previous_guest_csv_file_data[l]['guest id'] != nil do
+            row_number += 1
+            l += 1
+          end
+          for k in 0...row_number do
+            previous_guest_parameters = {
+            id: previous_guest_csv_file_data[k]['guest id'].to_f
+            first_name: previous_guest_csv_file_data[k]['first name']
+            last_name: previous_guest_csv_file_data[k]['last name']
+            affiliation: previous_guest_csv_file_data[k]['affiliation']
+            category: previous_guest_csv_file_data[k]['category']
+            allocated_seats: previous_guest_csv_file_data[k]['allocated seats'].to_f
+            commited_seats: previous_guest_csv_file_data[k]['commited seats'].to_f
+            guest_commited: previous_guest_csv_file_data[k]['guest_commited'].to_f
+            status: previous_guest_csv_file_data[k]['status']
+            event_id: current_user.events.find_by(params[:id]).id 
+            }
+            @guest_for_this_functionality = Guest.find_or_create_by(previous_guest_parameters)
+            @guest_for_this_functionality.save
+          end
+        end 
+        flash[:notice] = 'Completed importing previous guest information!'       
+      else
+        flash[:notice] = 'The file cannot be read, probably because it is not valid csv file.'
+      end
+    else
+      flash[:notice]= 'No file uploaded.'
+    end
+  end
+
+
+
+
+
+
 
   private
     def calculate_seating_summary(event_id)
