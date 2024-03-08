@@ -87,12 +87,7 @@ class EventsController < ApplicationController
     previous_guest_csv_file = params[:documentation]
     if previous_guest_csv_file.present? && previous_guest_csv_file.respond_to?(:read)
           previous_guest_csv_file_data = CSV.read(previous_guest_csv_file, headers: true) 
-          row_number=0
-          l=0
-          while previous_guest_csv_file_data[l]['event id'] != nil do
-            row_number += 1
-            l += 1
-          end
+          row_number = previous_guest_csv_file_data.length
           for k in 0...row_number do
             related_event_parametrization = {
               id: previous_guest_csv_file_data[k]['event id'].to_f,
@@ -100,12 +95,12 @@ class EventsController < ApplicationController
               address: previous_guest_csv_file_data[k]['address'],
               description: previous_guest_csv_file_data[k]['description'],
               datetime: previous_guest_csv_file_data[k]['datetime'],
-              event avatar: previous_guest_csv_file_data[k]['event avatar'],
-              event box office: previous_guest_csv_file_data[k]['event box office'],
-              user_id: current_user_id
-              @event_for_this_functionality = Event.find_or_create_by(related_event_parametrization)
-              @event_for_this_functionality.save
+              event_avatar: previous_guest_csv_file_data[k]['event avatar'],
+              event_box_office: previous_guest_csv_file_data[k]['event box office'],
+              user_id: current_user.id
             }
+            @event_for_this_functionality = Event.find_or_create_by(related_event_parametrization)
+            @event_for_this_functionality.save
             if @event_for_this_functionality.save do
               previous_guest_parameters = {
                 id: previous_guest_csv_file_data[k]['guest id'].to_f,
