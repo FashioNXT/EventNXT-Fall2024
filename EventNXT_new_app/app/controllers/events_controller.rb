@@ -101,7 +101,7 @@ class EventsController < ApplicationController
             }
             @event_for_this_functionality = Event.find_or_create_by(related_event_parametrization)
             @event_for_this_functionality.save
-            if @event_for_this_functionality.save do
+            if @event_for_this_functionality.save 
               previous_guest_parameters = {
                 id: previous_guest_csv_file_data[k]['guest id'].to_f,
                 first_name: previous_guest_csv_file_data[k]['first name'],
