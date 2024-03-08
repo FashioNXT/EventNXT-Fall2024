@@ -85,38 +85,49 @@ class EventsController < ApplicationController
  
   def import_previous_guest_information
     previous_guest_csv_file = params[:documentation]
-    if previous_guest_csv_file.present?
-      if previous_guest_csv_file.reponse_to?(:read)
-        previous_guest_csv_file_data = CSV.read(previous_guest_csv_file, headers: true) do
+    if previous_guest_csv_file.present? && previous_guest_csv_file.respond_to?(:read)
+          previous_guest_csv_file_data = CSV.read(previous_guest_csv_file, headers: true) 
           row_number=0
           l=0
-          while previous_guest_csv_file_data[l]['guest id'] != nil do
+          while previous_guest_csv_file_data[l]['event id'] != nil do
             row_number += 1
             l += 1
           end
           for k in 0...row_number do
-            previous_guest_parameters = {
-            id: previous_guest_csv_file_data[k]['guest id'].to_f
-            first_name: previous_guest_csv_file_data[k]['first name']
-            last_name: previous_guest_csv_file_data[k]['last name']
-            affiliation: previous_guest_csv_file_data[k]['affiliation']
-            category: previous_guest_csv_file_data[k]['category']
-            allocated_seats: previous_guest_csv_file_data[k]['allocated seats'].to_f
-            commited_seats: previous_guest_csv_file_data[k]['commited seats'].to_f
-            guest_commited: previous_guest_csv_file_data[k]['guest_commited'].to_f
-            status: previous_guest_csv_file_data[k]['status']
-            event_id: current_user.events.find_by(params[:id]).id 
+            related_event_parametrization = {
+              id: previous_guest_csv_file_data[k]['event id'].to_f,
+              title: previous_guest_csv_file_data[k]['title'],
+              address: previous_guest_csv_file_data[k]['address'],
+              description: previous_guest_csv_file_data[k]['description'],
+              datetime: previous_guest_csv_file_data[k]['datetime'],
+              event avatar: previous_guest_csv_file_data[k]['event avatar'],
+              event box office: previous_guest_csv_file_data[k]['event box office'],
+              user_id: current_user_id
+              @event_for_this_functionality = Event.find_or_create_by(related_event_parametrization)
+              @event_for_this_functionality.save
             }
-            @guest_for_this_functionality = Guest.find_or_create_by(previous_guest_parameters)
-            @guest_for_this_functionality.save
-          end
-        end 
-        flash[:notice] = 'Completed importing previous guest information!'       
-      else
-        flash[:notice] = 'The file cannot be read, probably because it is not valid csv file.'
-      end
+            if @event_for_this_functionality.save do
+              previous_guest_parameters = {
+                id: previous_guest_csv_file_data[k]['guest id'].to_f,
+                first_name: previous_guest_csv_file_data[k]['first name'],
+                last_name: previous_guest_csv_file_data[k]['last name'],
+                affiliation: previous_guest_csv_file_data[k]['affiliation'],
+                category: previous_guest_csv_file_data[k]['category'],
+                alloted_seats: previous_guest_csv_file_data[k]['alloted seats'].to_f,
+                commited_seats: previous_guest_csv_file_data[k]['commited seats'].to_f,
+                guest_commited: previous_guest_csv_file_data[k]['guest commited'].to_f,
+                status: previous_guest_csv_file_data[k]['status'],
+                event_id: previous_guest_csv_file_data[k]['event id'].to_f, 
+                email: previous_guest_csv_file_data[k]['email'],
+                rsvp_link: previous_guest_csv_file_data[k]['rsvp link'] 
+              }
+              @guest_for_this_functionality = Guest.find_or_create_by(previous_guest_parameters)
+              @guest_for_this_functionality.save           
+            end
+          end 
+          flash[:notice] = 'Completed importing previous guest information!'         
     else
-      flash[:notice]= 'No file uploaded.'
+      flash[:notice]= 'No file uploaded or your file is not valid.'
     end
   end
 
