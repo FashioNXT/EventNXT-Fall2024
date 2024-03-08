@@ -36,3 +36,8 @@ Then('I should be on the Sign in page') do
   visit new_user_session_path
 end
 
+
+When('post the function import previous guest information') do
+  post '/import_previous_guest_information'
+end
+
