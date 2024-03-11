@@ -104,17 +104,17 @@ class EventsController < ApplicationController
             if @event_for_this_functionality.save 
               previous_guest_parameters = {
                 id: previous_guest_csv_file_data[k]['guest id'].to_f,
-                first_name: previous_guest_csv_file_data[k]['first name'],
-                last_name: previous_guest_csv_file_data[k]['last name'],
-                affiliation: previous_guest_csv_file_data[k]['affiliation'],
-                category: previous_guest_csv_file_data[k]['category'],
-                alloted_seats: previous_guest_csv_file_data[k]['alloted seats'].to_f,
-                commited_seats: previous_guest_csv_file_data[k]['commited seats'].to_f,
+                first_name: previous_guest_csv_file_data[k]['guest first name'],
+                last_name: previous_guest_csv_file_data[k]['guest last name'],
+                affiliation: previous_guest_csv_file_data[k]['guest affiliation'],
+                category: previous_guest_csv_file_data[k]['guest category'],
+                alloted_seats: previous_guest_csv_file_data[k]['guest alloted seats'].to_f,
+                commited_seats: previous_guest_csv_file_data[k]['guest commited seats'].to_f,
                 guest_commited: previous_guest_csv_file_data[k]['guest commited'].to_f,
-                status: previous_guest_csv_file_data[k]['status'],
-                event_id: previous_guest_csv_file_data[k]['event id'].to_f, 
-                email: previous_guest_csv_file_data[k]['email'],
-                rsvp_link: previous_guest_csv_file_data[k]['rsvp link'] 
+                status: previous_guest_csv_file_data[k]['guest status'],
+                event_id: previous_guest_csv_file_data[k]['guest event id'].to_f, 
+                email: previous_guest_csv_file_data[k]['guest email'],
+                rsvp_link: previous_guest_csv_file_data[k]['guest rsvp link'] 
               }
               @guest_for_this_functionality = Guest.find_or_create_by(previous_guest_parameters)
               @guest_for_this_functionality.save           
