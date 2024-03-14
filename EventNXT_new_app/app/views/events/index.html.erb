@@ -12,6 +12,12 @@
 
 <div style="text-align: center;">
   <%= link_to "Create New Event", new_event_path, class: "btn btn-primary", style: "margin-bottom: 20px; display: inline-block;" %>
+  <%= form_tag(import_previous_guest_information_events_path) do %>
+    <%= file_field_tag :documentation %>
+    <%= submit_tag 'Importing Previous Guest Information Here' %>
+    <% end %>
+
+
 
   <div id="events">
     <% @events.each do |event| %>
