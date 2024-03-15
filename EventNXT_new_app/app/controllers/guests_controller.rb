@@ -119,7 +119,38 @@ class GuestsController < ApplicationController
     end
   end
   
-  
+  def import_previous_guest_information
+    previous_guest_csv_file = params[:documentation]
+    if previous_guest_csv_file.present? && previous_guest_csv_file.respond_to?(:read)
+          previous_guest_csv_file_data = CSV.read(previous_guest_csv_file, headers: true) 
+          row_number = previous_guest_csv_file_data.length
+          for k in 0...row_number do
+            related_guest_parametrization = {
+                id: previous_guest_csv_file_data[k]['guest id'].to_f,
+                first_name: previous_guest_csv_file_data[k]['guest first name'],
+                last_name: previous_guest_csv_file_data[k]['guest last name'],
+                affiliation: previous_guest_csv_file_data[k]['guest affiliation'],
+                category: previous_guest_csv_file_data[k]['guest category'],
+                alloted_seats: previous_guest_csv_file_data[k]['guest alloted seats'].to_f,
+                commited_seats: previous_guest_csv_file_data[k]['guest commited seats'].to_f,
+                guest_commited: previous_guest_csv_file_data[k]['guest commited'].to_f,
+                status: previous_guest_csv_file_data[k]['guest status'],
+                event_id: previous_guest_csv_file_data[k]['event id'], 
+                email: previous_guest_csv_file_data[k]['guest email'],
+                rsvp_link: previous_guest_csv_file_data[k]['guest rsvp link']     
+            }
+            if !Guest.find_by(previous_guest_csv_file_data[k]['guest id'].to_f)
+              @guest_for_this_functionality = Guest.find_or_create_by(related_guest_parametrization)
+              @guest_for_this_functionality.save
+            else
+              redirect_to event_path and return
+            end
+          end 
+          redirect_to event_path, notice: 'Completed importing previous guest information!'         
+    else
+      redirect_to event_path, notice: 'No file uploaded or your file is not valid.'
+    end
+  end
 
   private
   

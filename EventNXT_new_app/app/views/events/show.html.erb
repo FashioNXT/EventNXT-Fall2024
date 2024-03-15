@@ -127,6 +127,12 @@
   </table>
 </div>
 <%= link_to 'Add Guest', new_event_guest_path(@event), style: 'display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;margin-left:25%;margin-bottom:30px', class: 'button' %>
+<%= form_tag(import_previous_guest_information_path, multipart: true) do%>
+<%= file_field_tag :documentation>
+<%= submit_tag "Import Previous Guest Information Here"%>
+<% end %>
+
+
 
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Box Office Sales</h2>
 <% if @event_box_office_data.present? %>

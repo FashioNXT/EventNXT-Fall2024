@@ -83,46 +83,32 @@ class EventsController < ApplicationController
     end
   end
  
-  def import_previous_guest_information
-    previous_guest_csv_file = params[:documentation]
-    if previous_guest_csv_file.present? && previous_guest_csv_file.respond_to?(:read)
-          previous_guest_csv_file_data = CSV.read(previous_guest_csv_file, headers: true) 
-          row_number = previous_guest_csv_file_data.length
+  def import_previous_event_information
+    previous_event_csv_file = params[:documentation]
+    if previous_event_csv_file.present? && previous_event_csv_file.respond_to?(:read)
+          previous_event_csv_file_data = CSV.read(previous_event_csv_file, headers: true) 
+          row_number = previous_event_csv_file_data.length
           for k in 0...row_number do
             related_event_parametrization = {
-              id: previous_guest_csv_file_data[k]['event id'].to_f,
-              title: previous_guest_csv_file_data[k]['title'],
-              address: previous_guest_csv_file_data[k]['address'],
-              description: previous_guest_csv_file_data[k]['description'],
-              datetime: previous_guest_csv_file_data[k]['datetime'],
-              event_avatar: previous_guest_csv_file_data[k]['event avatar'],
-              event_box_office: previous_guest_csv_file_data[k]['event box office'],
+              id: previous_event_csv_file_data[k]['event id'].to_f,
+              title: previous_event_csv_file_data[k]['title'],
+              address: previous_event_csv_file_data[k]['address'],
+              description: previous_event_csv_file_data[k]['description'],
+              datetime: previous_event_csv_file_data[k]['datetime'],
+              event_avatar: previous_event_csv_file_data[k]['event avatar'],
+              event_box_office: previous_event_csv_file_data[k]['event box office'],
               user_id: current_user.id
             }
-            @event_for_this_functionality = Event.find_or_create_by(related_event_parametrization)
-            @event_for_this_functionality.save
-            if @event_for_this_functionality.save 
-              previous_guest_parameters = {
-                id: previous_guest_csv_file_data[k]['guest id'].to_f,
-                first_name: previous_guest_csv_file_data[k]['guest first name'],
-                last_name: previous_guest_csv_file_data[k]['guest last name'],
-                affiliation: previous_guest_csv_file_data[k]['guest affiliation'],
-                category: previous_guest_csv_file_data[k]['guest category'],
-                alloted_seats: previous_guest_csv_file_data[k]['guest alloted seats'].to_f,
-                commited_seats: previous_guest_csv_file_data[k]['guest commited seats'].to_f,
-                guest_commited: previous_guest_csv_file_data[k]['guest commited'].to_f,
-                status: previous_guest_csv_file_data[k]['guest status'],
-                event_id: previous_guest_csv_file_data[k]['guest event id'].to_f, 
-                email: previous_guest_csv_file_data[k]['guest email'],
-                rsvp_link: previous_guest_csv_file_data[k]['guest rsvp link'] 
-              }
-              @guest_for_this_functionality = Guest.find_or_create_by(previous_guest_parameters)
-              @guest_for_this_functionality.save           
+            if !Event.find_by(previous_event_csv_file_data[k]['event id'].to_f)
+              @event_for_this_functionality = Event.find_or_create_by(related_event_parametrization)
+              @event_for_this_functionality.save
+            else
+              redirect_to events_path and return
             end
           end 
-          flash[:notice] = 'Completed importing previous guest information!'         
+          redirect_to events_path, notice: 'Completed importing previous event information!'         
     else
-      flash[:notice]= 'No file uploaded or your file is not valid.'
+      redirect_to events_path, notice: 'No file uploaded or your file is not valid.'
     end
   end
 

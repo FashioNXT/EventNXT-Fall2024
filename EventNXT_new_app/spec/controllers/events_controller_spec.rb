@@ -197,9 +197,9 @@ RSpec.describe EventsController, type: :controller do
     end
   end
 
-  describe "importing the corresponding previous guest information as a csv file" do 
+  describe "importing the corresponding previous event information as a csv file" do 
     it "then the csv file information will be read" do
-      expect{post :import_previous_guest_information, params: {documentation: fixture_file_upload(Rails.root.join('spec', 'fixtures', 'guest_information_testing.csv'))}}.to change(Event,:count).by(1)
+      expect{post :import_previous_event_information, params: {documentation: fixture_file_upload(Rails.root.join('spec', 'fixtures', 'event_information_testing.csv'))}}.to change(Event,:count).by(1)
     end
   end 
 

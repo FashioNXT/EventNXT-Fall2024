@@ -12,9 +12,9 @@
 
 <div style="text-align: center;">
   <%= link_to "Create New Event", new_event_path, class: "btn btn-primary", style: "margin-bottom: 20px; display: inline-block;" %>
-  <%= form_tag(import_previous_guest_information_events_path) do %>
+  <%= form_tag(import_previous_event_information_path, multipart: true) do %>
     <%= file_field_tag :documentation %>
-    <%= submit_tag 'Importing Previous Guest Information Here' %>
+    <%= submit_tag 'Importing Previous Event Information Here' %>
     <% end %>
 
 
