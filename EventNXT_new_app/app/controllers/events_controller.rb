@@ -99,7 +99,7 @@ class EventsController < ApplicationController
               event_box_office: previous_event_csv_file_data[k]['event box office'],
               user_id: current_user.id
             }
-            if !Event.find_by(previous_event_csv_file_data[k]['event id'].to_f)
+            if !Event.find_by(previous_event_csv_file_data[k]['event id'])
               @event_for_this_functionality = Event.find_or_create_by(related_event_parametrization)
               @event_for_this_functionality.save
             else

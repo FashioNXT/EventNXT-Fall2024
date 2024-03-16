@@ -12,6 +12,13 @@
   <% end %>
 </div>
 
+
+<%= form_tag(import_previous_guest_information_for_the_event_path, multipart: true) do%>
+  <%= file_field_tag :documentation %>
+  <%= submit_tag "Import Previous Guest Information Here"%>
+  <% end %>
+
+
 <%# link_to "New guest", new_guest_path %>
 <%= link_to "New guest", new_event_guest_path(@event) %>
 

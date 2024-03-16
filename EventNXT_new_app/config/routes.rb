@@ -38,7 +38,7 @@ Rails.application.routes.draw do
   end
 
   post '/import_previous_event_information', to: 'events#import_previous_event_information'
-  post '/import_previous_guest_information', to: 'guests#import_previous_guest_information'
+  post '/events/:event_id/import_previous_guest_information', to: 'guests#import_previous_guest_information', as: 'import_previous_guest_information_for_the_event'
 
   #resources :seats
   #resources :guests
