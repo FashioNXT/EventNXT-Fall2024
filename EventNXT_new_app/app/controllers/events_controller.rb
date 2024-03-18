@@ -90,21 +90,14 @@ class EventsController < ApplicationController
           row_number = previous_event_csv_file_data.length
           for k in 0...row_number do
             related_event_parametrization = {
-              id: previous_event_csv_file_data[k]['event id'].to_f,
               title: previous_event_csv_file_data[k]['title'],
               address: previous_event_csv_file_data[k]['address'],
               description: previous_event_csv_file_data[k]['description'],
               datetime: previous_event_csv_file_data[k]['datetime'],
-              event_avatar: previous_event_csv_file_data[k]['event avatar'],
-              event_box_office: previous_event_csv_file_data[k]['event box office'],
               user_id: current_user.id
             }
-            if !Event.find_by(previous_event_csv_file_data[k]['event id'])
-              @event_for_this_functionality = Event.find_or_create_by(related_event_parametrization)
-              @event_for_this_functionality.save
-            else
-              redirect_to events_path and return
-            end
+            @event_for_this_functionality = Event.create(related_event_parametrization)
+            @event_for_this_functionality.save
           end 
           redirect_to events_path, notice: 'Completed importing previous event information!'         
     else

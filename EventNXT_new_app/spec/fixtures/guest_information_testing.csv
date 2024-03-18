@@ -1,2 +1,2 @@
-guest id,guest first name,guest last name,guest email,guest affiliation,guest category,guest alloted seats,guest commited seats,guest commited,guest status,guest event id,guest created at,guest updated at
-1,xx,xx,yyyyyyy@yyyyyyy.com,xx,category1,1,1,1,,1,02-01-2011 14:02:00 UTC,02-01-2011 14:02:00 UTC
+guest first name,guest last name,guest email,guest affiliation,guest category,guest alloted seats,guest commited seats,guest commited,guest status,guest event id,guest created at,guest updated at
+xx,xx,yyyyyyy@yyyyyyy.com,xx,category1,1,1,1,,1,02-01-2011 14:02:00 UTC,02-01-2011 14:02:00 UTC

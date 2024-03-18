@@ -1,2 +1,2 @@
-event id,title,address,description,datetime,created at,updated at,event avatar,event box office,user id
-1,zz,zzz,zzz,04-01-2011 14:00:00 UTC,02-01-2011 14:00:00 UTC,02-01-2011 14:00:00 UTC,aaa,aaa,
+title,address,description,datetime,created at,updated at,event avatar,event box office,user id
+zz,zzz,zzz,04-01-2011 14:00:00 UTC,02-01-2011 14:00:00 UTC,02-01-2011 14:00:00 UTC,aaa,aaa,
