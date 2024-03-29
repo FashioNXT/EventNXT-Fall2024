@@ -152,7 +152,31 @@
 </div>
 
 
+<<<<<<< Updated upstream
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Box Office Sales</h2>
+=======
+<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Box Office Sales</h2>
+<table class="table table-striped table-hover">
+<thead>
+  <tr class="highlight-heading">
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Email</th>
+    <th>Seats</th>
+    <th>Section seat</th>
+  </tr>
+</thead>
+<tbody>
+  <% @guest_details.each do |guest| %>
+    <tr>
+      <td><%= guest[:first_name] %></td>
+      <td><%= guest[:last_name] %></td>
+    </tr>
+  <% end %>
+</tbody>
+</table>
+
+>>>>>>> Stashed changes
 <% if @event_box_office_data.present? %>
 <div class="container">
 <table class="table table-striped table-hover">
