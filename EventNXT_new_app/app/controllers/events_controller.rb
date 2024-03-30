@@ -83,6 +83,9 @@ class EventsController < ApplicationController
     end
   end
 
+  
+
+
   private
     def calculate_seating_summary(event_id)
       seating_summary = []
