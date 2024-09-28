@@ -1,8 +1,0 @@
-Hi,
-Please send your friends an invitation to FASHIONNXT event <%= @event.title %> by entering their email in the below referral link. You will be receivng rewards if any of your friends purchase tickets to the event.
-<%= url_for(@event.image) %>
-Event date: <%= @event.datetime %>
-About Event: <%= @event.description %>
-<%= @event.address %>
-Refer your friends with this link: <%= link_to 'Referral', edit_event_guest_url(@event, @guest, :protocol => 'https') %>.
-Looking forward to seeing you there!
