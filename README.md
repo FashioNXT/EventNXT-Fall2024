@@ -4,7 +4,57 @@ TEAM Fall 2024
 
 # How to Locally Run the Applicatiion
 
-## Running directly on Your Host Machine
+Clone the repo: 
+
+```bash
+git clone https://github.com/FashioNXT/EventNXT-Fall2024.git
+```
+
+## Recommanded: Running in Containers by Docker
+
+> For now you need to swtich to the branch: `setup-ming`.
+> ```bash
+> git checkout setup-ming 
+> ```
+
+Please check you have Docker deamon running on your machine. If not, install it following https://docs.docker.com/engine/install/.
+
+We recommand this approach because there is no need to install any other packages to run the app. You can run and test the app by one SINGLE command, wihout extra actions or environment configurations.
+
+### Run Server
+
+```bash
+docker-compose up
+```
+It builds the images for the app and database,  create a named volume to store the data, and start running containers from the images.
+
+If errors occurs, you can view the log by
+```bash
+docker-compose log
+```
+- To view the log of the app:
+    ```bash
+    docker-compose log web
+    ```
+- To view the log of the database:
+    ```bash
+    docker-compose log db
+    ``` 
+
+### Run Tests
+
+#### Rspec
+```
+docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec
+```
+
+#### Cucumber
+```
+docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_cucumber
+```
+
+
+## Legacy: Running directly on Your Host Machine
 
 By Team Spring-2024.
 
@@ -81,7 +131,7 @@ To get an Idea:
     
     Then you can try bundle install again.
 
-## How to run Test cases
+### How to run Test cases
 
 *cucumber test cases:
 
