@@ -4,7 +4,7 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: <%= ENV.fetch("POSTGRES_USER") { 'eventnxt' } %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD") { 'password' } %>
-  host: db # refers to the db service from docker-compose.yml (which is the PostgreSQL container).
+  host: postgres # refers to the postgres service from docker-compose.yml (which is the PostgreSQL container).
   port: 5432
 
 development:

@@ -1,6 +1,6 @@
 version: "3"
 services:
-  web:
+  eventnxt:
     build: .
     environment:
       RAILS_ENV: development
@@ -10,10 +10,10 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - postgres
 
-  db:
-    image: postgres
+  postgres:
+    image: postgres:latest
     environment:
       POSTGRES_USER: eventnxt
       POSTGRES_PASSWORD: password

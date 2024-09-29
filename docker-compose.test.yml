@@ -1,6 +1,6 @@
 version: "3"
 services:
-  db: 
+  postgres: 
     environment:
        POSTGRES_DB: eventnxt_db_test
        
@@ -14,7 +14,7 @@ services:
     environment:
       RAILS_ENV: test
     depends_on:
-      - db
+      - postgres
 
   test_cucumber:
     build: .
@@ -24,4 +24,4 @@ services:
     volumes:
       - .:/myapp
     depends_on:
-      - db
+      - postgres
