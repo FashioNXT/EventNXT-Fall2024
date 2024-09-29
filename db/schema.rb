@@ -11,6 +11,9 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "email_services", force: :cascade do |t|
     t.string "to"
     t.string "subject"
@@ -19,8 +22,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
     t.datetime "updated_at", null: false
     t.datetime "sent_at"
     t.datetime "committed_at"
-    t.integer "event_id"
-    t.integer "guest_id"
+    t.bigint "event_id"
+    t.bigint "guest_id"
     t.integer "email_template_id"
     t.index ["event_id"], name: "index_email_services_on_event_id"
     t.index ["guest_id"], name: "index_email_services_on_guest_id"
@@ -44,7 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
     t.datetime "updated_at", null: false
     t.string "event_avatar"
     t.string "event_box_office"
-    t.integer "user_id", default: 1
+    t.bigint "user_id", default: 1
     t.index ["user_id"], name: "index_events_on_user_id"
   end
 
@@ -57,7 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
     t.integer "commited_seats"
     t.integer "guest_commited"
     t.boolean "status"
-    t.integer "event_id", null: false
+    t.bigint "event_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email"
@@ -67,8 +70,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
   end
 
   create_table "referrals", force: :cascade do |t|
-    t.integer "event_id"
-    t.integer "guest_id"
+    t.bigint "event_id"
+    t.bigint "guest_id"
     t.string "email", null: false
     t.string "name", null: false
     t.string "referred", null: false
@@ -88,7 +91,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
   create_table "seats", force: :cascade do |t|
     t.string "category"
     t.integer "total_count"
-    t.integer "event_id", null: false
+    t.bigint "event_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "section"
