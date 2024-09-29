@@ -53,6 +53,13 @@ docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rs
 docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_cucumber
 ```
 
+#### Tear Down
+Use this to remove the containers.
+```
+docker-compose down [-v] [-rmi all]
+```
+- `-v`: remove the nameed volumes for db data.
+- `-rmi`: remove the images built by docker-compose.
 
 ## Legacy: Running directly on Your Host Machine
 
