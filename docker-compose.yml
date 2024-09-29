@@ -17,7 +17,7 @@ services:
     environment:
       POSTGRES_USER: eventnxt
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres_db_dev
+      POSTGRES_DB: eventnxt_db_dev 
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:

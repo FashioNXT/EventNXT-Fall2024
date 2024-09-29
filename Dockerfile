@@ -6,11 +6,7 @@ RUN apt update -qq && apt install -y \
   nodejs
 COPY . /eventnxt
 
-# Build-time argument (passed using --build-arg)
-ARG RAILS_ENV=development
-
-# Runtime environment variables
-ENV RAILS_ENV=${RAILS_ENV} 
+ENV RAILS_ENV=production
 
 RUN gem install bundler
 RUN bundle install

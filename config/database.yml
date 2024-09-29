@@ -9,12 +9,11 @@ default: &default
 
 development:
   <<: *default
-  database: postgres_db_dev
+  database: <%= ENV.fetch("POSTGRES_DB") { 'eventnxt_db_dev' } %>
 
 test:
   <<: *default
-  database: postgres_db_test
+  database: <%= ENV.fetch("POSTGRES_DB") { 'eventnxt_db_test' } %>
 
 production:
   url: <%= ENV['DATABASE_URL'] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
