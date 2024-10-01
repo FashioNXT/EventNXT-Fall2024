@@ -10,7 +10,7 @@ services:
       RAILS_ENV: test 
     command: bundle exec rspec
     volumes:
-      - .:/myapp
+      - .:/eventnxt
     environment:
       RAILS_ENV: test
     depends_on:
@@ -22,6 +22,6 @@ services:
       RAILS_ENV: test
     command: bundle exec cucumber
     volumes:
-      - .:/myapp
+      - .:/eventnxt
     depends_on:
       - postgres
