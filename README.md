@@ -24,42 +24,42 @@ We recommand this approach because there is no need to install any other package
 ### Run Server
 
 ```bash
-docker-compose up
+$ ./script/run_app
 ```
 It builds the images for the app and database,  create a named volume to store the data, and start running containers from the images.
 
 If errors occurs, you can view the log by
 ```bash
-docker-compose log
+$ docker-compose log
 ```
 - To view the log of the app:
     ```bash
-    docker-compose log web
+    $ docker-compose log web
     ```
 - To view the log of the database:
     ```bash
-    docker-compose log db
+    $ docker-compose log db
     ``` 
 
 ### Run Tests
 
 #### Rspec
 ```
-docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec
+$ ./script/run_test_spec [rspec_args]
 ```
 
 #### Cucumber
 ```
-docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_cucumber
+$ ./script/run_test_cucumber [cucumber_args]
 ```
 
 ### Tear Down
 Use this to remove the containers.
 ```
-docker-compose down [-v] [-rmi all]
+docker-compose down [-v] [--rmi all]
 ```
 - `-v`: remove the nameed volumes for db data.
-- `-rmi`: remove the images built by docker-compose.
+- `--rmi`: remove the images built by docker-compose.
 
 ## Legacy: Running directly on Your Host Machine
 

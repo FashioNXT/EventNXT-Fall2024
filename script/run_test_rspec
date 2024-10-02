@@ -1,3 +1,17 @@
 #!/usr/bin/env ruby
 
-system("docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec")
+cmd = "docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec"
+
+if ARGV.length > 0
+  cmd += " bundle exec rspec"
+  ARGV.each do |arg| 
+    if arg.include?(" ")
+      cmd += " \"#{arg}\""
+    else
+      cmd += " #{arg}"
+    end
+  end
+  puts cmd
+end
+
+system(cmd)

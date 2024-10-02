@@ -11,8 +11,6 @@ services:
     command: bundle exec rspec
     volumes:
       - .:/eventnxt
-    environment:
-      RAILS_ENV: test
     depends_on:
       - postgres
 
