@@ -10,8 +10,7 @@ if ARGV.length > 0
     else
       cmd += " #{arg}"
     end
-  end
-  puts cmd
+  ends
 end
 
 system(cmd)

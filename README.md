@@ -28,7 +28,7 @@ $ ./script/run_app
 ```
 It builds the images for the app and database,  create a named volume to store the data, and start running containers from the images.
 
-If errors occurs, you can view the log by
+If errors occur, you can view the log by
 ```bash
 $ docker-compose log
 ```
@@ -45,7 +45,7 @@ $ docker-compose log
 
 #### Rspec
 ```
-$ ./script/run_test_spec [rspec_args]
+$ ./script/run_test_rspec [rspec_args]
 ```
 
 #### Cucumber
