@@ -30,15 +30,15 @@ It builds the images for the app and database,  create a named volume to store t
 
 If errors occur, you can view the log by
 ```bash
-$ docker-compose log
+$ docker-compose logs
 ```
 - To view the log of the app:
     ```bash
-    $ docker-compose log web
+    $ docker-compose logs eventnxt
     ```
 - To view the log of the database:
     ```bash
-    $ docker-compose log db
+    $ docker-compose logs postgres
     ``` 
 
 ### Run Tests
