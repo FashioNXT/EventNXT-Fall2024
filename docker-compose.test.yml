@@ -1,0 +1,25 @@
+version: "3"
+services:
+  postgres: 
+    environment:
+       POSTGRES_DB: eventnxt_db_test
+       
+  test_rspec:
+    build: .
+    environment:
+      RAILS_ENV: test 
+    command: bundle exec rspec
+    volumes:
+      - .:/eventnxt
+    depends_on:
+      - postgres
+
+  test_cucumber:
+    build: .
+    environment:
+      RAILS_ENV: test
+    command: bundle exec cucumber
+    volumes:
+      - .:/eventnxt
+    depends_on:
+      - postgres

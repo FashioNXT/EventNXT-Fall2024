@@ -1,0 +1,32 @@
+version: "3"
+services:
+  eventnxt:
+    build: .
+    environment:
+      RAILS_ENV: development
+    command: bash -c "rails db:prepare && rails s -b 0.0.0.0 -p 3000"
+    volumes:
+      - .:/eventnxt
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: eventnxt
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: eventnxt_db_dev 
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db_data:
+
+
+      
+      
+    
