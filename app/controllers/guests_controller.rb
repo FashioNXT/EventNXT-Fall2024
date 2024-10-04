@@ -1,5 +1,6 @@
+require 'roo'
+
 class GuestsController < ApplicationController
-  require 'csv'
   #<!--===================-->
   # <!--corresponding filter of the defined method for nested scaffold-->
   before_action :get_event, except: [:book_seats, :update_commited_seats]
@@ -116,49 +117,23 @@ class GuestsController < ApplicationController
     end
   end
   
-  def import_guests_csv
+
+  def import
+    params.require(:event_id)
+
     event_id = params[:event_id]
     event = Event.find(event_id)
 
     return redirect_to event_path(@event), alert: "No file uploaded." if params[:file].blank?
 
-  
     # Roo setup to open the Excel file
     file = params[:file]
     spreadsheet = Roo::Spreadsheet.open(file.path)
-    header = spreadsheet.row(1) # Assuming first row is the header
-  
-    # Iterate over each row
-    (2..spreadsheet.last_row).each do |i|
-      row = Hash[[header, spreadsheet.row(i)].transpose]
-  
-      first_name = row["First Name"]
-      last_name = row["Last Name"]
-      email = row["Email"]
-      affiliation = row["Affiliation"] # Ensure this column exists in your Excel file
-      category = row["Category"] # Ensure this column exists in your Excel file
-      alloted_seats = row["Allotted Seats"].to_i # Adjust the key as per your Excel file
-      commited_seats = row["Committed Seats"].to_i # Adjust the key as per your Excel file
-      section = row["Section"]
-      #guest_commited = row["Guest Committed"].to_i # Adjust the key as per your Excel file
-  
-      # Since email is removed, you might want to use a different field to find or initialize guests
-      # For example, using first_name and last_name (but ensure these combinations are unique per event)
-      guest = Guest.find_or_initialize_by(first_name: first_name, last_name: last_name, event_id: event_id)
-      if guest.new_record?
-        guest.assign_attributes({
-          first_name: first_name,
-          last_name: last_name,
-          email: email,
-          affiliation: affiliation,
-          category: category,
-          alloted_seats: alloted_seats,
-          commited_seats: commited_seats,
-          section: section
-          #guest_commited: guest_commited
-        })
-        guest.save!
-      end
+
+    result = Guest.import_spreadsheet(spreadsheet, event_id)
+
+    if result[:status] == false
+      return redirect_to event_path(event), alert: "Invalid file format: #{result[:message]}"
     end
   
     redirect_to event_path(event), notice: "Guests imported"
