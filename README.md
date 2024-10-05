@@ -4,9 +4,9 @@ TEAM Fall 2024
 
 # Sprint 1 MVP
 
-Heroku deployment:https://eventnxt-0fcb166cb5ae.herokuapp.com/ <br>
-Document Summary:<br>
-Code climate report:
+Heroku deployment: https://eventnxt-0fcb166cb5ae.herokuapp.com/ <br>
+Document Summary: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/documentation/Fall2024/Sprint%201%20MVP.pdf<br>
+Code climate report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/documentation/Fall2024/code-cliamte-report.pdf
 
 # Team working Agreement
 Norms and Values
