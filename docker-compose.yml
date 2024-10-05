@@ -3,10 +3,15 @@ services:
   eventnxt:
     build: .
     environment:
-      RAILS_ENV: development
-    command: bash -c "rails db:prepare && rails s -b 0.0.0.0 -p 3000"
+      - RAILS_ENV=development
+      - BUNDLE_WITHOUT=test
+    command: bash -c "rm -f tmp/pids/server.pid && \
+      bundle install && \
+      bundle exec rails db:prepare && \
+      bundle exec rails s -b 0.0.0.0 -p 3000"
     volumes:
       - .:/eventnxt
+      - bundle_data:/usr/local/bundle
     ports:
       - "3000:3000"
     depends_on:
@@ -15,9 +20,9 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_USER: eventnxt
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: eventnxt_db_dev 
+      POSTGRES_USER: ${POSTGRES_USER:-eventnxt}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: eventnxt_db_dev
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
@@ -25,6 +30,7 @@ services:
 
 volumes:
   db_data:
+  bundle_data:  # Add this to cache the bundle install
 
 
       

@@ -7,19 +7,23 @@ services:
   test_rspec:
     build: .
     environment:
-      RAILS_ENV: test 
-    command: bundle exec rspec
+      - RAILS_ENV=test
+      - BUNDLE_WITHOUT=development
+    command: bash -c "bundle install && bundle exec rspec"
     volumes:
       - .:/eventnxt
+      - bundle_data:/usr/local/bundle
     depends_on:
       - postgres
 
   test_cucumber:
     build: .
     environment:
-      RAILS_ENV: test
-    command: bundle exec cucumber
+      - RAILS_ENV=test
+      - BUNDLE_WITHOUT=development
+    command: bash -c "bundle install && bundle exec cucumber"
     volumes:
       - .:/eventnxt
+      - bundle_data:/usr/local/bundle
     depends_on:
       - postgres
