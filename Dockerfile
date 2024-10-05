@@ -6,8 +6,8 @@ RUN apt update -qq && apt install -y \
   nodejs
 COPY . /eventnxt
 
-ENV RAILS_ENV=production
+ENV RAILS_ENV production
 
 RUN gem install bundler
 RUN bundle install
-CMD rails s -b 0.0.0.0 -p $PORT
+CMD bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0 -p $PORT"
