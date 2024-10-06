@@ -5,6 +5,20 @@
 # files.
 
 require 'cucumber/rails'
+require 'warden/test/helpers'  # Add this line to include Warden test helpers
+
+# Add Warden helpers to the test environment
+World(Warden::Test::Helpers)
+
+# Ensure Warden runs in test mode
+Before do
+  Warden.test_mode!  # Puts Warden into test mode to enable login_as
+end
+
+# Reset Warden after each scenario to clear any session data
+After do
+  Warden.test_reset!
+end
 
 # frozen_string_literal: true
 
@@ -57,4 +71,3 @@ end
 # The :transaction strategy is faster, but might give you threading problems.
 # See https://github.com/cucumber/cucumber-rails/blob/master/features/choose_javascript_database_strategy.feature
 Cucumber::Rails::Database.javascript_strategy = :truncation
-
