@@ -1,5 +1,6 @@
+require 'roo'
+
 class Guest < ApplicationRecord
-  require 'roo'
 
   belongs_to :event
   has_many :referrals, dependent: :destroy
@@ -10,7 +11,7 @@ class Guest < ApplicationRecord
   # required to have to pass Rspec tests
   validates :first_name, presence: true
   validates :last_name, presence: true
-  # Removed the email validation
+  validates :email, presence: true
   validates :affiliation, presence: true
   validates :category, presence: true
   validates :section, presence: true
@@ -68,11 +69,64 @@ class Guest < ApplicationRecord
     
   end
 
+  def self.validate_import(spreadsheet)
+    return {status: true, message: "Spreadsheet validated successfully"}
+  end
 
-  # ===================================
+  def self.import_spreadsheet(spreadsheet, event_id)
+     result = self.validate_import(spreadsheet)
+     if result[:status] == false
+       return result
+     end
 
-  private
+     # Iterate over each worksheet
+    spreadsheet.sheets.each do |worksheet_name| 
+      worksheet = spreadsheet.sheet(worksheet_name)
+      
+      # Assuming the first row is headers, get the header row
+      header = worksheet.row(1)
 
+      (2..spreadsheet.last_row).each do |i|
+        row = Hash[[header, spreadsheet.row(i)].transpose]
+
+        first_name = row["First Name"]
+        last_name = row["Last Name"]
+        email = row["Email"]
+        affiliation = row["Affiliation"] 
+        category = row["Category"]
+        section = row["Section"]
+        alloted_seats = row["Allotted Seats"].to_i
+        commited_seats = row["Committed Seats"].to_i
+  
+        guest = Guest.find_or_initialize_by(email: email, event_id: event_id)
+        if guest.new_record?
+          guest.assign_attributes({
+            first_name: first_name,
+            last_name: last_name,
+            email: email,
+            affiliation: affiliation,
+            category: category,
+            alloted_seats: alloted_seats,
+            commited_seats: commited_seats,
+            section: section,
+            event_id: event_id
+          })
+        end
+        
+        begin
+          guest.save!
+          result[:message] = "Guest #{guest.email} imported successfully"
+        rescue ActiveRecord::RecordInvalid => e
+          result[:status] = false
+          result[:message] = e.message
+        end
+      end
+    end
+
+    return result
+  end
+
+private
   def generate_rsvp_link
     self.rsvp_link = SecureRandom.hex(20) # You can adjust the length as needed
   end
