@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
-cmd = "docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec"
+docker_run = "docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec"
 
 if ARGV.length > 0
-  cmd += " bundle exec rspec"
+  cmd ='bundle install && bundle exec rspec'
   ARGV.each do |arg| 
     if arg.include?(" ")
       cmd += " \"#{arg}\""
@@ -11,6 +11,10 @@ if ARGV.length > 0
       cmd += " #{arg}"
     end
   end
+  cmd = "bash -c '#{cmd}'"
 end
 
+cmd = "#{docker_run} #{cmd}"
+
+puts("Running Cmd: #{cmd}")
 system(cmd)
