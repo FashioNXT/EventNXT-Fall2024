@@ -17,9 +17,9 @@ Background: registered users
   Given I am on the index page
   When  I follow "Log In"
   Then  I should be on the Sign in page
-  When  I fill the "Email" as "rakeshpothineni@tamu.edu"
-  And   I fill the "Password" as "Rakesh@123"
-  And   I press "Log in"
+  When  I fill in "Email" with "rakeshpothineni@tamu.edu"
+  And   I fill in "Password" with "Rakesh@123"
+  And   I click on "Log in"
   Then  I should be on the event dashboard page
   When  I click on the 'Edit Profile' button
   And   I should see Edit User
