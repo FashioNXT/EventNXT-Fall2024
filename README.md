@@ -6,9 +6,12 @@ TEAM Fall 2024
 
 Heroku deployment: https://eventnxt-0fcb166cb5ae.herokuapp.com/ <br>
 Document Summary: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/documentation/Fall2024/Sprint%201%20MVP.pdf<br>
-Code climate report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/documentation/Fall2024/code-cliamte-report.pdf
+Code Quality report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/documentation/Fall2024/code-cliamte-report.pdf
 Team agreement Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/team_agreement_report.md
 
+# Sprint 1 Retro
+
+TODO
 
 # How to Locally Run the Applicatiion
 
@@ -20,9 +23,10 @@ git clone https://github.com/FashioNXT/EventNXT-Fall2024.git
 
 ## Recommanded: Running in Containers by Docker
 
-> For now you need to swtich to the branch: `setup-ming`.
+> For now you need to swtich to the branch: `dev`.
 > ```bash
-> git checkout setup-ming 
+> git fetch origin dev
+> git checkout dev 
 > ```
 
 Please check you have Docker deamon running on your machine. If not, install it following https://docs.docker.com/engine/install/.
@@ -64,10 +68,43 @@ $ ./script/run_test_cucumber [cucumber_args]
 ### Tear Down
 Use this to remove the containers.
 ```
-docker-compose down [-v] [--rmi all]
+$ docker-compose down [-v] [--rmi all]
 ```
 - `-v`: remove the nameed volumes for db data.
 - `--rmi`: remove the images built by docker-compose.
+
+## Deployment (Manually) on Heroku
+
+1. Login to Heroku CLI:
+      ```bash
+      $ heroku login
+      ```
+2. Create your app on Heroku: 
+    ```bash
+    $ heroku create <app_name>
+    ```
+3. Manually add Postgres add-on for the app on Heroku Dashboard..
+4. Login to Heroku docker registry:
+    ```bash
+    $ heroku container:login
+    ```
+5. Swtich the app into container stack:
+    ```bash
+    $ heroku stack:set container -a <app_name>
+    ```
+6. Build an image using the `Dockerfile` in this repo, and push it onto Heroku by the following command.
+    ```
+    $ heroku container:push web -a <app_name>
+    ```
+   - The above command does both building and pushing of the image, you don't need to build the image by yourself.
+7. After successfully pushing the image, release the app (start running the container) on Heroku.
+    ```bash
+    $ heroku container:release web -a <app>
+    ```
+
+This way you can test your feature branch on Heroku
+
+
 
 ## Legacy: Running directly on Your Host Machine
 
