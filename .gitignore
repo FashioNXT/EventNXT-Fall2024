@@ -62,7 +62,7 @@ Temporary Items
 .apdisk
 
 # Ignore VScode Related
-.vscode/*
+.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json

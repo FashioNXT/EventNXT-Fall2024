@@ -1,0 +1,31 @@
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Layout/AlignHash:
+  EnforcedColonStyle: key  # Ensure the colon stays aligned after the key
+  EnforcedLastArgumentHashStyle: always_inspect  # Always inspect hash style for last argument
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented  # Indent multi-line method calls
+  IndentRelativeToReceiver: true  # Indent relative to the method receiver
+
+Layout/DotPosition:
+  EnforcedStyle: leading
+
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation  # Align parameters in method definitions and calls
+
+# Style/TrailingCommaInArguments:
+#   EnforcedStyleForMultiline: comma  # Enforce trailing comma in multiline method arguments
+
+Metrics/MethodLength:
+  Max: 40  # Maximum number of lines allowed in a method
+
+Metrics/ClassLength:
+  Max: 150  # Maximum number of lines allowed in a class or module
+
+# Metrics/BlockLength:
+#   Max: 300  # Maximum number of lines allowed in a block or file
+
+# Metrics/FileLength:
+#   Max: 500  # Maximum number of lines allowed in an entire file

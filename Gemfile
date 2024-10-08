@@ -75,6 +75,12 @@ group :test do
   gem "database_cleaner"
   gem 'faker'
   gem 'factory_bot_rails'
+  # Code coverage for Ruby
+  gem 'simplecov', require: false
+  gem 'rspec-rails'
+  gem 'shoulda-matchers' # to rovide RSpec-compatible matchers
+  gem 'rails-controller-testing'
+  gem 'rspec-support', '3.12.1'
 end
 
 # to upload
@@ -93,16 +99,8 @@ gem 'devise', '~> 4.9', '>= 4.9.2'
 #gem 'omniauth-google-oauth2', '~> 1.1', '>= 1.1.1'
 #gem 'omniauth-rails_csrf_protection', '~> 1.0', '>= 1.0.1'
 
-# Code coverage for Ruby
-gem 'simplecov', require: false, group: :test
-gem 'rspec-rails', group: [:development, :test]
-gem 'shoulda-matchers', group: [:development, :test]        # to rovide RSpec-compatible matchers
-gem 'rails-controller-testing'
-gem 'rspec-support', '3.12.1'
-
 #for central login
-gem 'oauth2', '~> 1.4'
+gem 'oauth2', '~> 2.0'
 gem 'omniauth', '>= 1.9', '< 3'
 gem 'omniauth-oauth2', '~> 1.7', '>= 1.7.1'
-#gem 'oauth2', '~> 1.4.9'
 gem "omniauth-rails_csrf_protection"
