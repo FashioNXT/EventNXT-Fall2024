@@ -152,15 +152,15 @@
   </div>
 
   <div id="link-import-guests">
-    <%= form_with(url: import_event_guests_path(@event), multipart: true) do |form|%>
+    <%= form_with(url: import_spreadsheet_event_guests_path(@event), multipart: true) do |form|%>
       <div class="form-field">
         <%= form.label "Choose Spreadsheet File" %>
-        <%= form.file_field :file %>
+        <%= form.file_field :file, id: "guest-list-attach" %>%>
         <%= form.hidden_field :event_id, value:@event.id %>
       </div>
 
       <div class="form-action">
-        <%= form.submit "Upload"%>
+        <%= form.submit "Upload Guests"%>
       </div>
     <% end %>
   </div>
