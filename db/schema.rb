@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_12_205337) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,7 +46,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "event_avatar"
-    t.string "event_box_office"
     t.bigint "user_id", default: 1
     t.index ["user_id"], name: "index_events_on_user_id"
   end
@@ -98,6 +97,22 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
     t.index ["event_id"], name: "index_seats_on_event_id"
   end
 
+  create_table "ticket_sales", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email", null: false
+    t.string "affiliation"
+    t.string "category", null: false
+    t.string "section", null: false
+    t.integer "tickets", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.bigint "event_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "lower((email)::text)", name: "index_ticket_sales_on_lower_email", unique: true
+    t.index ["event_id"], name: "index_ticket_sales_on_event_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -118,4 +133,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_230806) do
   add_foreign_key "events", "users"
   add_foreign_key "guests", "events"
   add_foreign_key "seats", "events"
+  add_foreign_key "ticket_sales", "events"
 end

@@ -155,7 +155,7 @@
     <%= form_with(url: import_spreadsheet_event_guests_path(@event), multipart: true) do |form|%>
       <div class="form-field">
         <%= form.label "Choose Spreadsheet File" %>
-        <%= form.file_field :file, id: "guest-list-attach" %>%>
+        <%= form.file_field :file, id: "guest-list-attach" %>
         <%= form.hidden_field :event_id, value:@event.id %>
       </div>
 
@@ -166,6 +166,7 @@
   </div>
   
 
+<!-- Box Office Sale -->
 </div>
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Box Office Sales</h2>
 <strong>NOTIFICATION (!): Please upload .xlsx file having column names exactly 'Email', 'Tickets' and 'Amount', among other chosen columns, otherwise the corresponding data cannot be 
