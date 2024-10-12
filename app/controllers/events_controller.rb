@@ -7,7 +7,6 @@ class EventsController < ApplicationController
   def index
     @events = current_user.events
   end
-
   # GET /events/1 or /events/1.json
   def show
     # <!--===================-->
@@ -52,21 +51,6 @@ class EventsController < ApplicationController
              end
           end
       end
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
     else
       flash[:notice] = "No box office spreadsheet uploaded for this event"
       @event_box_office_data = []
@@ -170,4 +154,160 @@ class EventsController < ApplicationController
       # <!--===================-->
       
     end
+end
+
+
+require 'rails_helper'
+
+RSpec.describe EventsController, type: :controller do
+  let(:user) { create(:user) }
+  let(:event) { create(:event, user: user) }
+
+  before do
+    sign_in user
+  end
+
+  describe "GET #index" do
+    it "returns a success response" do
+      get :index
+      expect(response).to be_successful
+    end
+
+    it "assigns @events" do
+      get :index
+      expect(assigns(:events)).to eq([event])
+    end
+  end
+
+  describe "GET #show" do
+    it "returns a success response" do
+      get :show, params: { id: event.id }
+      expect(response).to be_successful
+    end
+
+    it "assigns @event" do
+      get :show, params: { id: event.id }
+      expect(assigns(:event)).to eq(event)
+    end
+
+    it "assigns @guests" do
+      guest = create(:guest, event: event)
+      get :show, params: { id: event.id }
+      expect(assigns(:guests)).to include(guest)
+    end
+
+    it "assigns @seats" do
+      seat = create(:seat, event: event)
+      get :show, params: { id: event.id }
+      expect(assigns(:seats)).to include(seat)
+    end
+
+    it "assigns @seating_summary" do
+      get :show, params: { id: event.id }
+      expect(assigns(:seating_summary)).to be_an(Array)
+    end
+
+    it "assigns @guest_details" do
+      guest = create(:guest, event: event)
+      get :show, params: { id: event.id }
+      expect(assigns(:guest_details)).to include(guest)
+    end
+
+  end
+
+  describe "GET #new" do
+    it "returns a success response" do
+      get :new
+      expect(response).to be_successful
+    end
+
+    it "assigns a new event to @event" do
+      get :new
+      expect(assigns(:event)).to be_a_new(Event)
+    end
+  end
+
+  describe "GET #edit" do
+    it "returns a success response" do
+      get :edit, params: { id: event.id }
+      expect(response).to be_successful
+    end
+
+    it "assigns the requested event to @event" do
+      get :edit, params: { id: event.id }
+      expect(assigns(:event)).to eq(event)
+    end
+  end
+
+  describe "POST #create" do
+    context "with valid parameters" do
+      it "creates a new Event" do
+        expect {
+          post :create, params: { event: attributes_for(:event) }
+        }.to change(Event, :count).by(1)
+      end
+
+      it "redirects to the created event" do
+        post :create, params: { event: attributes_for(:event) }
+        expect(response).to redirect_to(Event.last)
+      end
+    end
+
+    # context "with invalid parameters" do
+    #   # it "does not create a new Event" do
+    #   #   expect {
+    #   #     post :create, params: { event: attributes_for(:event, title: nil) }
+    #   #   }.to_not change(Event, :count)
+    #   # end
+
+    #   # it "renders the 'new' template" do
+    #   #   post :create, params: { event: attributes_for(:event, title: nil) }
+    #   #   expect(response).to render_template("new")
+    #   # end
+    # end
+  end
+
+  describe "PUT #update" do
+    context "with valid parameters" do
+      let(:new_attributes) { { title: "Updated Event Title" } }
+
+      it "updates the requested event" do
+        put :update, params: { id: event.id, event: new_attributes }
+        event.reload
+        expect(event.title).to eq("Updated Event Title")
+      end
+
+      it "redirects to the event" do
+        put :update, params: { id: event.id, event: new_attributes }
+        expect(response).to redirect_to(event)
+      end
+    end
+
+    context "with invalid parameters" do
+      it "does not update the event" do
+        put :update, params: { id: event.id, event: attributes_for(:event, title: nil) }
+        event.reload
+        expect(event.title).not_to be_nil
+      end
+
+      # it "renders the 'edit' template" do
+      #   put :update, params: { id: event.id, event: attributes_for(:event, title: nil) }
+      #   expect(response).to render_template("edit")
+      # end
+    end
+  end
+
+  describe "DELETE #destroy" do
+    it "destroys the requested event" do
+      event_to_delete = create(:event, user: user)
+      expect {
+        delete :destroy, params: { id: event_to_delete.id }
+      }.to change(Event, :count).by(-1)
+    end
+
+    it "redirects to the events list" do
+      delete :destroy, params: { id: event.id }
+      expect(response).to redirect_to(events_url)
+    end
+  end
 end
