@@ -7,11 +7,11 @@ RSpec.describe Users::AuthorizeloginController, type: :controller do
       allow(ENV).to receive(:[]).with("NXT_APP_ID").and_return("your_client_id")
       allow(ENV).to receive(:[]).with("EVENT_NXT_APP_URL").and_return("http://example-callback.com")
 
-      expect do
-        get :authorize_event360
-      end.to redirect_to("http://example.com/oauth/authorize?client_id=your_client_id&redirect_uri=http://example-callback.com/auth/events360/callback&response_type=code&scope=public")
-    end
+      # Directly call the action without a block
+      get :authorize_event360
 
-    # Add more tests as needed
+      # Check the redirect_to expectation
+      expect(response).to redirect_to("http://example.com/oauth/authorize?client_id=your_client_id&redirect_uri=http://example-callback.com/auth/events360/callback&response_type=code&scope=public")
+    end
   end
 end
