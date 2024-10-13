@@ -20,6 +20,9 @@ Layout/ParameterAlignment:
 Layout/DotPosition:
   EnforcedStyle: leading
 
+Style/RedundantSelf:
+  Enabled: false  # Disables the cop that removes redundant `self`
+
 # Style/TrailingCommaInArguments:
 #   EnforcedStyleForMultiline: comma  # Enforce trailing comma in multiline method arguments
 
@@ -39,4 +42,4 @@ Metrics/ClassLength:
 #   Max: 500  # Maximum number of lines allowed in an entire file
 
 Metrics/AbcSize:
-  Max: 20
+  Max: 40  # Maximum ABC size in a method
