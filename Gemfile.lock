@@ -162,6 +162,7 @@ GEM
     globalid (1.1.0)
       activesupport (>= 5.0)
     hashie (5.0.0)
+    htmlbeautifier (1.4.3)
     i18n (1.13.0)
       concurrent-ruby (~> 1.0)
     image_processing (1.12.2)
@@ -412,6 +413,7 @@ DEPENDENCIES
   devise (~> 4.9, >= 4.9.2)
   factory_bot_rails
   faker
+  htmlbeautifier
   importmap-rails
   jbuilder
   mini_magick
@@ -423,6 +425,7 @@ DEPENDENCIES
   puma (~> 5.0)
   rails (~> 7.0.4, >= 7.0.4.3)
   rails-controller-testing
+  responders (~> 3.0)
   roo (~> 2.10)
   rspec-rails
   rspec-support (= 3.12.1)

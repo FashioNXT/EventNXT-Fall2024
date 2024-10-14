@@ -109,7 +109,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_12_205337) do
     t.bigint "event_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index "lower((email)::text)", name: "index_ticket_sales_on_lower_email", unique: true
+    t.index "event_id, lower((email)::text)", name: "index_ticket_sales_on_event_id_and_lower_email", unique: true
     t.index ["event_id"], name: "index_ticket_sales_on_event_id"
   end
 

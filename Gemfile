@@ -29,6 +29,9 @@ gem 'stimulus-rails'
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jbuilder'
 
+# Simplifies response handling in Rails controllers with multiple formats
+gem 'responders', '~> 3.0'
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 
@@ -59,6 +62,7 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'web-console'
   # Code quality tool
+  gem 'htmlbeautifier'
   gem 'rubocop'
   gem 'rubocop-packaging'
   gem 'rubocop-performance'
@@ -101,10 +105,6 @@ gem 'roo', '~> 2.10'
 
 # to authenticate
 gem 'devise', '~> 4.9', '>= 4.9.2'
-
-# Google Login
-# gem 'omniauth-google-oauth2', '~> 1.1', '>= 1.1.1'
-# gem 'omniauth-rails_csrf_protection', '~> 1.0', '>= 1.0.1'
 
 # for central login
 gem 'oauth2', '~> 2.0'

@@ -32,7 +32,7 @@ Rails.application.routes.draw do
 
   post 'email_services/add_email_template', to: 'email_services#add_email_template', as: 'add_email_template'
   patch '/email_services/email_template/:id/update', to: 'email_services#update_email_template',
-                                                     as: 'update_email_template'
+    as: 'update_email_template'
   patch '/update_commited_seats/:rsvp_link', to: 'guests#update_commited_seats', as: 'update_commited_seats'
 
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
@@ -49,6 +49,11 @@ Rails.application.routes.draw do
     resources :guests do
       collection do
         post 'import', to: 'guests#import_spreadsheet', as: 'import_spreadsheet'
+      end
+    end
+    resources :ticket_sales do
+      collection do
+        post 'import', to: 'ticket_sales#import_spreadsheet', as: 'import_spreadsheet'
       end
     end
   end

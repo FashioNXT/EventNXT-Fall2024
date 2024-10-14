@@ -5,10 +5,8 @@ class TicketSale < ApplicationRecord
   # class instance variable
   REQUIRED_FIELDS = %i[email category section tickets amount].freeze
 
-  # Model-level uniqueness validation (case-insensitive)
-  validates :email, presence: true, uniqueness: { case_sensitive: false }
-
-  # Model-level validations
+  # Model-level vaidations
+  validates :email, presence: true, uniqueness: { scope: :event_id, case_sensitive: false }
   validates :category, presence: true
   validates :section, presence: true
   validates :tickets, presence: true,
@@ -17,10 +15,26 @@ class TicketSale < ApplicationRecord
     numericality: { greater_than_or_equal_to: 0 }
 
   # Custom validations
-  validate tickets_cannot_be_greater_than_remaining_seats
+  validate :tickets_cannot_be_greater_than_remaining_seats
+
+  # Downcase the email before saving
+  before_save :downcase_email
+
+  private
+
+  def tickets_cannot_be_greater_than_remaining_seats
+    validation = TicketSale.validate_incoming_tickets(event, tickets, category, section)
+    return unless validation[:status] == false
+
+    errors.add(:tickets, validation[:err_msgs].join(', '))
+  end
+
+  def downcase_email
+    self.email = email.downcase if email.present?
+  end
 
   class << self
-    def validate_import(spreadsheet_file)
+    def validate_import(event, spreadsheet_file)
       err_msgs = []
 
       # Validate headers
@@ -32,7 +46,7 @@ class TicketSale < ApplicationRecord
 
       # Validate sales
       sales = self.collect_sales(spreadsheet_file)
-      validation = self.validate_sales(sales)
+      validation = self.validate_sales(event, sales)
       err_msgs.concat(validation[:err_msgs]) if validation[:status] == false
 
       if err_msgs.empty?
@@ -42,21 +56,22 @@ class TicketSale < ApplicationRecord
       end
     end
 
-    def import_spreadsheet(spreadsheet_file)
-      validation = self.validate_import(spreadsheet_file)
+    def import_spreadsheet(event, spreadsheet_file)
+      validation = self.validate_import(event, spreadsheet_file)
       return validation if validation[:status] == false
 
-      spreadsheet = Roo::Spreadsheet.open(spreadsheet_file.path)
       err_msgs = []
-      sales = self.collect_sales(spreadsheet)
+      sales = self.collect_sales(spreadsheet_file)
 
       existing_sales = self.where(
+        event_id: event.id,
         email: sales.map do |sale|
           sale[:email]
         end
       ).index_by(&:email)
 
       sales.each do |sale|
+        sale[:event_id] = event.id
         if existing_sales[sale[:email]].nil?
           self.create(sale)
         else
@@ -71,23 +86,10 @@ class TicketSale < ApplicationRecord
       end
     end
 
-    # Private Class Methods
-    private
-
-    def tickets_cannot_be_greater_than_remaining_seats
-      validation = self.validate_incoming_tickets(tickets, category, section)
-      return unless validation[:status] == false
-
-      errors.add(:tickets, validated[:err_msgs].join(', '))
-    end
-
-    def sum_tickets(category, section)
-      self.where(category:, section:).sum(:tickets)
-    end
-
-    def validate_incoming_tickets(tickets, category, section)
+    def validate_incoming_tickets(event, tickets, category, section)
       err_msgs = []
 
+      puts event.id
       seats = event.seats.find_by(category:, section:)
       if seats.nil?
         err_msgs << "Seats for #{category}:#{section} do not exist."
@@ -95,7 +97,8 @@ class TicketSale < ApplicationRecord
       end
 
       # TODO: Should be replace with event.seats.remaining_seats
-      remaining_seats = eats.total_count
+      remaining_seats =
+        seats.total_count - sum_tickets(event, category, section)
       if remaining_seats < tickets
         err_msgs << "Not enough seats available for #{category}:#{section}"
       elsif tickets.negative? && remaining_seats - tickets > seats.total_count
@@ -109,7 +112,16 @@ class TicketSale < ApplicationRecord
       end
     end
 
-    def validate_sales(sales)
+    # Private Class Methods
+    private
+
+    def sum_tickets(event, category, section)
+      TicketSale.where(
+        event_id: event.id, category:, section:
+      ).sum(:tickets)
+    end
+
+    def validate_sales(event, sales)
       err_msgs = []
 
       # Check the emails are unique
@@ -120,12 +132,12 @@ class TicketSale < ApplicationRecord
       end
 
       # Compute the offset of tickets in each category and section
-      tickets_offset = compute_tickets_offset(sales)
+      tickets_offset = self.compute_tickets_offset(event, sales)
 
       # Do the validation
       tickets_offset.each do |category, sections|
         sections.each do |section, offset|
-          validation = self.validate_incoming_tickets(offset, category, section)
+          validation = self.validate_incoming_tickets(event, offset, category, section)
           err_msgs.concat(validation[:err_msgs]) if validation[:status] == false
         end
       end
@@ -137,15 +149,13 @@ class TicketSale < ApplicationRecord
       end
     end
 
-    def compute_tickets_offset(sales)
-      tickets_offset = {}
+    def compute_tickets_offset(event, sales)
+      tickets_offset = Hash.new { |hash, key| hash[key] = Hash.new(0) }
       sales.each do |sale|
-        record = self.find_by(sale[:email])
+        existing_sale = self.find_by(event_id: event.id, email: sale[:email])
         #  New sale will overwrite any existing record with the same email.
-        unless record.nil?
-          tickets_offset[record.category][record.section] -= record.tickets
-        end
-        tickets_offset[sale[:category]][sale[:section]] += tickets
+        tickets_offset[existing_sale.category][existing_sale.section] -= record.tickets unless existing_sale.nil?
+        tickets_offset[sale[:category]][sale[:section]] += sale[:tickets]
       end
       tickets_offset
     end
@@ -164,7 +174,7 @@ class TicketSale < ApplicationRecord
         worksheet = spreadsheet.sheet(worksheet_name)
         # Assuming the first row is headers
         headers = self.normilize_headers(worksheet.row(1))
-        missing_fields = self.class.REQUIRED_FIELDS - headers
+        missing_fields = REQUIRED_FIELDS - headers
         next if missing_fields.empty?
 
         err_msg = "Missing fields on worksheet '#{worksheet_name}': "
@@ -187,8 +197,9 @@ class TicketSale < ApplicationRecord
         worksheet = spreadsheet.sheet(worksheet_name)
         # Assuming the first row is headers
         headers = self.normilize_headers(worksheet.row(1))
-        worksheet.each(2..worksheet.last_row) do |row|
-          sale = Hash[[headers, row].transpose]
+        worksheet.each_row_streaming(offset: 1) do |row|
+          row_data = row.map(&:value)
+          sale = Hash[[headers, row_data].transpose]
           sales << sale
         end
       end

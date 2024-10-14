@@ -27,7 +27,7 @@ Style/RedundantSelf:
 #   EnforcedStyleForMultiline: comma  # Enforce trailing comma in multiline method arguments
 
 Layout/LineLength:
-  Max: 80  # Set the max line length to 80 characters
+  Max: 120  # Set the max line length to 80 characters
 
 Metrics/MethodLength:
   Max: 40  # Maximum number of lines allowed in a method

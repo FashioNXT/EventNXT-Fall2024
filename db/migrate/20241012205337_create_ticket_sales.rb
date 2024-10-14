@@ -15,6 +15,9 @@ class CreateTicketSales < ActiveRecord::Migration[7.0]
     end
 
     # Add unique index on email
-    add_index :ticket_sales, "LOWER(email)", unique: true, name: 'index_ticket_sales_on_lower_email'
+    execute <<-SQL
+      CREATE UNIQUE INDEX index_ticket_sales_on_event_id_and_lower_email
+      ON ticket_sales (event_id, LOWER(email));
+    SQL
   end
 end
