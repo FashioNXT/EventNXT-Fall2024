@@ -32,27 +32,42 @@ class GuestsController < ApplicationController
   end
 
   # POST /guests or /guests.json
+  # def create
+  #   # @guest = Guest.new(guest_params)
+
+  #   # <!--===================-->
+  #   # <!--to post a new child instance-->
+  #   @guest = @event.guests.build(guest_params)
+  #   # <!--===================-->
+
+  #   respond_to do |format|
+  #     if @guest.save
+  #       # format.html { redirect_to guest_url(@guest), notice: "Guest was successfully created." }
+  #       format.html do
+  #         redirect_to event_url(@event),
+  #           notice: 'Guest was successfully created.'
+  #       end
+  #       format.json { render :show, status: :created, location: @guest }
+  #     else
+  #       format.html { render :new, status: :unprocessable_entity }
+  #       format.json do
+  #         render json: @guest.errors, status: :unprocessable_entity
+  #       end
+  #     end
+  #   end
+  # end
+
+  # New code
   def create
-    # @guest = Guest.new(guest_params)
-
-    # <!--===================-->
-    # <!--to post a new child instance-->
     @guest = @event.guests.build(guest_params)
-    # <!--===================-->
-
+  
     respond_to do |format|
       if @guest.save
-        # format.html { redirect_to guest_url(@guest), notice: "Guest was successfully created." }
-        format.html do
-          redirect_to event_url(@event),
-            notice: 'Guest was successfully created.'
-        end
+        format.html { redirect_to event_url(@event), notice: 'Guest was successfully created.' }
         format.json { render :show, status: :created, location: @guest }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json do
-          render json: @guest.errors, status: :unprocessable_entity
-        end
+        format.json { render json: @guest.errors, status: :unprocessable_entity }
       end
     end
   end
