@@ -89,7 +89,6 @@ class TicketSale < ApplicationRecord
     def validate_incoming_tickets(event, tickets, category, section)
       err_msgs = []
 
-      puts event.id
       seats = event.seats.find_by(category:, section:)
       if seats.nil?
         err_msgs << "Seats for #{category}:#{section} do not exist."
