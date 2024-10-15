@@ -17,8 +17,8 @@ class TicketSale < ApplicationRecord
   # Custom validations
   validate :tickets_cannot_be_greater_than_remaining_seats
 
-  # Downcase the email before saving
-  before_save :downcase_email
+  # Downcase the email before validation and saving
+  before_validation :downcase_email
 
   private
 
@@ -50,10 +50,18 @@ class TicketSale < ApplicationRecord
 
       sales.each do |sale|
         sale[:event_id] = event.id
-        if existing_sales[sale[:email]].nil?
-          self.create(sale)
-        else
-          existing_sales[sale[:email]].update(sale)
+        begin
+          if existing_sales[sale[:email]].nil?
+            self.create!(sale)
+          else
+            existing_sales[sale[:email]].update!(sale)
+          end
+        rescue ActiveRecord::RecordInvalid => e
+          # Handle validation error or log it
+          err_msgs << "Failed to save sale for email #{sale[:email]}: #{e.message}"
+        rescue StandardError => e
+          # Catch other exceptions, log or handle them
+          err_msgs << "An unexpected error occurred: #{e.message}"
         end
       end
 
@@ -158,11 +166,12 @@ class TicketSale < ApplicationRecord
         worksheet = spreadsheet.sheet(worksheet_name)
         # Assuming the first row is headers
         headers = self.normilize_headers(worksheet.row(1))
-        # Not using each_row_streaming due to unpredicable behavior with empty cells
+        # Not using each_row_streaming due to unpredictable behavior with empty cells
         (2..worksheet.last_row).each do |i|
           sale = Hash[[headers, worksheet.row(i)].transpose]
           sale = sale.select { |field, _value| field_names.include?(field) }
-          # Convert to integer and float
+          # Norimization of data
+          sale[:email] = sale[:email].downcase
           sale[:tickets] = sale[:tickets].to_i
           sale[:amount] = sale[:amount].to_f
           sales << sale

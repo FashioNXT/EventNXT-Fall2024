@@ -1,8 +1,10 @@
 # Controller for ticket sales
 class TicketSalesController < ApplicationController
+  include TicketSalesHelper
+
   before_action :authenticate_user!
   before_action :set_event
-  before_action :set_ticket_sale, only: %i[edit update]
+  before_action :set_ticket_sale, only: %i[edit update destroy]
   respond_to :html, :json, :turbo_stream
 
   def index
@@ -18,20 +20,28 @@ class TicketSalesController < ApplicationController
     if @ticket_sale.update(ticket_sales_params)
       flash[:notice] = 'Ticket sale updated'
       respond_with @ticket_sale do |format|
-        format.html { redirect_to event_path(@event) }
         # Turbo Stream logic is moved to update.turbo_stream.erb
-        format.turbo_stream 
+        format.turbo_stream
+        # (Fallback) Go back to event dashboard for HTML requests
+        format.html { redirect_to event_path(@event) }
       end
     else
       respond_with @ticket_sale do |format|
-        format.html { render :edit } # Re-render the edit form for HTML requests
-        # Replace the form with the form with herror messages
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace('ticket-sale-form', 
-            partial: 'ticket_sales/form', locals: { ticket_sale: @ticket_sale }
-          )
-        end
+        # Turbo Stream logic is moved to update.turbo_stream_failure.erb
+        format.turbo_stream { render :update_failure }
+        # (Fallback) Re-render the edit form for HTML requests
+        format.html { render :edit }
       end
+    end
+  end
+
+  def destroy
+    @ticket_sale.destroy
+    respond_with @ticket_sale do |format|
+      # Turbo Stream logic is moved to destroy.turbo_stream.erb
+      format.turbo_stream
+      # (Fallback) Go back to event dashboard for HTML requests
+      format.html { redirect_to event_path(@event) }
     end
   end
 
@@ -43,7 +53,7 @@ class TicketSalesController < ApplicationController
 
     if result[:status] == false
       return redirect_to event_path(@event),
-        alert: "Invalid file format or data:\n#{result[:err_msgs].join("\n")}"
+        alert: "Invalid file format or data: #{result[:err_msgs].join(', ')}"
     end
     redirect_to event_path(@event), notice: 'Box Office sales imported'
   end

@@ -1,7 +1,7 @@
-<%= turbo_stream.replace "ticket-sale-#{@ticket_sale.id}" do %>
+<%= turbo_stream.replace ticket_sale_dom_id(@ticket_sale) do %>
   <%= render partial: "ticket_sales/ticket_sale", locals: { event: @event, ticket_sale: @ticket_sale } %>
 <% end %>
 
-<%= turbo_stream.replace "ticket-sale-form" do %>
-  <div id="ticket-sale-form" hidden="true"></div>
+<%= turbo_stream.replace ticket_sale_form_dom_id() do %>
+  <div id=<%= ticket_sale_form_dom_id() %> hidden="true"></div>
 <% end %>

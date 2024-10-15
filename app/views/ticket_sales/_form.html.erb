@@ -1,4 +1,4 @@
-<%= form_with(model: [ticket_sale.event, ticket_sale], local: false, html: { id: "ticket-sale-form" }) do |f| %> 
+<%= form_with(model: [ticket_sale.event, ticket_sale], local: false, html: { id: ticket_sale_form_dom_id() }) do |f| %> 
 <div>
   <%=render partial: 'shared/form_error', locals: { model: ticket_sale} %> 
 </div>

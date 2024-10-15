@@ -1,3 +1,3 @@
-<%= turbo_stream.replace "ticket-sale-form" do %>
+<%= turbo_stream.replace ticket_sale_form_dom_id() do %>
   <%= render partial: "ticket_sales/form", locals: { event: @event, ticket_sale: @ticket_sale } %>
 <% end %>
