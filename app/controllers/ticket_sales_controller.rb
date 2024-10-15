@@ -19,18 +19,17 @@ class TicketSalesController < ApplicationController
       flash[:notice] = 'Ticket sale updated'
       respond_with @ticket_sale do |format|
         format.html { redirect_to event_path(@event) }
-        # format.turbo_stream # Turbo Stream logic is moved to update.turbo_stream.erb
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace('ticket_sale_1', partial: 'ticket_sales/ticket_sale',
-            locals: { event: @event, ticket_sale: @ticket_sale })
-        end
+        # Turbo Stream logic is moved to update.turbo_stream.erb
+        format.turbo_stream 
       end
     else
-      flash.now[:alert] = 'Invalid data: ' + @ticket_sale.errors.full_messages.to_sentence
       respond_with @ticket_sale do |format|
         format.html { render :edit } # Re-render the edit form for HTML requests
+        # Replace the form with the form with herror messages
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace('ticket-sales-flash', partial: 'shared/flash')
+          render turbo_stream: turbo_stream.replace('ticket-sale-form', 
+            partial: 'ticket_sales/form', locals: { ticket_sale: @ticket_sale }
+          )
         end
       end
     end

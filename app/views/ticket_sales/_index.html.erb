@@ -6,10 +6,6 @@ reflected correctly in the following referral table, causing eventually mistakes
 of the tickets bought, and 'Amount' means on the other hand the total payment made for the tickets from the person for this event.
 </strong>
 
-<div id="ticket-sales-flash">
-  <%= render 'shared/flash' %>
-</div>
-
 <div id="ticket-sales-import">
   <%= form_with(url: import_spreadsheet_event_ticket_sales_path(@event), multipart: true) do |form|%>
     <div class="form-field">

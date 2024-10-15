@@ -12,7 +12,7 @@ class EventsController < ApplicationController
     @event = current_user.events.find(params[:id])
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
-    @seating_summary = calculate_seating_summary(@event.id)
+    @seating_summary = @event.calculate_seating_summary
     @guest_details = Guest.where(event_id: @event.id)
     @ticket_sales = @event.ticket_sales
     @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
@@ -81,33 +81,6 @@ class EventsController < ApplicationController
 
   private
 
-  def calculate_seating_summary(event_id)
-    seating_summary = []
-
-    # seats = Seat.where(event_id: event_id).order(:category, :section)
-    Seat.where(event_id:).each do |seat|
-      # seats.each do |seat|
-      guests_in_category = Guest.where(event_id:,
-        category: seat.category)
-      guests_in_section = Guest.where(event_id:,
-        section: seat.section)
-      total_guests = guests_in_category.and(guests_in_section).distinct.count
-      committed_seats = guests_in_category.and(guests_in_section).sum(:commited_seats)
-      allocated_seats = guests_in_category.and(guests_in_section).sum(:alloted_seats)
-      total_seats = seat.total_count
-
-      seating_summary << {
-        category: seat.category,
-        section: seat.section,
-        guests_count: total_guests,
-        committed_seats:,
-        allocated_seats:,
-        total_seats:
-      }
-    end
-
-    seating_summary
-  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_event

@@ -1,5 +1,7 @@
-<%= form_with(model: [ticket_sale.event, ticket_sale], local: true, html: { id: "ticket-sale-form" }) do |f| %> 
-<%=render partial: 'shared/form_error', locals: { model: ticket_sale} %> 
+<%= form_with(model: [ticket_sale.event, ticket_sale], local: false, html: { id: "ticket-sale-form" }) do |f| %> 
+<div>
+  <%=render partial: 'shared/form_error', locals: { model: ticket_sale} %> 
+</div>
 <div>
     <div>
       <%= f.label :first_name %>

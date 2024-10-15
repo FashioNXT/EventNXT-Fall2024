@@ -5,7 +5,7 @@
   }
 </style>
 
-<p style="color: green"><%= notice %></p>
+<%= render 'shared/flash' %>
 
 
 <div class="container">
@@ -87,7 +87,7 @@
           <td><%= category[:total_seats] %></td>
           <td><%= category[:allocated_seats] %></td>
           <td><%= category[:committed_seats] %></td>
-          <td><%= category[:total_seats] - (category[:committed_seats]) %></td> 
+          <td><%= category[:remaining_seats] %></td> 
         </tr>
       <% end %>
     </tbody>
