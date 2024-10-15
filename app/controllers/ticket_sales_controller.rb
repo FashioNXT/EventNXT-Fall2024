@@ -43,7 +43,7 @@ class TicketSalesController < ApplicationController
 
     if result[:status] == false
       return redirect_to event_path(@event),
-        alert: "Invalid file format or data: #{result[:err_msgs].join(', ')}"
+        alert: "Invalid file format or data:\n#{result[:err_msgs].join("\n")}"
     end
     redirect_to event_path(@event), notice: 'Box Office sales imported'
   end
