@@ -20,17 +20,16 @@ RSpec.describe RememberMeController, type: :controller do
 
       it 'redirects with an alert message' do
         post :clear_remember_me
-        expect(response).to redirect_to("http://test.host/")
+        expect(response).to redirect_to('http://test.host/')
       end
     end
 
     context 'when no user is signed in' do
       it 'redirects with an alert message' do
         post :clear_remember_me
-        #expect(response).to redirect_to("")
+        # expect(response).to redirect_to("")
         expect(flash[:alert]).to eq('You need to sign in or sign up before continuing.')
       end
     end
   end
 end
-

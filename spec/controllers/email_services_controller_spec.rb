@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe EmailServicesController, type: :controller do
-    let(:user) { create(:user) }
-    before do
-        sign_in user # Sign in the user before running the tests
-    end
+  let(:user) { create(:user) }
+  before do
+    sign_in user # Sign in the user before running the tests
+  end
   let(:valid_attributes) do
     {
       to: 'user@example.com',
@@ -45,8 +45,8 @@ RSpec.describe EmailServicesController, type: :controller do
     it 'returns a success response' do
       get :index
       expect(response).to be_successful
-      #expect(response).to render_template(:index)
-      #expect(response.body).to include("Unsent Email")
+      # expect(response).to render_template(:index)
+      # expect(response.body).to include("Unsent Email")
     end
   end
 
@@ -54,7 +54,6 @@ RSpec.describe EmailServicesController, type: :controller do
     it 'returns a success response' do
       get :show, params: { id: @email_service.id }
       expect(response).to be_successful
-      
     end
   end
 
@@ -91,8 +90,8 @@ RSpec.describe EmailServicesController, type: :controller do
       it 'returns a success response (i.e. to display the "new" template)' do
         post :create, params: { email_service: invalid_attributes }
         expect(response).not_to be_successful
-        #expect(response).to render_template(:new)
-        #expect(response).to have_http_status(:unprocessable_entity)
+        # expect(response).to render_template(:new)
+        # expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -109,7 +108,9 @@ RSpec.describe EmailServicesController, type: :controller do
 
       it 'updates the requested email_service' do
         email_service = EmailService.create! valid_attributes
-        put :update, params: { id: email_service.to_param, email_service: new_attributes }
+        put :update,
+          params: { id: email_service.to_param,
+                    email_service: new_attributes }
         email_service.reload
         expect(email_service.to).to eq(new_attributes[:to])
         expect(email_service.subject).to eq(new_attributes[:subject])
@@ -118,7 +119,9 @@ RSpec.describe EmailServicesController, type: :controller do
 
       it 'redirects to the email_service' do
         email_service = EmailService.create! valid_attributes
-        put :update, params: { id: email_service.to_param, email_service: valid_attributes }
+        put :update,
+          params: { id: email_service.to_param,
+                    email_service: valid_attributes }
         expect(response).to redirect_to(email_service)
       end
     end
@@ -126,7 +129,9 @@ RSpec.describe EmailServicesController, type: :controller do
     context 'with invalid params' do
       it 'returns a success response (i.e. to display the "edit" template)' do
         email_service = EmailService.create! valid_attributes
-        put :update, params: { id: email_service.to_param, email_service: invalid_attributes }
+        put :update,
+          params: { id: email_service.to_param,
+                    email_service: invalid_attributes }
         expect(response).not_to be_successful
       end
     end
@@ -136,11 +141,11 @@ RSpec.describe EmailServicesController, type: :controller do
     it 'destroys the email service' do
       email_service = EmailService.create! valid_attributes
 
-      expect {
+      expect do
         delete :destroy, params: { id: email_service.to_param }
-      }.to change(EmailService, :count).by(-1)
+      end.to change(EmailService, :count).by(-1)
 
-      #expect(response).to redirect_to(email_service)
+      # expect(response).to redirect_to(email_service)
       expect(flash[:notice]).to eq('Email service was successfully destroyed.')
     end
   end
@@ -179,9 +184,9 @@ RSpec.describe EmailServicesController, type: :controller do
   describe 'POST #add_email_template' do
     context 'with valid parameters' do
       it 'creates a new email template' do
-        expect {
+        expect do
           post :add_email_template, params: valid_template_attributes
-        }.to change(EmailTemplate, :count).by(1)
+        end.to change(EmailTemplate, :count).by(1)
       end
 
       it 'redirects to the email services URL' do
@@ -197,9 +202,9 @@ RSpec.describe EmailServicesController, type: :controller do
 
     context 'with invalid parameters' do
       it 'does not create a new email template' do
-        expect {
+        expect do
           post :add_email_template, params: invalid_template_attributes
-        }.not_to change(EmailTemplate, :count)
+        end.not_to change(EmailTemplate, :count)
       end
 
       it 'renders the _form_email_template partial' do
@@ -242,7 +247,9 @@ RSpec.describe EmailServicesController, type: :controller do
 
     context 'with valid parameters' do
       it 'updates the requested email template' do
-        put :update_email_template, params: { id: email_template.to_param, email_template: valid_template_attributes }
+        put :update_email_template,
+          params: { id: email_template.to_param,
+                    email_template: valid_template_attributes }
         email_template.reload
         expect(email_template.name).to eq('Sample Template')
         expect(email_template.subject).to eq('Test Email')
@@ -250,19 +257,25 @@ RSpec.describe EmailServicesController, type: :controller do
       end
 
       it 'redirects to the email services URL' do
-        put :update_email_template, params: { id: email_template.to_param, email_template: valid_attributes }
+        put :update_email_template,
+          params: { id: email_template.to_param,
+                    email_template: valid_attributes }
         expect(response).to redirect_to(email_services_url)
       end
 
       it 'sets a flash notice message' do
-        put :update_email_template, params: { id: email_template.to_param, email_template: valid_attributes }
+        put :update_email_template,
+          params: { id: email_template.to_param,
+                    email_template: valid_attributes }
         expect(flash[:notice]).to eq('Email template was successfully updated.')
       end
     end
 
     context 'with invalid parameters' do
       it 'does not update the email template' do
-        put :update_email_template, params: { id: email_template.to_param, email_template: invalid_attributes }
+        put :update_email_template,
+          params: { id: email_template.to_param,
+                    email_template: invalid_attributes }
         email_template.reload
         expect(email_template.name).not_to eq('Template Name')
         expect(email_template.subject).not_to eq('Test Email')
@@ -270,23 +283,30 @@ RSpec.describe EmailServicesController, type: :controller do
       end
 
       it 'renders the edit_email_template partial' do
-        put :update_email_template, params: { id: email_template.to_param, email_template: invalid_attributes }
+        put :update_email_template,
+          params: { id: email_template.to_param,
+                    email_template: invalid_attributes }
         expect(response).to render_template(partial: '_edit_email_template')
       end
 
       it 'sets a flash alert message' do
-        put :update_email_template, params: { id: email_template.to_param, email_template: invalid_attributes }
+        put :update_email_template,
+          params: { id: email_template.to_param,
+                    email_template: invalid_attributes }
         expect(flash[:alert]).to eq(nil)
       end
     end
   end
 
   describe 'GET #render_template' do
-    let(:email_template) { create(:email_template, subject: 'Test Subject', body: 'Test Body') }
+    let(:email_template) do
+      create(:email_template, subject: 'Test Subject', body: 'Test Body')
+    end
 
     context 'when requesting JSON format' do
       it 'renders the email template attributes as JSON' do
-        get :render_template, params: { id: email_template.to_param }, format: :json
+        get :render_template, params: { id: email_template.to_param },
+          format: :json
         expect(response).to have_http_status(:success)
         json_response = JSON.parse(response.body)
         expect(json_response['subject']).to eq('Test Subject')
@@ -311,18 +331,21 @@ RSpec.describe EmailServicesController, type: :controller do
 
     context 'when the email template exists' do
       it 'destroys the requested email template' do
-        expect {
-          delete :destroy_email_template, params: { id: email_template.to_param }
-        }.to change(EmailTemplate, :count).by(-1)
+        expect do
+          delete :destroy_email_template,
+            params: { id: email_template.to_param }
+        end.to change(EmailTemplate, :count).by(-1)
       end
 
       it 'redirects to the email services URL' do
-        delete :destroy_email_template, params: { id: email_template.to_param }
+        delete :destroy_email_template,
+          params: { id: email_template.to_param }
         expect(response).to redirect_to(email_services_url)
       end
 
       it 'sets a flash notice message' do
-        delete :destroy_email_template, params: { id: email_template.to_param }
+        delete :destroy_email_template,
+          params: { id: email_template.to_param }
         expect(flash[:notice]).to eq('Email template was successfully deleted.')
       end
     end
@@ -335,8 +358,7 @@ RSpec.describe EmailServicesController, type: :controller do
     end
   end
 
-  describe "#send_email" do
-
+  describe '#send_email' do
     let(:email_service) { create(:email_service) }
     let(:event) { create(:event) }
     let(:guest) { create(:guest) }
@@ -346,20 +368,20 @@ RSpec.describe EmailServicesController, type: :controller do
       allow(Event).to receive(:find).and_return(event)
       allow(Guest).to receive(:find).and_return(guest)
     end
-    
-   it "sends an email and updates the email service" do
+
+    it 'sends an email and updates the email service' do
       initial_count = EmailService.where.not(sent_at: nil).count
 
       expect do
         post :send_email, params: { id: email_service.id }
         email_service.reload
-      end.to change { EmailService.where.not(sent_at: nil).count }.from(initial_count).to(initial_count + 1)
+      end.to change {
+               EmailService.where.not(sent_at: nil).count
+             }.from(initial_count).to(initial_count + 1)
 
       expect(response).to redirect_to(email_services_url)
       expect(flash[:success]).to eq('Email sent!')
       expect(email_service.reload.sent_at).to be_present
     end
   end
-
 end
-

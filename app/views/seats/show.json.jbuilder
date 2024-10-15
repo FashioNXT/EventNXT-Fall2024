@@ -1,1 +1,1 @@
-json.partial! "seats/seat", seat: @seat
+json.partial! 'seats/seat', seat: @seat

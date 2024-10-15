@@ -1,2 +1,4 @@
-module Users::AuthorizeloginHelper
+module Users
+  module AuthorizeloginHelper
+  end
 end

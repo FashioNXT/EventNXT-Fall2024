@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
-docker_run = "docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec"
+docker_run = 'docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec'
 
-if ARGV.length > 0
-  cmd ='bundle install && bundle exec rspec'
-  ARGV.each do |arg| 
-    if arg.include?(" ")
-      cmd += " \"#{arg}\""
-    else
-      cmd += " #{arg}"
-    end
+if ARGV.length.positive?
+  cmd = 'bundle install && bundle exec rspec'
+  ARGV.each do |arg|
+    cmd += if arg.include?(' ')
+             " \"#{arg}\""
+           else
+             " #{arg}"
+           end
   end
   cmd = "bash -c '#{cmd}'"
 end

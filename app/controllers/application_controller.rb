@@ -4,7 +4,7 @@
 #   #before_action :sign_out_all_users, only: [:force_sign_out]
 #   #before_action :authenticate_user!
 #   #skip_before_action :authenticate_user!, only: [:home]
-  
+
 #   protected
 
 #   def after_sign_in_path_for(resource)
@@ -39,15 +39,13 @@ class ApplicationController < ActionController::Base
   protected
 
   def after_sign_in_path_for(resource)
-    begin
-      if resource.is_a?(User)
-        events_path
-      else
-        super
-      end
-    rescue RuntimeError => e
-      Rails.logger.error("Error in after_sign_in_path_for: #{e.message}")
+    if resource.is_a?(User)
+      events_path
+    else
       super
     end
+  rescue RuntimeError => e
+    Rails.logger.error("Error in after_sign_in_path_for: #{e.message}")
+    super
   end
 end

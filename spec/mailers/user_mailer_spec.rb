@@ -1,5 +1,5 @@
 # spec/mailers/user_mailer_spec.rb
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe UserMailer, type: :mailer do
   describe 'referral_confirmation' do
