@@ -123,6 +123,14 @@ class TicketSale < ApplicationRecord
     def validate_sales(event, sales)
       err_msgs = []
 
+      # Check Required fields
+      missing_fields = REQUIRED_FIELDS.select do |field|
+        sales.any? { |sale| !sale.key?(field) || sale[field].nil? }
+      end 
+      unless missing_fields.empty?
+        return { status: false, err_msgs: ["Missing fields: " + missing_fields.join(', ')] }
+      end
+
       # Check the emails are unique
       unique_emails = sales.map { |sale| sale[:email] }.uniq
       if unique_emails.size != sales.size
@@ -133,7 +141,7 @@ class TicketSale < ApplicationRecord
       # Compute the offset of tickets in each category and section
       tickets_offset = self.compute_tickets_offset(event, sales)
 
-      # Do the validation
+      # Validate the number of tickets in each category and section
       tickets_offset.each do |category, sections|
         sections.each do |section, offset|
           validation = self.validate_incoming_tickets(event, offset, category, section)
@@ -153,7 +161,7 @@ class TicketSale < ApplicationRecord
       sales.each do |sale|
         existing_sale = self.find_by(event_id: event.id, email: sale[:email])
         #  New sale will overwrite any existing record with the same email.
-        tickets_offset[existing_sale.category][existing_sale.section] -= record.tickets unless existing_sale.nil?
+        tickets_offset[existing_sale.category][existing_sale.section] -= existing_sale.tickets unless existing_sale.nil?
         tickets_offset[sale[:category]][sale[:section]] += sale[:tickets]
       end
       tickets_offset
@@ -196,10 +204,9 @@ class TicketSale < ApplicationRecord
         worksheet = spreadsheet.sheet(worksheet_name)
         # Assuming the first row is headers
         headers = self.normilize_headers(worksheet.row(1))
-        worksheet.each_row_streaming(offset: 1) do |row|
-          row_data = row.map(&:value)
-          sale = Hash[[headers, row_data].transpose]
-          sales << sale
+        # not using each_row_streaming because unpredicable behavior with empty cells
+        (1..worksheet.last_row).each do |i|
+          sales << Hash[[headers, worksheet.row(i)].transpose]
         end
       end
       sales
