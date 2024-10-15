@@ -1,0 +1,3 @@
+<%= turbo_stream.replace ticket_sales_table_dom_id() do %>
+  <%= render partial: "ticket_sales/table", locals: { event: @event, ticket_sales: @ticket_sales } %>
+<% end %>

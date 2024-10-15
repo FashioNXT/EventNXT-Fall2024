@@ -43,3 +43,6 @@ Metrics/ClassLength:
 
 Metrics/AbcSize:
   Max: 40  # Maximum ABC size in a method
+
+Metrics/CyclomaticComplexity:
+  Max: 8  # The maximum allowed complexity for a method

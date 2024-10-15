@@ -7,11 +7,11 @@ of the tickets bought, and 'Amount' means on the other hand the total payment ma
 </strong>
 
 <div id="ticket-sales-import">
-  <%= form_with(url: import_spreadsheet_event_ticket_sales_path(@event), multipart: true) do |form|%>
+  <%= form_with(url: import_spreadsheet_event_ticket_sales_path(event), multipart: true) do |form|%>
     <div class="form-field">
       <%= form.label "Choose a Spreadsheet File" %>
       <%= form.file_field :file, id: "event-show-import-box-office-sales-input" %>
-      <%= form.hidden_field :event_id, value: @event.id %>
+      <%= form.hidden_field :event_id, value: event.id %>
     </div>
 
     <div class="form-action">
@@ -22,23 +22,4 @@ of the tickets bought, and 'Amount' means on the other hand the total payment ma
 
 <div id=<%= ticket_sale_form_dom_id() %> hidden="true"></div>
 
-<table>
-  <thead>
-    <tr>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Email</th>
-      <th>Affiliation</th>
-      <th>Category</th>
-      <th>Section</th>
-      <th>Tickets</th>
-      <th>Amount</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody id="ticket-sales-tbody">
-    <% ticket_sales.each do |ticket_sale| %>
-      <%= render partial: "ticket_sales/ticket_sale", locals: {event: event, ticket_sale: ticket_sale } %>
-    <% end %>
-  </tbody>
-</table>
+<%= render partial: "ticket_sales/table", locals: {event: event, ticket_sales: ticket_sales }%>

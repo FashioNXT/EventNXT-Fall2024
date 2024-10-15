@@ -8,7 +8,8 @@ class TicketSalesController < ApplicationController
   respond_to :html, :json, :turbo_stream
 
   def index
-    @ticket_sales = @event.ticket_sales.all
+    # Allow sorting by a column, defaulting to 'created_at'
+    @ticket_sales = @event.ticket_sales.order("#{sort_field_param} #{sort_order_param}")
     respond_with @ticket_sales
   end
 
@@ -69,9 +70,14 @@ class TicketSalesController < ApplicationController
   end
 
   def ticket_sales_params
-    params.require(:ticket_sale).permit(
-      :first_name, :last_name, :email, :affiliation,
-      :category, :section, :tickets, :amount
-    )
+    params.require(:ticket_sale).permit(TicketSale.field_names)
+  end
+
+  def sort_field_param
+    TicketSale.field_names.include?(params[:sort_field].to_sym) ? params[:sort_field] : 'created_at'
+  end
+
+  def sort_order_param
+    %w[asc desc].include?(params[:sort_order]) ? params[:sort_order] : 'asc'
   end
 end

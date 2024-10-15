@@ -34,6 +34,10 @@ class TicketSale < ApplicationRecord
   end
 
   class << self
+    def field_names
+      self.column_names.map(&:to_sym) - %i[id created_at updated_at]
+    end
+
     def import_spreadsheet(event, spreadsheet_file)
       validation = self.validate_import(event, spreadsheet_file)
       return validation if validation[:status] == false
@@ -157,9 +161,21 @@ class TicketSale < ApplicationRecord
       end
     end
 
+    def normalize_sale(sale)
+      sale = sale.select { |field, _value| self.field_names.include?(field) }
+
+      (self.field_names - %i[ticket amount]).each do |field|
+        sale[field] = sale[field].to_s if sale[field].present?
+      end
+
+      sale[:email] = sale[:email].downcase if sale[:email].present?
+      sale[:tickets] = sale[:tickets].to_i if sale[:tickets].present?
+      sale[:amount] = sale[:amount].to_f if sale[:amount].present?
+      sale
+    end
+
     def collect_sales(spreadsheet_file)
       spreadsheet = Roo::Spreadsheet.open(spreadsheet_file.path)
-      field_names = self.column_names.map(&:to_sym)
       sales = []
 
       spreadsheet.sheets.each do |worksheet_name|
@@ -169,11 +185,7 @@ class TicketSale < ApplicationRecord
         # Not using each_row_streaming due to unpredictable behavior with empty cells
         (2..worksheet.last_row).each do |i|
           sale = Hash[[headers, worksheet.row(i)].transpose]
-          sale = sale.select { |field, _value| field_names.include?(field) }
-          # Norimization of data
-          sale[:email] = sale[:email].downcase
-          sale[:tickets] = sale[:tickets].to_i
-          sale[:amount] = sale[:amount].to_f
+          sale = normalize_sale(sale)
           sales << sale
         end
       end
@@ -226,7 +238,7 @@ class TicketSale < ApplicationRecord
 
     def validate_sales_with_required_fields(sales)
       missing_fields = REQUIRED_FIELDS.select do |field|
-        sales.any? { |sale| !sale.key?(field) || sale[field].nil? }
+        sales.any? { |sale| !sale.key?(field) || sale[field].blank? }
       end
       if missing_fields.empty?
         { status: true, err_msg: [] }
