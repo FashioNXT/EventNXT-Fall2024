@@ -128,20 +128,41 @@ class GuestsController < ApplicationController
     end
   end
 
+  # import excel sheet functionality
   def import_spreadsheet
     if params[:file].blank?
-      return redirect_to event_path(@event), alert: 'No file uploaded.'
+      redirect_to event_path(params[:event_id]), alert: 'No file uploaded.'
+    else
+      result = Guest.import_spreadsheet(params[:file], params[:event_id])
+      if result[:status] == false
+        return redirect_to event_path(params[:event_id]), alert: "Invalid file format: #{result[:message]}"
+      end
+
+      new_guests = result[:guests]
+      existing_guests = Guest.where(event_id: params[:event_id]).pluck(:email, :id).to_h
+      duplicate_emails = []
+
+      new_guests.each do |guest|
+        if existing_guests.key?(guest.email)
+          existing_guest = Guest.find(existing_guests[guest.email])
+          if existing_guest
+            existing_guest.update(guest.attributes.except('id', 'created_at', 'updated_at'))
+            duplicate_emails << guest.email
+          end
+        else
+          guest.save
+        end
+      end
+
+      if duplicate_emails.any?
+        flash[:warning] = "Duplicate emails found"
+        # "Duplicate emails found: #{duplicate_emails.join(', ')}"
+      else
+        flash[:success] = "Guests imported successfully."
+      end
+
+      redirect_to event_path(params[:event_id])
     end
-
-    spreadsheet_file = params[:file]
-    result = Guest.import_spreadsheet(spreadsheet_file, @event.id)
-
-    if result[:status] == false
-      return redirect_to event_path(@event),
-        alert: "Invalid file format: #{result[:message]}"
-    end
-
-    redirect_to event_path(@event), notice: 'Guests imported'
   end
 
   private

@@ -2,7 +2,7 @@ require('roo')
 
 class Guest < ApplicationRecord
   belongs_to :event
-  has_many :referrals, dependent: :destroy
+  has_many :email_services, dependent: :destroy
 
   before_create :generate_rsvp_link
 
@@ -55,25 +55,29 @@ class Guest < ApplicationRecord
   # end
 
   def self.validate_import(spreadsheet)
-    { status: true, message: 'Spreadsheet validated successfully' }
+    { status: true }
   end
 
   def self.import_spreadsheet(spreadsheet_file, event_id)
     spreadsheet = Roo::Spreadsheet.open(spreadsheet_file.path)
-
+  
     result = validate_import(spreadsheet)
     return result if result[:status] == false
-
+  
+    new_guests = []
+    duplicate_emails = []
+    existing_guests = Guest.where(event_id: event_id).pluck(:email, :id).to_h
+  
     # Iterate over each worksheet
     spreadsheet.sheets.each do |worksheet_name|
       worksheet = spreadsheet.sheet(worksheet_name)
-
+  
       # Assuming the first row is headers, get the header row
       header = worksheet.row(1)
-
-      (2..spreadsheet.last_row).each do |i|
-        row = Hash[[header, spreadsheet.row(i)].transpose]
-
+  
+      (2..worksheet.last_row).each do |i|
+        row = Hash[[header, worksheet.row(i)].transpose]
+  
         first_name = row['First Name']
         last_name = row['Last Name']
         email = row['Email']
@@ -82,37 +86,53 @@ class Guest < ApplicationRecord
         section = row['Section']
         alloted_seats = row['Allotted Seats'].to_i
         commited_seats = row['Committed Seats'].to_i
-
-        guest = Guest.find_or_initialize_by(email:, event_id:)
+  
+        guest = Guest.find_or_initialize_by(email: email, event_id: event_id)
         if guest.new_record?
           guest.assign_attributes(
-            {
-              first_name:,
-              last_name:,
-              email:,
-              affiliation:,
-              category:,
-              alloted_seats:,
-              commited_seats:,
-              section:,
-              event_id:
-            }
+            first_name: first_name,
+            last_name: last_name,
+            email: email,
+            affiliation: affiliation,
+            category: category,
+            alloted_seats: alloted_seats,
+            commited_seats: commited_seats,
+            section: section,
+            event_id: event_id
+          )
+        else
+          duplicate_emails << email
+          guest.assign_attributes(
+            first_name: first_name,
+            last_name: last_name,
+            affiliation: affiliation,
+            category: category,
+            alloted_seats: alloted_seats,
+            commited_seats: commited_seats,
+            section: section
           )
         end
-
+  
         begin
           guest.save!
-          result[:message] = "Guest #{guest.email} imported successfully"
+          new_guests << guest
         rescue ActiveRecord::RecordInvalid => e
           result[:status] = false
           result[:message] = e.message
+          return result
         end
       end
     end
-
+  
+    result[:status] = true
+    result[:message] = "Guests imported successfully."
+    if duplicate_emails.any?
+      result[:message] += " Duplicate emails found: #{duplicate_emails.join(', ')}"
+    end
+  
+    result[:guests] = new_guests
     result
   end
-
   private
 
   def generate_rsvp_link
