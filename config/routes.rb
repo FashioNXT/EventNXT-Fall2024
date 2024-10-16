@@ -30,25 +30,6 @@ Rails.application.routes.draw do
 
   resources :tickets, only: %i[new create]
 
-  post '/import_guests_csv', to: 'guests#import_guests_csv' # Defines a route for the upload_existing_plan action on guests controller.
-
-  resources :guests do
-    collection do
-      post '/import_guests_csv', to: 'guests#import_guests_csv'
-      get :import
-      post :import, to: 'guests#process_import'
-      get :new_guest, to: 'guests#new_guest'
-    end
-  end
-
-  resources :events do
-    resources :guests do
-      collection do
-        post 'import_csv', to: 'guests#import_guests_csv', as: 'import_csv'
-      end
-    end
-  end
-
   root 'home#index'
 
   post 'email_services/add_email_template', to: 'email_services#add_email_template', as: 'add_email_template'
@@ -67,7 +48,11 @@ Rails.application.routes.draw do
 
   resources :events do
     resources :seats
-    resources :guests
+    resources :guests do
+      collection do
+        post 'import', to: 'guests#import_spreadsheet', as: 'import_spreadsheet'
+      end
+    end
   end
 
   # resources :seats

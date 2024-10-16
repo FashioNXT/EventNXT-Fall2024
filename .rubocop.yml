@@ -1,22 +1,30 @@
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Layout/AlignHash:
-  EnforcedColonStyle: key  # Ensure the colon stays aligned after the key
-  EnforcedLastArgumentHashStyle: always_inspect  # Always inspect hash style for last argument
+Layout/HashAlignment:
+  Enabled: true
+
+Layout/FirstHashElementLineBreak:
+  EnforcedStyle: consistent  # Ensure consistent single indentation after a line break
 
 Layout/MultilineMethodCallIndentation:
-  EnforcedStyle: indented  # Indent multi-line method calls
-  IndentRelativeToReceiver: true  # Indent relative to the method receiver
+  EnforcedStyle: indented  # Indent method calls, but do not align with the receiver
+  IndentRelativeToReceiver: false  # Prevent alignment relative to the method receiver
+
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation  # Use fixed indentation for arguments, no alignment based on first argument
+
+Layout/ParameterAlignment:
+  EnforcedStyle: with_fixed_indentation  # Align parameters in method definitions and calls
 
 Layout/DotPosition:
   EnforcedStyle: leading
 
-Layout/AlignParameters:
-  EnforcedStyle: with_fixed_indentation  # Align parameters in method definitions and calls
-
 # Style/TrailingCommaInArguments:
 #   EnforcedStyleForMultiline: comma  # Enforce trailing comma in multiline method arguments
+
+Layout/LineLength:
+  Max: 80  # Set the max line length to 80 characters
 
 Metrics/MethodLength:
   Max: 40  # Maximum number of lines allowed in a method
@@ -29,3 +37,6 @@ Metrics/ClassLength:
 
 # Metrics/FileLength:
 #   Max: 500  # Maximum number of lines allowed in an entire file
+
+Metrics/AbcSize:
+  Max: 20

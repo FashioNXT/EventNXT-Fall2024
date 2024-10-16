@@ -29,13 +29,10 @@ class User < ApplicationRecord
     name = data['name']
     password = SecureRandom.urlsafe_base64(20).tr('lIO0', 'sxyz')
     # User.find_or_create_by(email:)
-    where(email:).first_or_create do |user|
-      user.email = email
-      user.name = name
-      user.password = password
-      user.password_confirmation = password
-      # user.initial_access = Time.now
-      # user.last_access    = Time.now
-    end
+    puts "Outer name: #{name}"
+    user = User.find_by(email: email)
+    puts "user: #{user}"
+    user = User.find_or_create_by(email: email)
+    user.update(name: name, password: password, password_confirmation: password)
   end
 end

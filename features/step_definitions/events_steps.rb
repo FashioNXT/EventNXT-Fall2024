@@ -10,20 +10,12 @@ Given('I am on the index page') do
   visit root_path
 end
 
-When('I follow {string}') do |_string|
+When('I follow {string}') do |string|
   visit new_user_registration_path
 end
 
 Then('I should be on the Sign up page') do
   visit new_user_registration_path
-end
-
-When('I fill the {string} as {string}') do |string, string2|
-  fill_in(string, with: string2)
-end
-
-When('I press {string}') do |string|
-  click_button(string)
 end
 
 Then('I should be on the index page') do
@@ -118,7 +110,7 @@ end
 When('we have a referral with 5 tickets bought') do
   the_referral_parametrization = {
     email: @guest.email,
-    name: "#{@guest.first_name} #{@guest.last_name}",
+    name: @guest.first_name + ' ' + @guest.last_name,
     referred: 'aaaaaaa@aaaaaaa.aaa',
     status: true,
     tickets: 5,

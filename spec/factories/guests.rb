@@ -15,6 +15,24 @@ FactoryBot.define do
     status { 'Confirmed' }
     section { 1 }
     association :event, factory: :event
-    # Add any other attributes as needed
+
+    # Define multiple factories for the same model
+    trait :guest1 do
+      first_name { 'Test Guestd 1' }
+      last_name { 'Fake' }
+      email { 'testguest1@sample.com' }
+    end
+
+    trait :guest2 do
+      first_name { 'Test Guest 2' }
+      last_name { 'Fake' }
+      email { 'testguest2@sample.com' }
+    end
+
+    trait :guest3 do
+      first_name { 'Test Guest 3' }
+      last_name { 'Fake' }
+      email { 'testguest3@sample.com' }
+    end
   end
 end

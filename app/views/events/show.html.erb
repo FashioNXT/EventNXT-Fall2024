@@ -7,7 +7,17 @@
 
 <p style="color: green"><%= notice %></p>
 
+<% if flash[:alert] %>
+  <div class="alert alert-danger">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
 
+<% if flash[:notice] %>
+  <div class="alert alert-success">
+    <%= flash[:notice] %>
+  </div>
+<% end %>
 
 <div class="container">
   <div class="row">
@@ -136,25 +146,24 @@
 </div>
 <div style="margin-left: 0%;">
 <div style="margin-left: 25%; margin-bottom: 30px;">
-  <%= link_to 'Add Guest', new_event_guest_path(@event), style: 'display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
+  
+  <div id="link-add-new-guest">
+     <%= link_to 'Add Guest', new_event_guest_path(@event) %>
+  </div>
 
-  <%= form_tag import_csv_event_guests_path(@event), multipart: true, style: 'display: inline-block;' do %>
-    <%= file_field_tag 'file', id: "file-upload", style: "display: none;", onchange: "submitForm()" %>
-    <%= hidden_field_tag :event_id, @event.id %>
-  
-    <button type="button" onclick="document.getElementById('file-upload').click()" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer">
-      Upload File
-    </button>
-  <% end %>
-  
-  <script>
-    function submitForm() {
-      var fileInput = document.getElementById('file-upload');
-      if(fileInput.value) {
-        fileInput.form.submit();
-      }
-    }
-  </script>
+  <div id="link-import-guests">
+    <%= form_with(url: import_spreadsheet_event_guests_path(@event), multipart: true) do |form|%>
+      <div class="form-field">
+        <%= form.label "Choose Spreadsheet File" %>
+        <%= form.file_field :file, id: "guest-list-attach" %>%>
+        <%= form.hidden_field :event_id, value:@event.id %>
+      </div>
+
+      <div class="form-action">
+        <%= form.submit "Upload Guests"%>
+      </div>
+    <% end %>
+  </div>
   
 
 </div>

@@ -128,7 +128,8 @@ class EmailServicesController < ApplicationController
       if @email_templates.save
         format.html { redirect_to email_services_url, notice: 'Email template was successfully created.' }
       else
-        format.html { render '_form_email_template', alert: 'Error: Email template could not be saved.' }
+        flash[:notice] = 'Error: Email template could not be saved.'
+        format.html { render '_form_email_template' }
       end
     end
   end

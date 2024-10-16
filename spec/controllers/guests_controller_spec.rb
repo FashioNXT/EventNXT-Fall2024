@@ -1,16 +1,21 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'factory_bot'
 
 RSpec.describe GuestsController, type: :controller do
   # Create a parent event to associate with guests
-  let(:event) { create(:event) }
   let(:user) { create(:user) } # Create a user for authentication
+  let(:event) { create(:event, user:) }
+
   before do
     sign_in user # Sign in the user before running the tests
   end
+
   let(:valid_attributes) { attributes_for(:guest, event_id: event.id) }
-  let(:invalid_attributes) { attributes_for(:guest, first_name: nil, event_id: event.id) }
+  let(:invalid_attributes) do
+    attributes_for(:guest, first_name: nil, event_id: event.id)
+  end
 
   describe 'GET #index' do
     it 'assigns all guests of the event as @guests' do
@@ -83,7 +88,8 @@ RSpec.describe GuestsController, type: :controller do
     context 'with invalid params' do
       it 'does not create a new guest' do
         expect do
-          post :create, params: { event_id: event.id, guest: invalid_attributes }
+          post :create,
+            params: { event_id: event.id, guest: invalid_attributes }
         end.to_not change(Guest, :count)
       end
 
@@ -95,78 +101,67 @@ RSpec.describe GuestsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    let(:event) { Event.create(title: 'Test Event') }
-    let(:guest) do
-      Guest.create(first_name: 'Test', last_name: 'Guest', email: 'testguest@example.com', event:, affiliation: 'Friend',
-                   category: 'Adult', alloted_seats: 10, commited_seats: 10, guest_commited: 1, status: 'Confirmed', section: 1)
-    end
+    let!(:guest) { create(:guest, event:) }
+
     context 'with valid parameters' do
       it 'updates the requested guest' do
-        # let(:event) { Event.create(title: "Test Event") }
-        # let(:guest) { Guest.create(first_name: "Test", last_name: "Guest", event: event) }
         put :update,
-            params: { event_id: event.to_param, id: guest.to_param,
-                      guest: { first_name: 'Updated', last_name: 'Guest' } }
+          params: { event_id: event.to_param, id: guest.to_param,
+                    guest: { first_name: 'Updated', last_name: 'Guest' } }
         guest.reload
         expect(guest.first_name).to eq('Updated')
         expect(guest.last_name).to eq('Guest')
       end
 
       it 'redirects to the guest' do
-        put :update, params: { event_id: event.id, id: guest.id, guest: { first_name: 'Updated', last_name: 'Guest' } }
+        put :update,
+          params: { event_id: event.id, id: guest.id,
+                    guest: { first_name: 'Updated', last_name: 'Guest' } }
         expect(response).to redirect_to(event_path(event))
       end
     end
 
     context 'with invalid parameters' do
       it 'does not update the guest' do
-        put :update, params: { event_id: event.id, id: guest.id, guest: { first_name: nil, last_name: 'Guest1' } }
+        put :update,
+          params: { event_id: event.id, id: guest.id,
+                    guest: { first_name: nil, last_name: 'Guest1' } }
         guest.reload
         expect(guest.first_name).to_not be_nil
         expect(guest.last_name).to_not eq('Guest1')
       end
 
       it 're-renders the edit method' do
-        put :update, params: { event_id: event.id, id: guest.id, guest: { first_name: nil, last_name: 'Guest' } }
+        put :update,
+          params: { event_id: event.id, id: guest.id,
+                    guest: { first_name: nil, last_name: 'Guest' } }
         expect(response).to render_template(:edit)
       end
     end
   end
 
   describe 'DELETE #destroy' do
-    # before(:each) do
-    #   @event = Event.create(title: "Birthday Party")
-    #   @guest = @event.guests.create(first_name: "John", last_name: "Doe", affiliation: "Friend", category: "Adult", alloted_seats: 1, commited_seats: 1, guest_commited: true, status: "Confirmed")
-    # end
-    let(:event) { Event.create(title: 'Test Event') }
-    let(:guest) do
-      Guest.create(first_name: 'Test', last_name: 'Guest', email: 'testguest@example.com', event:, affiliation: 'Friend',
-                   category: 'Adult', alloted_seats: 10, commited_seats: 10, guest_commited: 1, status: 'Confirmed', section: 1)
+    let!(:guests) do
+      FactoryBot.create_list(:guest, 1, :guest1)
+      FactoryBot.create_list(:guest, 1, :guest2)
+      FactoryBot.create_list(:guest, 1, :guest3)
     end
-    # let(:guest1) { Guest.create(first_name: "Test1", last_name: "Guest", event: event, affiliation: "Friend", category: "Adult", alloted_seats: 10, commited_seats: 10, guest_commited: 1, status: "Confirmed")}
 
     it 'destroys the requested guest' do
-      guest1 = create(:guest, event:)
       initial_count = Guest.count
       expect do
-        delete :destroy, params: { event_id: event.id, id: guest1.id }
+        delete :destroy, params: { event_id: event.id, id: guests.first.id }
       end.to change(Guest, :count).from(initial_count).to(initial_count - 1)
     end
 
     it 'redirects to the guests list' do
-      delete :destroy, params: { event_id: event.id, id: guest.id }
+      delete :destroy, params: { event_id: event.id, id: guests.first.id }
       expect(response).to redirect_to(event_guests_path(event))
     end
   end
 
   describe 'before_action :set_guest' do
-    # let(:event) { create(:event) }
-    # let(:guest) { create(:guest, event: event) }
-    let(:event) { Event.create(title: 'Test Event') }
-    let(:guest) do
-      Guest.create(first_name: 'Test', last_name: 'Guest', email: 'testguest@example.com', event:, affiliation: 'Friend',
-                   category: 'Adult', alloted_seats: 10, commited_seats: 10, guest_commited: 1, status: 'Confirmed', section: 1)
-    end
+    let!(:guest) { create(:guest, event:) }
 
     context 'when a valid guest id is provided' do
       before do
@@ -193,7 +188,7 @@ RSpec.describe GuestsController, type: :controller do
     # let(:guest) { create(:guest, rsvp_link: 'valid_rsvp_link') }
     let(:guest1) do
       Guest.create(first_name: 'Test', last_name: 'Guest', email: 'testguest@example.com', event:, affiliation: 'Friend',
-                   category: 'Adult', alloted_seats: 10, commited_seats: 10, guest_commited: 1, status: 'Confirmed', section: 1)
+        category: 'Adult', alloted_seats: 10, commited_seats: 10, guest_commited: 1, status: 'Confirmed', section: 1)
     end
 
     context 'when a valid RSVP link is provided' do
@@ -235,7 +230,7 @@ RSpec.describe GuestsController, type: :controller do
   describe '#update_commited_seats' do
     let(:guest) do
       Guest.create(first_name: 'Test', last_name: 'Guest', email: 'testguest@example.com', event:, affiliation: 'Friend',
-                   category: 'Adult', alloted_seats: 10, commited_seats: 0, guest_commited: 0, status: 'Confirmed', section: 1)
+        category: 'Adult', alloted_seats: 10, commited_seats: 0, guest_commited: 0, status: 'Confirmed', section: 1)
     end
 
     context 'when a valid RSVP link is provided' do
@@ -295,32 +290,70 @@ RSpec.describe GuestsController, type: :controller do
     end
   end
 
-  describe 'POST #import_guests_csv' do
-    let(:event) { create(:event) }
+  describe '#import_spreadsheet' do
+    let(:spreadsheet_file) do
+      fixture_file_upload(
+        'guests.xlsx',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      )
+    end
 
-    context 'when file is uploaded' do
-      let(:file) do
-        fixture_file_upload('example.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    context 'without file' do
+      it 'not call Guest#import_spreadsheet' do
+        post :import_spreadsheet,
+          params: { event_id: event.id, file: nil }
+
+        expect(Guest).to_not receive(:import_spreadsheet)
       end
 
-      it 'imports guests and redirects to the event page' do
-        post :import_guests_csv, params: { event_id: event.id, file: }
+      it 'redirects to event path with error message' do
+        post :import_spreadsheet,
+          params: { event_id: event.id, file: nil }
+
         expect(response).to redirect_to(event_path(event))
-        expect(flash[:notice]).to eq 'Guests imported'
-        # Assert that guests are imported
+        expect(flash[:alert]).to eq('No file uploaded.')
       end
     end
 
-    context 'when no file is uploaded' do
-      it 'redirects with an alert' do
-        post :import_guests_csv, params: { event_id: event.id }
+    context 'with valid file' do
+      before do
+        allow(Guest).to receive(:import_spreadsheet).and_return({
+          status: true,
+          message: ''
+        })
+      end
+
+      it 'calls Guest#import_spreadsheet once' do
+        post :import_spreadsheet,
+          params: { event_id: event.id, file: spreadsheet_file }
+
+        expect(Guest).to have_received(:import_spreadsheet).once
+      end
+
+      it 'redirects to event path with success message' do
+        post :import_spreadsheet,
+          params: { event_id: event.id, file: spreadsheet_file }
+
         expect(response).to redirect_to(event_path(event))
-        expect(flash[:alert]).to eq 'No file uploaded.'
+        expect(flash[:notice]).to eq('Guests imported')
       end
     end
 
-    # Add more tests for error handling or edge cases
+    context 'with invalid file' do
+      before do
+        allow(Guest).to receive(:import_spreadsheet).and_return({
+          status: false,
+          message: 'fake error message'
+        })
+      end
+
+      it 'redirects to event path with error message' do
+        post :import_spreadsheet,
+          params: { event_id: event.id, file: spreadsheet_file }
+
+        expect(response).to redirect_to(event_path(event))
+        expect(flash[:alert]).to eq('Invalid file format: fake error message')
+      end
+    end
   end
-
-  require 'rails_helper'
 end
