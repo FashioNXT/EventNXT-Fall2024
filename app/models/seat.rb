@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 class Seat < ApplicationRecord
   belongs_to :event
-  
-  
+
   # ===================================
   # required to have to pass Rspec tests
   validates :category, presence: true

@@ -1,4 +1,6 @@
-#require 'rails_helper'
+# frozen_string_literal: true
+
+# require 'rails_helper'
 
 # Specs in this file have access to a helper object that includes
 # the RememberMeHelper. For example:
@@ -10,6 +12,6 @@
 #     end
 #   end
 # end
-#RSpec.describe RememberMeHelper, type: :helper do
+# RSpec.describe RememberMeHelper, type: :helper do
 #  pending "add some examples to (or delete) #{__FILE__}"
-#end
+# end

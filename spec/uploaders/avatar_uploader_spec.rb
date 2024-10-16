@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'rails_helper'
 
 # RSpec.describe AvatarUploader, type: :uploader do
@@ -75,4 +77,3 @@ RSpec.describe AvatarUploader, type: :uploader do
     end
   end
 end
-

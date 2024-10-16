@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe TokenController, type: :controller do
@@ -6,7 +8,8 @@ RSpec.describe TokenController, type: :controller do
 
     it 'returns JSON with access_token' do
       access_token_double = double('OAuth2::AccessToken', token: 'your_access_token_here')
-      allow(access_token_double).to receive(:get).with('/api/user').and_return(double(parsed: { name: user.name, email: user.email }))
+      allow(access_token_double).to receive(:get).with('/api/user').and_return(double(parsed: { name: user.name,
+                                                                                                email: user.email }))
       allow(OAuth2::AccessToken).to receive(:from_hash).and_return(access_token_double)
 
       post :exchange, params: { access_token: 'your_access_token_here' }

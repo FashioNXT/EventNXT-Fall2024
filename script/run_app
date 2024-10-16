@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-system("docker-compose -f docker-compose.yml up")
+system('docker-compose -f docker-compose.yml up')

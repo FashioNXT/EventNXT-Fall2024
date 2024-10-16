@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe GuestsImport, type: :model do
@@ -31,8 +33,8 @@ RSpec.describe GuestsImport, type: :model do
     let(:import) { GuestsImport.new(event_id: 123, api_key: 'some_api_key') }
     let(:guest_list) do
       [
-        {'first_name' => 'John', 'last_name' => 'Doe', 'email' => 'john@example.com'},
-        {'first_name' => 'Jane', 'last_name' => 'Doe', 'email' => 'jane@example.com'}
+        { 'first_name' => 'John', 'last_name' => 'Doe', 'email' => 'john@example.com' },
+        { 'first_name' => 'Jane', 'last_name' => 'Doe', 'email' => 'jane@example.com' }
       ]
     end
 

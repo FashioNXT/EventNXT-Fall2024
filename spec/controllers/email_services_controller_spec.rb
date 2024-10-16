@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe EmailServicesController, type: :controller do
-    let(:user) { create(:user) }
-    before do
-        sign_in user # Sign in the user before running the tests
-    end
+  let(:user) { create(:user) }
+  before do
+    sign_in user # Sign in the user before running the tests
+  end
   let(:valid_attributes) do
     {
       to: 'user@example.com',
@@ -45,8 +47,8 @@ RSpec.describe EmailServicesController, type: :controller do
     it 'returns a success response' do
       get :index
       expect(response).to be_successful
-      #expect(response).to render_template(:index)
-      #expect(response.body).to include("Unsent Email")
+      # expect(response).to render_template(:index)
+      # expect(response.body).to include("Unsent Email")
     end
   end
 
@@ -54,7 +56,6 @@ RSpec.describe EmailServicesController, type: :controller do
     it 'returns a success response' do
       get :show, params: { id: @email_service.id }
       expect(response).to be_successful
-      
     end
   end
 
@@ -91,8 +92,8 @@ RSpec.describe EmailServicesController, type: :controller do
       it 'returns a success response (i.e. to display the "new" template)' do
         post :create, params: { email_service: invalid_attributes }
         expect(response).not_to be_successful
-        #expect(response).to render_template(:new)
-        #expect(response).to have_http_status(:unprocessable_entity)
+        # expect(response).to render_template(:new)
+        # expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -136,11 +137,11 @@ RSpec.describe EmailServicesController, type: :controller do
     it 'destroys the email service' do
       email_service = EmailService.create! valid_attributes
 
-      expect {
+      expect do
         delete :destroy, params: { id: email_service.to_param }
-      }.to change(EmailService, :count).by(-1)
+      end.to change(EmailService, :count).by(-1)
 
-      #expect(response).to redirect_to(email_service)
+      # expect(response).to redirect_to(email_service)
       expect(flash[:notice]).to eq('Email service was successfully destroyed.')
     end
   end
@@ -179,9 +180,9 @@ RSpec.describe EmailServicesController, type: :controller do
   describe 'POST #add_email_template' do
     context 'with valid parameters' do
       it 'creates a new email template' do
-        expect {
+        expect do
           post :add_email_template, params: valid_template_attributes
-        }.to change(EmailTemplate, :count).by(1)
+        end.to change(EmailTemplate, :count).by(1)
       end
 
       it 'redirects to the email services URL' do
@@ -197,9 +198,9 @@ RSpec.describe EmailServicesController, type: :controller do
 
     context 'with invalid parameters' do
       it 'does not create a new email template' do
-        expect {
+        expect do
           post :add_email_template, params: invalid_template_attributes
-        }.not_to change(EmailTemplate, :count)
+        end.not_to change(EmailTemplate, :count)
       end
 
       it 'renders the _form_email_template partial' do
@@ -311,9 +312,9 @@ RSpec.describe EmailServicesController, type: :controller do
 
     context 'when the email template exists' do
       it 'destroys the requested email template' do
-        expect {
+        expect do
           delete :destroy_email_template, params: { id: email_template.to_param }
-        }.to change(EmailTemplate, :count).by(-1)
+        end.to change(EmailTemplate, :count).by(-1)
       end
 
       it 'redirects to the email services URL' do
@@ -335,8 +336,7 @@ RSpec.describe EmailServicesController, type: :controller do
     end
   end
 
-  describe "#send_email" do
-
+  describe '#send_email' do
     let(:email_service) { create(:email_service) }
     let(:event) { create(:event) }
     let(:guest) { create(:guest) }
@@ -346,8 +346,8 @@ RSpec.describe EmailServicesController, type: :controller do
       allow(Event).to receive(:find).and_return(event)
       allow(Guest).to receive(:find).and_return(guest)
     end
-    
-   it "sends an email and updates the email service" do
+
+    it 'sends an email and updates the email service' do
       initial_count = EmailService.where.not(sent_at: nil).count
 
       expect do
@@ -360,6 +360,4 @@ RSpec.describe EmailServicesController, type: :controller do
       expect(email_service.reload.sent_at).to be_present
     end
   end
-
 end
-
