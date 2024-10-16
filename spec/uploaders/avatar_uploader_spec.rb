@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'rails_helper'
 
 # RSpec.describe AvatarUploader, type: :uploader do
@@ -82,8 +84,10 @@ RSpec.describe AvatarUploader, type: :uploader do
   include CarrierWave::Test::Matchers
 
   let(:user) { create(:user) } # Assuming you have a User factory
-  let(:file_path) { Rails.root.join('spec/fixtures/files/some-dog.jpg') } # Updated to use fixture path
-
+  # Updated to use fixture path
+  let(:file_path) do
+    Rails.root.join('spec/fixtures/files/some-dog.jpg')
+  end
   before do
     AvatarUploader.enable_processing = true
     @uploader = AvatarUploader.new(user, :avatar)
@@ -115,4 +119,3 @@ RSpec.describe AvatarUploader, type: :uploader do
     end
   end
 end
-

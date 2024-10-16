@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Given('the following users exist:') do |table|
   table.hashes.each do |user|
     User.create user
@@ -8,7 +10,7 @@ Given('I am on the index page') do
   visit root_path
 end
 
-When('I follow {string}') do |string|
+When('I follow {string}') do |_string|
   visit new_user_registration_path
 end
 
@@ -108,7 +110,7 @@ end
 When('we have a referral with 5 tickets bought') do
   the_referral_parametrization = {
     email: @guest.email,
-    name: @guest.first_name + ' ' + @guest.last_name,
+    name: "#{@guest.first_name} #{@guest.last_name}",
     referred: 'aaaaaaa@aaaaaaa.aaa',
     status: true,
     tickets: 5,

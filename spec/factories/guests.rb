@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/guests.rb
 FactoryBot.define do
   factory :guest do

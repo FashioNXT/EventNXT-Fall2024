@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'rails_helper'
 
 # RSpec.describe ApplicationJob, type: :job do
@@ -38,9 +40,9 @@ require 'rails_helper'
 RSpec.describe ApplicationJob, type: :job do
   describe 'enqueuing the job' do
     it 'can be enqueued' do
-      expect {
+      expect do
         ApplicationJob.perform_later
-      }.to have_enqueued_job(ApplicationJob)
+      end.to have_enqueued_job(ApplicationJob)
     end
 
     it 'is in the default queue' do
@@ -49,5 +51,4 @@ RSpec.describe ApplicationJob, type: :job do
 
     # Add more tests for enqueueing scenarios if needed
   end
-
 end
