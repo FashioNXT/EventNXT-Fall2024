@@ -49,7 +49,7 @@ class EventsController < ApplicationController
         @referral_data.each do |referraldatum|
           if referraldatum.referred == datum[email_index]
             referraldatum.update(status: true, tickets: datum[tickets_index],
-                                 amount: datum[amount_index])
+              amount: datum[amount_index])
           end
         end
       end
@@ -83,11 +83,16 @@ class EventsController < ApplicationController
 
     respond_to do |format|
       if @event.save
-        format.html { redirect_to event_url(@event), notice: 'Event was successfully created.' }
+        format.html do
+          redirect_to event_url(@event),
+            notice: 'Event was successfully created.'
+        end
         format.json { render :show, status: :created, location: @event }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @event.errors, status: :unprocessable_entity
+        end
       end
     end
   end
@@ -96,11 +101,16 @@ class EventsController < ApplicationController
   def update
     respond_to do |format|
       if @event.update(event_params)
-        format.html { redirect_to event_url(@event), notice: 'Event was successfully updated.' }
+        format.html do
+          redirect_to event_url(@event),
+            notice: 'Event was successfully updated.'
+        end
         format.json { render :show, status: :ok, location: @event }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @event.errors, status: :unprocessable_entity
+        end
       end
     end
   end
@@ -109,7 +119,9 @@ class EventsController < ApplicationController
   def destroy
     @event.destroy
     respond_to do |format|
-      format.html { redirect_to events_url, notice: 'Event was successfully destroyed.' }
+      format.html do
+        redirect_to events_url, notice: 'Event was successfully destroyed.'
+      end
       format.json { head :no_content }
     end
   end
@@ -155,7 +167,7 @@ class EventsController < ApplicationController
     # <!--to add upload field-->
     # params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar)
     params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar,
-                                  :event_box_office)
+      :event_box_office)
     # <!--===================-->
   end
 end

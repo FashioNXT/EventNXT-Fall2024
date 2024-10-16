@@ -174,9 +174,12 @@ RSpec.describe EventsController, type: :controller do
       create(:seat, event:, category: 'VIP', total_count: 50)
       create(:seat, event:, category: 'Regular', total_count: 100)
 
-      create(:guest, event:, category: 'VIP', commited_seats: 5, alloted_seats: 10)
-      create(:guest, event:, category: 'Regular', commited_seats: 15, alloted_seats: 20)
-      create(:guest, event:, category: 'Regular', commited_seats: 3, alloted_seats: 5)
+      create(:guest, event:, category: 'VIP', commited_seats: 5,
+        alloted_seats: 10)
+      create(:guest, event:, category: 'Regular', commited_seats: 15,
+        alloted_seats: 20)
+      create(:guest, event:, category: 'Regular', commited_seats: 3,
+        alloted_seats: 5)
 
       seating_summary = event.calculate_seating_summary(event.id)
 

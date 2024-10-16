@@ -5,7 +5,9 @@ require 'active_support/core_ext/integer/time'
 Rails.application.configure do
   # Configure 'rails notes' to inspect Cucumber files
   config.annotations.register_directories('features')
-  config.annotations.register_extensions('feature') { |tag| /#\s*(#{tag}):?\s*(.*)$/ }
+  config.annotations.register_extensions('feature') do |tag|
+    /#\s*(#{tag}):?\s*(.*)$/
+  end
 
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -78,7 +80,8 @@ Rails.application.configure do
 
   # <!--===================-->
   # <!--to define the google authentication Oauth credentials-->
-  ENV['GOOGLE_OAUTH_CLIENT_ID'] = '142286611338-da6dp21qiuujfdk07nrjs6cpok8nou49.apps.googleusercontent.com'
+  ENV['GOOGLE_OAUTH_CLIENT_ID'] =
+    '142286611338-da6dp21qiuujfdk07nrjs6cpok8nou49.apps.googleusercontent.com'
   ENV['GOOGLE_OAUTH_CLIENT_SECRET'] = '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'
   # <!--===================-->
 

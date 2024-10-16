@@ -45,7 +45,8 @@ RSpec.describe ApplicationMailer, type: :mailer do
 
     it 'sends an email with the correct attributes' do
       # Call the mailer method
-      email = ApplicationMailer.send_email(to, subject, body, event, guest, rsvp_url)
+      email = ApplicationMailer.send_email(to, subject, body, event, guest,
+        rsvp_url)
 
       # puts email.body.to_s
 

@@ -20,8 +20,8 @@ class EmailServicesControllerTest < ActionDispatch::IntegrationTest
   test 'should create email_service' do
     assert_difference('EmailService.count') do
       post email_services_url,
-           params: { email_service: { body: @email_service.body, subject: @email_service.subject,
-                                      to: @email_service.to } }
+        params: { email_service: { body: @email_service.body, subject: @email_service.subject,
+                                   to: @email_service.to } }
     end
 
     assert_redirected_to email_service_url(EmailService.last)
@@ -39,8 +39,8 @@ class EmailServicesControllerTest < ActionDispatch::IntegrationTest
 
   test 'should update email_service' do
     patch email_service_url(@email_service),
-          params: { email_service: { body: @email_service.body, subject: @email_service.subject,
-                                     to: @email_service.to } }
+      params: { email_service: { body: @email_service.body, subject: @email_service.subject,
+                                 to: @email_service.to } }
     assert_redirected_to email_service_url(@email_service)
   end
 

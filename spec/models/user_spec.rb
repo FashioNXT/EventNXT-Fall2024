@@ -7,7 +7,8 @@ RSpec.describe User, type: :model do
 
   describe 'validations' do
     it 'requires a password' do
-      user = User.new(email: 'user@example.com', password:, password_confirmation: password)
+      user = User.new(email: 'user@example.com', password:,
+        password_confirmation: password)
       expect(user).to be_valid
 
       user.password = ''
@@ -36,11 +37,15 @@ RSpec.describe User, type: :model do
   describe '.from_omniauth' do
     let(:access_token) { instance_double('AccessToken', get: response) }
     let(:response) { instance_double('Response', parsed: oauth_response) }
-    let(:oauth_response) { { 'email' => 'test@example.com', 'name' => 'Test User' } }
+    let(:oauth_response) do
+      { 'email' => 'test@example.com', 'name' => 'Test User' }
+    end
 
     context 'when the user does not exist' do
       it 'creates a new user' do
-        expect { User.from_omniauth(access_token) }.to change(User, :count).by(1)
+        expect do
+          User.from_omniauth(access_token)
+        end.to change(User, :count).by(1)
         user = User.find_by(email: 'test@example.com')
         expect(user).not_to be_nil
         expect(user.name).to eq 'Test User'
@@ -51,7 +56,7 @@ RSpec.describe User, type: :model do
     context 'when the user already exists' do
       before do
         User.create(email: 'test@example.com', name: 'Existing User', password: 'password',
-                    password_confirmation: 'password')
+          password_confirmation: 'password')
       end
 
       it 'does not create a new user' do

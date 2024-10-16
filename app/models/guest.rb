@@ -16,9 +16,9 @@ class Guest < ApplicationRecord
   validates :section, presence: true
   validates :event_id, presence: true
   validates :alloted_seats,
-            numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :commited_seats,
-            numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   # validates :guest_commited, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   # validate :allocated_seats_not_exceed_total
 
@@ -54,7 +54,7 @@ class Guest < ApplicationRecord
 
   # end
 
-  def self.validate_import(spreadsheet)
+  def self.validate_import(_spreadsheet)
     { status: true, message: 'Spreadsheet validated successfully' }
   end
 

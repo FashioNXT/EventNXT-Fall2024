@@ -20,7 +20,7 @@ class ReferralsController < ApplicationController
     @guest = Guest.find_by(rsvp_link: random_code)
     if @guest
       @referral = Referral.find_or_create_by(event_id: @guest.event_id, guest_id: @guest.id, email: @guest.email,
-                                             name: "#{@guest.first_name} #{@guest.last_name}", referred: friend_email, ref_code: @guest.id)
+        name: "#{@guest.first_name} #{@guest.last_name}", referred: friend_email, ref_code: @guest.id)
       @referral.save
       UserMailer.referral_confirmation(friend_email).deliver_now
 
@@ -54,7 +54,8 @@ class ReferralsController < ApplicationController
       #   ref_code: @guest.id
       #  }
       @referral.update(referral_params)
-      @referral.update_attribute(:reward_value, referral_params[:reward_input].to_f * @referral.tickets)
+      @referral.update_attribute(:reward_value,
+        referral_params[:reward_input].to_f * @referral.tickets)
     elsif params[:reward_method] == 'reward percentage %'
       # the_referral_parametrization = {
       #   email: @referral.email,
@@ -70,7 +71,8 @@ class ReferralsController < ApplicationController
       #   ref_code: @guest.id
       #  }
       @referral.update(referral_params)
-      @referral.update_attribute(:reward_value, (@referral.amount * referral_params[:reward_input].to_f) / 100)
+      @referral.update_attribute(:reward_value,
+        (@referral.amount * referral_params[:reward_input].to_f) / 100)
     end
   end
 
@@ -88,6 +90,6 @@ class ReferralsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def referral_params
     params.require(:referral).permit(:event_id, :guest_id, :email, :name, :referred, :status, :tickets, :amount,
-                                     :reward_method, :reward_input, :ref_code, :reward_value)
+      :reward_method, :reward_input, :ref_code, :reward_value)
   end
 end

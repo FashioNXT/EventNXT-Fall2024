@@ -23,8 +23,8 @@ class GuestsControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Guest.count') do
       # post guests_url, params: { guest: { affiliation: @guest.affiliation, alloted_seats: @guest.alloted_seats, category: @guest.category, commited_seats: @guest.commited_seats, event_id: @guest.event_id, first_name: @guest.first_name, guest_commited: @guest.guest_commited, last_name: @guest.last_name, status: @guest.status } }
       post event_guests_path,
-           params: { guest: { affiliation: @guest.affiliation, alloted_seats: @guest.alloted_seats, category: @guest.category,
-                              commited_seats: @guest.commited_seats, event_id: @guest.event_id, first_name: @guest.first_name, guest_commited: @guest.guest_commited, last_name: @guest.last_name, status: @guest.status } }
+        params: { guest: { affiliation: @guest.affiliation, alloted_seats: @guest.alloted_seats, category: @guest.category,
+                           commited_seats: @guest.commited_seats, event_id: @guest.event_id, first_name: @guest.first_name, guest_commited: @guest.guest_commited, last_name: @guest.last_name, status: @guest.status } }
     end
 
     # assert_redirected_to guest_url(Guest.last)
@@ -46,8 +46,8 @@ class GuestsControllerTest < ActionDispatch::IntegrationTest
   test 'should update guest' do
     # patch guest_url(@guest), params: { guest: { affiliation: @guest.affiliation, alloted_seats: @guest.alloted_seats, category: @guest.category, commited_seats: @guest.commited_seats, event_id: @guest.event_id, first_name: @guest.first_name, guest_commited: @guest.guest_commited, last_name: @guest.last_name, status: @guest.status } }
     patch event_guest_path(@guest),
-          params: { guest: { affiliation: @guest.affiliation, alloted_seats: @guest.alloted_seats, category: @guest.category,
-                             commited_seats: @guest.commited_seats, event_id: @guest.event_id, first_name: @guest.first_name, guest_commited: @guest.guest_commited, last_name: @guest.last_name, status: @guest.status } }
+      params: { guest: { affiliation: @guest.affiliation, alloted_seats: @guest.alloted_seats, category: @guest.category,
+                         commited_seats: @guest.commited_seats, event_id: @guest.event_id, first_name: @guest.first_name, guest_commited: @guest.guest_commited, last_name: @guest.last_name, status: @guest.status } }
     # assert_redirected_to guest_url(@guest)
     assert_redirected_to event_guest_path(@guest)
   end

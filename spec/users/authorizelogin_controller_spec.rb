@@ -13,7 +13,7 @@ RSpec.describe Users::AuthorizeloginController, type: :controller do
       get :authorize_event360
 
       # Check the redirect_to expectation
-      expect(response).to redirect_to("http://example.com/oauth/authorize?client_id=your_client_id&redirect_uri=http://example-callback.com/auth/events360/callback&response_type=code&scope=public")
+      expect(response).to redirect_to('http://example.com/oauth/authorize?client_id=your_client_id&redirect_uri=http://example-callback.com/auth/events360/callback&response_type=code&scope=public')
     end
   end
 end

@@ -14,7 +14,7 @@ class SeatsController < ApplicationController
 
     # <!--===================-->
     # <!--to return all children instances associated with a particular parent instance-->
-    
+
     @event = Event.find(params[:event_id])
     @seats = @event.seats
     # <!--===================-->
@@ -49,7 +49,10 @@ class SeatsController < ApplicationController
     respond_to do |format|
       if @seat.save
         # format.html { redirect_to seat_url(@seat), notice: "Seat was successfully created." }
-        format.html { redirect_to event_url(@event), notice: 'Seat was successfully created.' }
+        format.html do
+          redirect_to event_url(@event),
+            notice: 'Seat was successfully created.'
+        end
         format.json { render :show, status: :created, location: @seat }
       else
         # Rails.logger.debug(@seat.errors.inspect)
@@ -65,7 +68,10 @@ class SeatsController < ApplicationController
     respond_to do |format|
       if @seat.update(seat_params)
         # format.html { redirect_to seat_url(@seat), notice: "Seat was successfully updated." }
-        format.html { redirect_to event_seat_path(@event), notice: 'Seat was successfully updated.' }
+        format.html do
+          redirect_to event_seat_path(@event),
+            notice: 'Seat was successfully updated.'
+        end
         format.json { render :show, status: :ok, location: @seat }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -80,7 +86,10 @@ class SeatsController < ApplicationController
 
     respond_to do |format|
       # format.html { redirect_to seats_url, notice: "Seat was successfully destroyed." }
-      format.html { redirect_to event_seats_path(@event), notice: 'Seat was successfully destroyed.' }
+      format.html do
+        redirect_to event_seats_path(@event),
+          notice: 'Seat was successfully destroyed.'
+      end
       format.json { head :no_content }
     end
   end

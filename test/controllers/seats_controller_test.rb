@@ -23,7 +23,8 @@ class SeatsControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Seat.count') do
       # post seats_url, params: { seat: { category: @seat.category, event_id: @seat.event_id, total_count: @seat.total_count } }
       post event_seats_path,
-           params: { seat: { category: @seat.category, event_id: @seat.event_id, total_count: @seat.total_count } }
+        params: { seat: { category: @seat.category,
+                          event_id: @seat.event_id, total_count: @seat.total_count } }
     end
 
     # assert_redirected_to seat_url(Seat.last)
@@ -45,7 +46,8 @@ class SeatsControllerTest < ActionDispatch::IntegrationTest
   test 'should update seat' do
     # patch seat_url(@seat), params: { seat: { category: @seat.category, event_id: @seat.event_id, total_count: @seat.total_count } }
     patch event_seat_path(@seat),
-          params: { seat: { category: @seat.category, event_id: @seat.event_id, total_count: @seat.total_count } }
+      params: { seat: { category: @seat.category, event_id: @seat.event_id,
+                        total_count: @seat.total_count } }
     # assert_redirected_to seat_url(@seat)
     assert_redirected_to event_seat_path(@seat)
   end

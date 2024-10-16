@@ -8,8 +8,8 @@ module OmniAuth
       option :name, :events360
 
       option :client_options,
-             site: ENV['NXT_APP_URL'],
-             authorize_path: '/oauth/authorize'
+        site: ENV['NXT_APP_URL'],
+        authorize_path: '/oauth/authorize'
 
       uid do
         raw_info['id']

@@ -3,4 +3,4 @@
 
 system('docker-compose -f docker-compose.yml up')
 
-system("docker-compose -f docker-compose.yml up")
+system('docker-compose -f docker-compose.yml up')

@@ -31,7 +31,7 @@ class EmailServicesController < ApplicationController
     updated_body = email_service.body.gsub('PLACEHOLDER_LINK', referral_url)
 
     ApplicationMailer.send_email(email_service.to, email_service.subject, updated_body, event, guest,
-                                 full_url).deliver_later
+      full_url).deliver_later
 
     flash[:success] = 'Email sent!'
     email_service.update(sent_at: Time.current)
@@ -84,11 +84,16 @@ class EmailServicesController < ApplicationController
 
     respond_to do |format|
       if @email_service.save
-        format.html { redirect_to email_services_url, notice: 'Email service was successfully created.' }
+        format.html do
+          redirect_to email_services_url,
+            notice: 'Email service was successfully created.'
+        end
         format.json { render :show, status: :created, location: @email_service }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @email_service.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @email_service.errors, status: :unprocessable_entity
+        end
       end
     end
   end
@@ -97,11 +102,16 @@ class EmailServicesController < ApplicationController
   def update
     respond_to do |format|
       if @email_service.update(email_service_params)
-        format.html { redirect_to email_service_url, notice: 'Email service was successfully updated.' }
+        format.html do
+          redirect_to email_service_url,
+            notice: 'Email service was successfully updated.'
+        end
         format.json { render :show, status: :ok, location: @email_service }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @email_service.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @email_service.errors, status: :unprocessable_entity
+        end
       end
     end
   end
@@ -111,7 +121,10 @@ class EmailServicesController < ApplicationController
     @email_service.destroy
 
     respond_to do |format|
-      format.html { redirect_to email_services_url, notice: 'Email service was successfully destroyed.' }
+      format.html do
+        redirect_to email_services_url,
+          notice: 'Email service was successfully destroyed.'
+      end
       format.json { head :no_content }
     end
   end
@@ -126,7 +139,10 @@ class EmailServicesController < ApplicationController
 
     respond_to do |format|
       if @email_templates.save
-        format.html { redirect_to email_services_url, notice: 'Email template was successfully created.' }
+        format.html do
+          redirect_to email_services_url,
+            notice: 'Email template was successfully created.'
+        end
       else
         flash[:notice] = 'Error: Email template could not be saved.'
         format.html { render '_form_email_template' }
@@ -143,14 +159,17 @@ class EmailServicesController < ApplicationController
 
   def update_email_template
     @email_template = EmailTemplate.find(params[:id])
-    email_template_params = params.require(:email_template).permit(:name, :subject, :body)
+    email_template_params = params.require(:email_template).permit(:name,
+      :subject, :body)
 
     puts "I'm here"
 
     if @email_template.update(email_template_params)
-      redirect_to email_services_url, notice: 'Email template was successfully updated.'
+      redirect_to email_services_url,
+        notice: 'Email template was successfully updated.'
     else
-      render '_edit_email_template', alert: 'Error: Email template could not be saved.'
+      render '_edit_email_template',
+        alert: 'Error: Email template could not be saved.'
     end
   end
 
@@ -159,7 +178,8 @@ class EmailServicesController < ApplicationController
 
     respond_to do |format|
       format.json do
-        render json: { subject: email_template.subject, body: email_template.body }
+        render json: { subject: email_template.subject,
+                       body: email_template.body }
       end
     end
   rescue ActiveRecord::RecordNotFound
@@ -171,7 +191,10 @@ class EmailServicesController < ApplicationController
     @email_template.destroy
 
     respond_to do |format|
-      format.html { redirect_to email_services_url, notice: 'Email template was successfully deleted.' }
+      format.html do
+        redirect_to email_services_url,
+          notice: 'Email template was successfully deleted.'
+      end
       format.json { head :no_content }
     end
   rescue ActiveRecord::RecordNotFound
@@ -191,6 +214,6 @@ class EmailServicesController < ApplicationController
     # params.require(:email_service).permit(:to, :subject, :body, :sent_at, :committed_at)
     # params.require(:email_service).permit(:to, :subject, :body, :sent_at, :committed_at, :event_id)
     params.require(:email_service).permit(:email_template_id, :to, :subject, :body, :sent_at, :committed_at,
-                                          :event_id, :guest_id)
+      :event_id, :guest_id)
   end
 end
