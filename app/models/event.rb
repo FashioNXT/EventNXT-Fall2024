@@ -8,7 +8,7 @@ class Event < ApplicationRecord
   has_many :email_services, dependent: :destroy
   has_many :referrals, dependent: :destroy
 
-  def calculate_seating_summary()
+  def calculate_seating_summary
     seating_summary = []
 
     self.seats.each do |seat|

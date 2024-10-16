@@ -5,3 +5,7 @@
 <%= turbo_stream.replace ticket_sale_form_dom_id() do %>
   <div id=<%= ticket_sale_form_dom_id() %> hidden="true"></div>
 <% end %>
+
+<%= turbo_stream.replace seats_summary_table_dom_id() do %>
+  <%= render partial: "seats/summary_table", locals: { event: @event } %>
+<% end %>
