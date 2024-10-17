@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EventsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_event, only: %i[show edit update destroy]
@@ -27,8 +29,7 @@ class EventsController < ApplicationController
   end
 
   # GET /events/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /events or /events.json
   def create
@@ -53,7 +54,7 @@ class EventsController < ApplicationController
   # PATCH/PUT /events/1 or /events/1.json
   def update
     respond_to do |format|
-      if @event.update(event_params) && import_result[:status]
+      if @event.update(event_params)
         format.html do
           redirect_to event_url(@event),
             notice: 'Event was successfully updated.'
@@ -80,7 +81,6 @@ class EventsController < ApplicationController
   end
 
   private
-
 
   # Use callbacks to share common setup or constraints between actions.
   def set_event

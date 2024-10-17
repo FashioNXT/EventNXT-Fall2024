@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class AvatarUploader < CarrierWave::Uploader::Base
+class SpreadsheetUploader < CarrierWave::Uploader::Base
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
-  include CarrierWave::MiniMagick
+  # include CarrierWave::MiniMagick
 
   # Choose what kind of storage to use for this uploader:
   storage :file
@@ -32,14 +32,14 @@ class AvatarUploader < CarrierWave::Uploader::Base
 
   # Create different versions of your uploaded files:
   # version :thumb do
-  #   process resize_to_fit: [350, 350]
+  #   process resize_to_fit: [50, 50]
   # end
 
   # Add an allowlist of extensions which are allowed to be uploaded.
   # For images you might use something like this:
-  def extension_allowlist
-    %w[jpg jpeg gif png svg]
-  end
+  # def extension_allowlist
+  #   %w(xlsx xls csv)
+  # end
 
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
