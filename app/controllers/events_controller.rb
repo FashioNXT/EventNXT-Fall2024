@@ -8,7 +8,6 @@ class EventsController < ApplicationController
   def index
     @events = current_user.events
   end
-
   # GET /events/1 or /events/1.json
   def show
     # <!--===================-->
@@ -53,7 +52,6 @@ class EventsController < ApplicationController
           end
         end
       end
-
     else
       flash[:notice] = 'No box office spreadsheet uploaded for this event'
       @event_box_office_data = []
