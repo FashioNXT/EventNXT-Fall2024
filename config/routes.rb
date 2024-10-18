@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  get 'token/exchange'
-  get 'remember_me/clear_remember_me'
   get '/book_seats/:rsvp_link', to: 'guests#book_seats', as: 'book_seats'
   get '/email_services/new_email_template',
     to: 'email_services#new_email_template', as: 'new_email_template'
@@ -48,12 +46,10 @@ Rails.application.routes.draw do
     controllers: { omniauth_callbacks: 'users/omniauth_callbacks' },
     omniauth_providers: %i[events360 eventbrite]
 
-  # devise_scope :user do
-  #   post 'oauth/authorize', to: 'users/authorizelogin#authorize_event360'
-  #   get 'oauth/authorize', to: 'users/authorizelogin#authorize_event360'
-  #   get 'auth/events360/callback', to: 'users/omniauth_callbacks#events360'
-  #   post 'auth/events360/callback', to: 'users/omniauth_callbacks#events360'
-  # end
+  # Define custom sessions routes
+  devise_scope :user do
+    delete 'users/sign_out', to: 'users/sessions#destroy', as: :destroy_user_session
+  end
 
   resources :events do
     resources :seats
@@ -68,7 +64,4 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  # resources :seats
-  # resources :guests
 end

@@ -24,6 +24,43 @@ class User < ApplicationRecord
       end
     end
 
+    # TODO: eventbrite integration
+    # def eventbrite_client
+    #   OAuth2::Client.new(
+    #     ENV['EVENTBRITE_CLIENT_ID'],
+    #     ENV['EVENTBRITE_CLIENT_SECRET'],
+    #     site: ENV['EVENTBRITE_URL']
+    #   )
+    # end
+
+    # def eventbrite_access_token
+    #   OAuth2::AccessToken.new(
+    #     eventbrite_client,
+    #     eventbrite_token,
+    #     refresh_token: eventbrite_refresh_token,
+    #     expires_at: eventbrite_token_expires_at.to_i
+    #   )
+    # end
+
+    # def refresh_eventbrite_token!
+    #   return unless eventbrite_token_expires_at < Time.current
+
+    #   new_token = eventbrite_access_token.refresh!
+
+    #   update(
+    #     eventbrite_token: new_token.token,
+    #     eventbrite_refresh_token: new_token.refresh_token,
+    #     eventbrite_token_expires_at: Time.at(new_token.expires_at)
+    #   )
+    # end
+
+    # def fetch_eventbrite_events
+    #   refresh_eventbrite_token!
+
+    #   response = eventbrite_access_token.get('/v3/users/me/owned_events/')
+    #   JSON.parse(response.body)['events']
+    # end
+
     private
 
     def from_omniauth_events360(auth)
@@ -38,6 +75,7 @@ class User < ApplicationRecord
 
       if user.present?
         user.update(user_info)
+        user
       else
         User.create(user_info)
       end

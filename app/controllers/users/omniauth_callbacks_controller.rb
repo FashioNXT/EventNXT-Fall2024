@@ -1,4 +1,5 @@
 module Users
+  # Callbacks for the OAuth provider to send code and tokens.
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     def events360
       # Omniauth middleware exchange access code with token underhood
@@ -6,7 +7,7 @@ module Users
 
       @user = User.from_omniauth(auth, current_user)
 
-      if @user.present?
+      if @user.present? && @user.persisted?
         Rails.logger.warn("User #{@user} login through CRM")
         sign_in_and_redirect @user, event: :authentication
       else
@@ -29,5 +30,10 @@ module Users
       end
       redirect_to events_path
     end
+
+    # def failure
+    #   flash[:alert] = 'Authentication failed. Please try again.'
+    #   redirect_to root_path
+    # end
   end
 end
