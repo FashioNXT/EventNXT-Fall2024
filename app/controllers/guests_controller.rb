@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GuestsController < ApplicationController
   # <!--===================-->
   # <!--corresponding filter of the defined method for nested scaffold-->
@@ -28,8 +30,7 @@ class GuestsController < ApplicationController
   end
 
   # GET /guests/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /guests or /guests.json
   # def create

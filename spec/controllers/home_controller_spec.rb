@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe HomeController, type: :controller do
-
   let(:valid_attributes) { attributes_for(:your_model) }
   let(:user) { create(:user) } # Create a user using the factory
 
@@ -16,38 +17,38 @@ RSpec.describe HomeController, type: :controller do
         expect(response).to be_successful
       end
     end
-    
+
     describe 'GET #sign_up' do
       context 'with valid registration data' do
         it 'creates a new user' do
-          user_params = attributes_for(:user) 
+          attributes_for(:user)
           expect do
             get :sign_up
           end
           expect(response).to have_http_status(200)
         end
       end
-    
+
       context 'with invalid registration data' do
         it 'does not create a new user' do
-          user_params = attributes_for(:user, email: nil)
+          attributes_for(:user, email: nil)
           expect do
             get :sign_up
           end
-          
+
           expect(response).to have_http_status(200)
         end
       end
     end
-  #describe "GET #index" do
-    #it "responds with a successful HTTP status code" do
-      #get :index
-      #expect(response).to have_http_status(:success)
-    #end
-    
-    #it "renders the index template" do
-      #get :index
-      #expect(response).to render_template("index")
-    #end
+    # describe "GET #index" do
+    # it "responds with a successful HTTP status code" do
+    # get :index
+    # expect(response).to have_http_status(:success)
+    # end
+
+    # it "renders the index template" do
+    # get :index
+    # expect(response).to render_template("index")
+    # end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'rails_helper'
 
 # RSpec.describe ApplicationMailer, type: :mailer do
@@ -43,17 +45,17 @@ RSpec.describe ApplicationMailer, type: :mailer do
 
     it 'sends an email with the correct attributes' do
       # Call the mailer method
-      email = ApplicationMailer.send_email(to, subject, body, event, guest, rsvp_url)
+      email = ApplicationMailer.send_email(to, subject, body, event, guest,
+        rsvp_url)
 
-      #puts email.body.to_s
+      # puts email.body.to_s
 
       # Test the content of the sent email
       expect(email.subject).to eq(subject)
       expect(email.to).to eq([to])
       expect(email.from).to eq(['eventnxtapp@gmail.com']) # Check the default from address
       expect(email.body).to include(body)
-      #expect(email.body).to include(rsvp_url)
+      # expect(email.body).to include(rsvp_url)
     end
-
   end
 end

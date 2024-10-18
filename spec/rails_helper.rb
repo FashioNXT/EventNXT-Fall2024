@@ -1,16 +1,19 @@
+# frozen_string_literal: true
+
 # <!--===================-->
 # <!--to analyze test coverage-->
 require 'simplecov'
 SimpleCov.start 'rails'
 # <!--===================-->
 
-
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+if Rails.env.production?
+  abort('The Rails environment is running in production mode!')
+end
 require 'rspec/rails'
 require 'active_job'
 ActiveJob::Base.queue_adapter = :test
@@ -72,8 +75,6 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Devise::Test::ControllerHelpers, type: :controller
 end
-
-
 
 # <!--===================-->
 # <!--to rovide RSpec-compatible matchers-->
