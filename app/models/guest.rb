@@ -54,8 +54,8 @@ class Guest < ApplicationRecord
 
   # end
 
-  def self.validate_import(spreadsheet)
-    { status: true }
+  def self.validate_import(_spreadsheet)
+    { status: true, message: 'Spreadsheet validated successfully' }
   end
 
   def self.import_spreadsheet(spreadsheet_file, event_id)
@@ -125,7 +125,7 @@ class Guest < ApplicationRecord
     end
   
     result[:status] = true
-    result[:message] = "Guests imported successfully."
+    result[:message] = "Guests imported successfully"
     if duplicate_emails.any?
       result[:message] += " Duplicate emails found: #{duplicate_emails.join(', ')}"
     end

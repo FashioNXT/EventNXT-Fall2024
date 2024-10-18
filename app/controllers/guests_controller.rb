@@ -137,28 +137,10 @@ class GuestsController < ApplicationController
       if result[:status] == false
         return redirect_to event_path(params[:event_id]), alert: "Invalid file format: #{result[:message]}"
       end
-
-      new_guests = result[:guests]
-      existing_guests = Guest.where(event_id: params[:event_id]).pluck(:email, :id).to_h
-      duplicate_emails = []
-
-      new_guests.each do |guest|
-        if existing_guests.key?(guest.email)
-          existing_guest = Guest.find(existing_guests[guest.email])
-          if existing_guest
-            existing_guest.update(guest.attributes.except('id', 'created_at', 'updated_at'))
-            duplicate_emails << guest.email
-          end
-        else
-          guest.save
-        end
-      end
-
-      if duplicate_emails.any?
-        flash[:warning] = "Duplicate emails found"
-        # "Duplicate emails found: #{duplicate_emails.join(', ')}"
+      if result[:message].include?("Duplicate emails found")
+        flash[:warning] = result[:message]
       else
-        flash[:success] = "Guests imported successfully."
+        flash[:success] = result[:message]
       end
 
       redirect_to event_path(params[:event_id])
