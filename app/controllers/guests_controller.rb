@@ -41,17 +41,20 @@ class GuestsController < ApplicationController
     # <!--===================-->
 
     respond_to do |format|
-      if @guest.save
-        # format.html { redirect_to guest_url(@guest), notice: "Guest was successfully created." }
-        format.html do
-          redirect_to event_url(@event),
-            notice: 'Guest was successfully created.'
-        end
-        format.json { render :show, status: :created, location: @guest }
-      else
+      if Guest.exists?(email: @guest.email, event_id: @event.id)
+        @guest.errors.add(:email, 'already exists')
         format.html { render :new, status: :unprocessable_entity }
-        format.json do
-          render json: @guest.errors, status: :unprocessable_entity
+        format.json { render json: @guest.errors, status: :unprocessable_entity }
+      else
+        if @guest.save
+          format.html do
+            redirect_to event_url(@event),
+                        notice: 'Guest was successfully created.'
+          end
+          format.json { render :show, status: :created, location: @guest }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @guest.errors, status: :unprocessable_entity }
         end
       end
     end
