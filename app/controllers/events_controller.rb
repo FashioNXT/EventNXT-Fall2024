@@ -8,7 +8,6 @@ class EventsController < ApplicationController
   def index
     @events = current_user.events
   end
-
   # GET /events/1 or /events/1.json
   def show
     # <!--===================-->
