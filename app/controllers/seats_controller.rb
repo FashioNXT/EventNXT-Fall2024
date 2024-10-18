@@ -37,31 +37,42 @@ class SeatsController < ApplicationController
   def edit; end
 
   # POST /seats or /seats.json
-  def create
-    # @seat = Seat.new(seat_params)
-    # puts "=== Creating Seat ==="
-    # Rails.logger.debug(params.inspect)
-    # <!--===================-->
-    # <!--to post a new child instance-->
-    @seat = @event.seats.build(seat_params)
-    # <!--===================-->
+  # def create
+  #   # @seat = Seat.new(seat_params)
+  #   #puts "=== Creating Seat ==="
+  #   #Rails.logger.debug(params.inspect)
+  #   # <!--===================-->
+  #   # <!--to post a new child instance-->
+  #   @seat = @event.seats.build(seat_params)
+  #   # <!--===================-->
 
+  #   respond_to do |format|
+  #     if @seat.save
+  #       # format.html { redirect_to seat_url(@seat), notice: "Seat was successfully created." }
+  #       format.html { redirect_to event_url(@event), notice: "Seat was successfully created." }
+  #       format.json { render :show, status: :created, location: @seat }
+  #     else
+  #       #Rails.logger.debug(@seat.errors.inspect)
+  #       #puts "Errors: #{@seat.errors.inspect}"
+  #       format.html { render :new, status: :unprocessable_entity }
+  #       format.json { render json: @seat.errors, status: :unprocessable_entity }
+  #     end
+  #   end
+  # end
+  def create
+    @seat = @event.seats.build(seat_params)
+  
     respond_to do |format|
       if @seat.save
-        # format.html { redirect_to seat_url(@seat), notice: "Seat was successfully created." }
-        format.html do
-          redirect_to event_url(@event),
-            notice: 'Seat was successfully created.'
-        end
+        format.html { redirect_to event_url(@event), notice: "Seat was successfully created." }
         format.json { render :show, status: :created, location: @seat }
       else
-        # Rails.logger.debug(@seat.errors.inspect)
-        # puts "Errors: #{@seat.errors.inspect}"
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @seat.errors, status: :unprocessable_entity }
       end
     end
   end
+  
 
   # PATCH/PUT /seats/1 or /seats/1.json
   def update
