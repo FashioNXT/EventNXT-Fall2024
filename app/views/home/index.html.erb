@@ -36,10 +36,7 @@
       <div class="col-md-5 p-lg-5 mx-auto my-5">
         <h1 class="display-4 fw-bold text-white">EventNXT</h1>
         <p class="lead fw-bold text-white">Unlock exclusive rewards and discounts by joining EventNXT's Referral Rewards Program, where every friend you invite brings you one step closer to your next unforgettable experience!</p>
-        <%= link_to 'Login / Register', new_user_session_path, class: 'btn btn-primary fw-bold' %>
-        <%= form_tag '/oauth/authorize', method: :post do %>
-            <%= button_tag "Sign in with Events 360", type: :submit, data: { turbo: "false" }, class: 'btn btn-success fw-bold', style: "margin-top: 10%" %>
-        <% end %>
+        <%= button_to 'Sign in with Events 360', user_events360_omniauth_authorize_path, method: :post, data: {turbo: false}, class: 'btn btn-success fw-bold' %>
       </div>
       <div class="product-device shadow-sm d-none d-md-block"></div>
       <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>

@@ -45,14 +45,15 @@ Rails.application.routes.draw do
     to: 'guests#update_commited_seats', as: 'update_commited_seats'
 
   devise_for :users,
-    controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+    controllers: { omniauth_callbacks: 'users/omniauth_callbacks' },
+    omniauth_providers: %i[events360 eventbrite]
 
-  devise_scope :user do
-    post 'oauth/authorize', to: 'users/authorizelogin#authorize_event360'
-    get 'oauth/authorize', to: 'users/authorizelogin#authorize_event360'
-    get 'auth/events360/callback', to: 'users/omniauth_callbacks#events360'
-    post 'auth/events360/callback', to: 'users/omniauth_callbacks#events360'
-  end
+  # devise_scope :user do
+  #   post 'oauth/authorize', to: 'users/authorizelogin#authorize_event360'
+  #   get 'oauth/authorize', to: 'users/authorizelogin#authorize_event360'
+  #   get 'auth/events360/callback', to: 'users/omniauth_callbacks#events360'
+  #   post 'auth/events360/callback', to: 'users/omniauth_callbacks#events360'
+  # end
 
   resources :events do
     resources :seats

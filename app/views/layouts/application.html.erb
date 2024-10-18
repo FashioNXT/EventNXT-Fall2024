@@ -23,8 +23,12 @@
     
     <!--===================-->
     <!--to add shared links based on user authentication-->
-    <%= render "shared/user_detail"%>
+    <%= render "shared/navigation"%>
     <!--===================-->
+
+    <div>
+      <%= render 'shared/flash' %>
+    </div>
     
     
     <%= yield %>

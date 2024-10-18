@@ -4,12 +4,16 @@ require 'omniauth-oauth2'
 
 module OmniAuth
   module Strategies
+    # Custom OAuth Strategy for Event360
     class Events360 < OmniAuth::Strategies::OAuth2
       option :name, :events360
 
-      option :client_options,
-        site: ENV['NXT_APP_URL'],
-        authorize_path: '/oauth/authorize'
+      option :client_options, {
+        site: ENV['EVENT360_URL'],
+        authorize_url: "#{ENV['EVENT360_URL']}/oauth/authorize",
+        token_url: "#{ENV['EVENT360_URL']}/oauth/token",
+        scope: 'public'
+      }
 
       uid do
         raw_info['id']

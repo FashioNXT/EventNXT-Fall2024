@@ -272,8 +272,13 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  config.omniauth :events360, ENV['NXT_APP_ID'], ENV['NXT_APP_SECRET'], callback_url: 'auth/events360/callback',
-    scope: 'public'
+  config.omniauth :events360,
+    ENV['EVENT360_CLIENT_ID'],
+    ENV['EVENT360_CLEINT_SECRET']
+
+  config.omniauth :eventbrite,
+    ENV['EVENTBRITE_CLIENT_ID'],
+    ENV['EVENTBRITE_CLIENT_SECRET']
   # <!--===================-->
   # <!--to allow google authentication-->
   # config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_CLIENT_ID'], ENV['GOOGLE_OAUTH_CLIENT_SECRET']

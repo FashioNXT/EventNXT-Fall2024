@@ -1,44 +1,33 @@
 module Users
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     def events360
-      Rails.logger.debug("Complete Request: #{request.inspect}")
-      Rails.logger.debug("Request Method: #{request.method}")
-      Rails.logger.debug("Request Path: #{request.fullpath}")
-      Rails.logger.debug("Request Parameters: #{params.inspect}")
+      # Omniauth middleware exchange access code with token underhood
+      auth = request.env['omniauth.auth']
 
-      # Exchange authorization code for an access token
-      exchange_code_for_token(params[:code])
-    end
+      @user = User.from_omniauth(auth, current_user)
 
-    private
-
-    def exchange_code_for_token(code)
-      events_360_app_url = ENV['NXT_APP_URL'].to_s
-      events_360_client_id = ENV['NXT_APP_ID'].to_s
-      events_360_client_secret = ENV['NXT_APP_SECRET'].to_s
-      event_nxt_url = ENV['EVENT_NXT_APP_URL'].to_s
-
-      redirect_uri = "#{event_nxt_url}/auth/events360/callback"
-      client = OAuth2::Client.new(events_360_client_id, events_360_client_secret,
-        site: events_360_app_url)
-
-      begin
-        access = client.auth_code.get_token(code, redirect_uri:)
-      rescue OAuth2::Error => e
-        Rails.logger.error("OAuth2 error: #{e.message}")
-        redirect_to new_user_session_path,
-          alert: 'Failed to authenticate via Event360.'
-        return
-      end
-
-      @user = User.from_omniauth(access)
       if @user.present?
-        session[:user_id] = @user.id
+        Rails.logger.warn("User #{@user} login through CRM")
         sign_in_and_redirect @user, event: :authentication
       else
+        Rails.logger.warn('Login through CRM failed')
         flash.alert = 'Invalid username/email or password'
-        redirect_to new_user_session_path
+        redirect_to root_path # new_user_session_path
       end
+    end
+
+    def eventbrite
+      # Omniauth middleware exchange access code with token underhood
+      auth = request.env['omniauth.auth']
+
+      @user = User.from_omniauth(auth, current_user)
+
+      if @user.persisted?
+        flash[:notice] = 'Eventbrite account linked successfully.'
+      else
+        flash[:alert] = 'There was a problem linking your Eventbrite account'
+      end
+      redirect_to events_path
     end
   end
 end

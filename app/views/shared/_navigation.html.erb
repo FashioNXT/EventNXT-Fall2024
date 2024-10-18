@@ -1,0 +1,17 @@
+<!--===================-->
+<!--this file is created to provide shared links for all pages-->
+
+<div id="navigation-header" class="header">
+  <div id="navigation-user-info" class="user-info">
+    Hi, <%= current_user.email %>!
+  </div>
+  <div class="nav-links">
+    <%= link_to 'Home', root_path, html: { class: "navigation-link" } %> | 
+    <%= link_to 'Event Dashboard', events_path, html: { class: "navigation-link" } %> |
+    <%= link_to 'Email Service', email_services_path, html: { class: "navigation-link" } %> |
+    <% if user_signed_in? %>
+      <%= link_to '"Sign Out', destroy_user_session_path, method: :delete html: { class: "navigation-auth" }%>
+    <% else %>
+      <%= link_to 'Sign In', user_events360_omniauth_authorize_path { class: "navigation-auth" }%>
+    <% end %>
+</div>
