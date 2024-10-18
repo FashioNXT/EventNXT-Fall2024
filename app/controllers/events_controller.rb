@@ -52,6 +52,7 @@ class EventsController < ApplicationController
           end
         end
       end
+
     else
       flash[:notice] = 'No box office spreadsheet uploaded for this event'
       @event_box_office_data = []

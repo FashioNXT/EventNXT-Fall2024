@@ -190,7 +190,7 @@ RSpec.describe EventsController, type: :controller do
 
       it 'sets a flash notice message' do
         delete :destroy, params: { id: event.id }
-        expect(flash[:notice]).to eq('Event was successfully destroyed.')
+        expect(flash[:notice]).to eq("Event was successfully destroyed.")
       end
       it "destroys the requested event" do
         expect {
