@@ -9,6 +9,14 @@ Document Summary: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/do
 Code climate report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/documentation/Fall2024/code-cliamte-report.pdf
 Team agreement Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/team_agreement_report.md
 
+# Sprint 2 MVP
+
+- Heroku deployment: https://eventnxt-fall2024-dev-67890e38df3f.herokuapp.com/
+- Linear (Project Tracker): https://linear.app/eventnxt/team/EVE
+  - Invitation link: https://linear.app/eventnxt/join/7a62856b531c96c8fd64df5b68f49ce5?s=1
+- Slack: https://app.slack.com/client/T07MYFJ1213/C07MYFJ2MAR
+- Team agreement Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/team_agreement_report.md
+
 
 # How to Locally Run the Applicatiion
 
@@ -19,11 +27,6 @@ git clone https://github.com/FashioNXT/EventNXT-Fall2024.git
 ```
 
 ## Recommanded: Running in Containers by Docker
-
-> For now you need to swtich to the branch: `setup-ming`.
-> ```bash
-> git checkout setup-ming 
-> ```
 
 Please check you have Docker deamon running on your machine. If not, install it following https://docs.docker.com/engine/install/.
 

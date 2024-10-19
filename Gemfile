@@ -84,6 +84,7 @@ group :test do
   gem 'faker'
   gem 'selenium-webdriver'
   gem 'webdrivers'
+  gem 'rubycritic'
   # Code coverage for Ruby
   gem 'rails-controller-testing'
   gem 'rspec-rails'
