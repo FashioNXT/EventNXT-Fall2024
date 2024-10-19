@@ -86,6 +86,7 @@
         <th>Total Seats</th>
         <th>Allocated Seats</th>
         <th>Committed Seats</th>
+        <th>Booked Seats</th>
         <th>Remaining Seats</th>
       </tr>
     </thead>
@@ -98,7 +99,8 @@
           <td><%= category[:total_seats] %></td>
           <td><%= category[:allocated_seats] %></td>
           <td><%= category[:committed_seats] %></td>
-          <td><%= category[:total_seats] - (category[:committed_seats]) %></td> 
+          <td><%= category[:tickets_sold] %></td>
+          <td><%= category[:total_seats] - (category[:committed_seats]) - category[:tickets_sold] %></td> 
         </tr>
       <% end %>
     </tbody>
