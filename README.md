@@ -12,11 +12,12 @@ Team agreement Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/d
 # Sprint 2 MVP
 
 - Heroku deployment: https://eventnxt-fall2024-dev-67890e38df3f.herokuapp.com/
+- Document Summary: 
+- Code Quality Report: 
+- Team agreement Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/team_agreement_report.md
 - Linear (Project Tracker): https://linear.app/eventnxt/team/EVE
   - Invitation link: https://linear.app/eventnxt/join/7a62856b531c96c8fd64df5b68f49ce5?s=1
 - Slack: https://app.slack.com/client/T07MYFJ1213/C07MYFJ2MAR
-- Team agreement Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/team_agreement_report.md
-
 
 # How to Locally Run the Applicatiion
 
