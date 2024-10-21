@@ -1,0 +1,14 @@
+<tr id=<%= ticket_sale_dom_id(ticket_sale) %> is="turbo-frame-tr">
+  <td><%= ticket_sale.first_name %></td>
+  <td><%= ticket_sale.last_name %></td>
+  <td><%= ticket_sale.email %></td>
+  <td><%= ticket_sale.affiliation %></td>
+  <td><%= ticket_sale.category %></td>
+  <td><%= ticket_sale.section %></td>
+  <td><%= ticket_sale.tickets %></td>
+  <td><%= number_to_currency(ticket_sale.amount) %></td>
+  <td>
+    <%= link_to "Edit", edit_event_ticket_sale_path(event, ticket_sale), data: { turbo_stream: true }%>
+    <%= button_to "Destroy", event_ticket_sale_path(event, ticket_sale), method: :delete, data: { turbo_stream: true, confirm: "Are you sure?" } %>
+  </td>
+</tr>

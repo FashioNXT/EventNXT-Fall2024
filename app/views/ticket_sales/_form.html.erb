@@ -1,0 +1,43 @@
+<%= form_with(model: [ticket_sale.event, ticket_sale], local: false, html: { id: ticket_sale_form_dom_id() }) do |f| %> 
+<div>
+  <%=render partial: 'shared/form_error', locals: { model: ticket_sale} %> 
+</div>
+<div>
+    <div>
+      <%= f.label :first_name %>
+      <%= f.text_field :first_name %>
+    </div>
+    <div>
+      <%= f.label :last_name %>
+      <%= f.text_field :last_name %>
+    </div>
+    <div>
+      <%= f.label :email %>
+      <%= f.email_field :email %>
+    </div>
+    <div>
+      <%= f.label :affiliation %>
+      <%= f.text_field :affiliation %>
+    </div>
+    <div>
+      <%= f.label :category %>
+      <%= f.text_field :category %>
+    </div>
+    <div>
+      <%= f.label :section %>
+      <%= f.text_field :section %>
+    </div>
+    <div>
+      <%= f.label :tickets %>
+      <%= f.number_field :tickets %>
+    </div>
+    <div>
+      <%= f.label :amount %>
+      <%= f.number_field :amount, step: 0.01 %>
+    </div>
+    <div> 
+      <%= f.submit "Save", class: "btn btn-primary" %>
+    </div>
+</div>
+ <% end %>
+

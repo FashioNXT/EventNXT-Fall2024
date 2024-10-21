@@ -1,0 +1,25 @@
+<h2 id="ticket-sales-title">Box Office Sales</h2>
+
+<strong>
+  NOTIFICATION (!): Please upload .xlsx file having column names exactly 'Email', 'Category', 'Section', 'Tickets' and 'Amount', among other chosen columns, otherwise the corresponding data cannot be 
+reflected correctly in the following referral table, causing eventually mistakes on the reward calculation and other considerations. We clarify further that the corresponding 'Tickets' means the quantity
+of the tickets bought, and 'Amount' means on the other hand the total payment made for the tickets from the person for this event.
+</strong>
+
+<div id="ticket-sales-import">
+  <%= form_with(url: import_spreadsheet_event_ticket_sales_path(event), multipart: true) do |form|%>
+    <div class="form-field">
+      <%= form.label "Choose a Spreadsheet File" %>
+      <%= form.file_field :file, id: "event-show-import-box-office-sales-input" %>
+      <%= form.hidden_field :event_id, value: event.id %>
+    </div>
+
+    <div class="form-action">
+      <%= form.submit "Import Box Office Sales"%>
+    </div>
+  <% end %>
+</div>
+
+<div id=<%= ticket_sale_form_dom_id() %> hidden="true"></div>
+
+<%= render partial: "ticket_sales/table", locals: {event: event, ticket_sales: ticket_sales }%>

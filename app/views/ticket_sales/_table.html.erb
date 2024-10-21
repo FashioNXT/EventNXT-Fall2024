@@ -1,0 +1,22 @@
+<table id=<%= ticket_sales_table_dom_id() %>>
+  <thead>
+    <tr>
+      <th><%= sortable("first_name", "First Name")%></th>
+      <th><%= sortable("last_name", "Last Name")%></th>
+      <th><%= sortable("email", "Email*")%></th>
+      <th><%= sortable("affiliation", "Affiliation")%>
+      <th><%= sortable("category", "Category*")%></th>
+      <th><%= sortable("section", "Section*")%></th>
+      <th><%= sortable("tickets", "Tickets*")%></th>
+      <th><%= sortable("amount", "Amount*")%></th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% ticket_sales.each do |ticket_sale| %>
+      <%= render partial: "ticket_sales/ticket_sale", locals: {event: event, ticket_sale: ticket_sale } %>
+    <% end %>
+  </tbody>
+</table>
+
+

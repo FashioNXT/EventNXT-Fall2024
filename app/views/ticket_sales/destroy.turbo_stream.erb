@@ -1,0 +1,5 @@
+<%= turbo_stream.remove ticket_sale_dom_id(@ticket_sale) %>
+
+<%= turbo_stream.replace seats_summary_table_dom_id() do %>
+  <%= render partial: "seats/summary_table", locals: { event: @event } %>
+<% end %>

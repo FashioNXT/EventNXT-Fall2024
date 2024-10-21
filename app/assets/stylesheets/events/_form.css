@@ -1,0 +1,14 @@
+.events-form-group {
+    margin-bottom: 20px;
+}
+
+.events-form-group-label {
+    display: block;
+}
+
+.events-form-group-input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
