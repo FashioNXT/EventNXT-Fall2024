@@ -48,7 +48,7 @@ Rails.application.routes.draw do
 
   # Define custom sessions routes
   devise_scope :user do
-    delete 'users/sign_out', to: 'users/sessions#destroy', as: :destroy_user_sessioni
+    delete 'users/sign_out', to: 'users/sessions#destroy', as: :destroy_user_session
   end
 
   resources :events do
