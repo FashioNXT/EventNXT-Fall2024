@@ -1,38 +1,46 @@
 # frozen_string_literal: true
 
+# Model for Users
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-    :recoverable, :rememberable, :validatable,
-    :omniauthable, omniauth_providers: [:events360]
+  devise :omniauthable, omniauth_providers: %i[events360 eventbrite]
 
-  # <!--===================-->
-  # <!--to add google authentication-->
-  # :omniauthable, omniauth_providers: [:google_oauth2]
-  # <!--===================-->
+  # Custom Validations
+  validates :uid, presence: true
+  validates :provider, presence: true
+  validates :uid, uniqueness: { scope: :provider, message: 'and provider combination must be unique' }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
+
   has_many :events
 
-  # <!--===================-->
-  # <!--to use google user info to create an account-->
-  def self.from_google(info)
-    create_with(uid: info[:uid], provider: 'google',
-      password: Devise.friendly_token[0, 20]).find_or_create_by!(email: info[:email])
-  end
+  class << self
+    def from_omniauth(auth, current_user = nil)
+      case auth.provider.to_s
+      when 'events360'
+        return self.from_omniauth_events360(auth)
+      end
+      current_user
+    end
 
-  # <!--===================-->
-  def self.from_omniauth(access_token)
-    # puts access_token.inspect
-    data = access_token.get('/api/user').parsed
-    # puts data
-    email = data['email']
-    name = data['name']
-    password = SecureRandom.urlsafe_base64(20).tr('lIO0', 'sxyz')
-    # User.find_or_create_by(email:)
-    puts "Outer name: #{name}"
-    user = User.find_by(email:)
-    puts "user: #{user}"
-    user = User.find_or_create_by(email:)
-    user.update(name:, password:, password_confirmation: password)
+    private
+
+    def from_omniauth_events360(auth)
+      user_info = {
+        uid: auth.uid.to_s,
+        provider: auth.provider.to_s,
+        email: auth.info.email,
+        name: auth.info.name
+      }
+
+      user = User.find_by(uid: user_info[:uid], provider: user_info[:provider])
+
+      if user.present?
+        user.update(user_info)
+        user
+      else
+        User.create(user_info)
+      end
+    end
   end
 end
