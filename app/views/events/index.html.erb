@@ -10,6 +10,18 @@
   </div>
 </div>
 
+<!-- Ticket Sales -->
+<div>
+  <% if user_signed_in? %>
+    <% unless current_user.eventbrite_token.present? %>
+      <%= button_to 'Connect to Eventbrite', user_eventbrite_omniauth_authorize_path, method: :post, data: {turbo: false}, class: 'btn btn-primary' %>
+    <% else %>
+      <p>Your Eventbrite account is connected.</p>
+      <!-- <%= render 'eventbrite_events/index' %> -->
+    <% end %>
+  <% end %>
+</div>
+
 
 <div style="text-align: center;">
   <%= link_to "Create New Event", new_event_path, class: "btn btn-primary", style: "margin-bottom: 20px; display: inline-block;" %>

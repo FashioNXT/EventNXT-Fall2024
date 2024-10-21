@@ -6,7 +6,8 @@ module OmniAuth
   module Strategies
     # Custom OAuth Strategy for Event360
     class Events360 < OmniAuth::Strategies::OAuth2
-      option :name, :events360
+      Rails.logger.info 'Loading OmniAuth::Strategies::Events360'
+      option :name, 'events360'
 
       option :client_options, {
         site: ENV['EVENT360_URL'],
