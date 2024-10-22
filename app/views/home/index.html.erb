@@ -38,7 +38,7 @@
         <p class="lead fw-bold text-white">Unlock exclusive rewards and discounts by joining EventNXT's Referral Rewards Program, where every friend you invite brings you one step closer to your next unforgettable experience!</p>
         
         <% unless user_signed_in? %>
-          <%= button_to 'Sign in with Events 360', user_events360_omniauth_authorize_path, method: :post, data: {turbo: false}, class: 'btn btn-success fw-bold' %>
+          <%= button_to 'Sign in with Events360', user_events360_omniauth_authorize_path, method: :post, data: {turbo: false}, class: 'btn btn-success fw-bold' %>
         <% end %>
         
       </div>

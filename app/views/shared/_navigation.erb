@@ -2,7 +2,7 @@
 <div id="navigation-header" class="header">
   <% if user_signed_in? %>
     <div id="navigation-user-info" class="user-info">
-      Hi, <%= current_user.email %>!
+      Welcome, <%= current_user.name.presence || current_user.email %>!
     </div>
   <% end %>
   <div class="nav-links">
