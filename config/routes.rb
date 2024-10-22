@@ -42,6 +42,7 @@ Rails.application.routes.draw do
   patch '/update_commited_seats/:rsvp_link',
     to: 'guests#update_commited_seats', as: 'update_commited_seats'
 
+  ## == Devise OAuth ==
   devise_for :users,
     controllers: { omniauth_callbacks: 'users/omniauth_callbacks' },
     omniauth_providers: %i[events360]

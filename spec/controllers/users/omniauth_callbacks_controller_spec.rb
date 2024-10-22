@@ -46,6 +46,80 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
         expect(flash[:alert]).to be_present
       end
     end
+
+    context 'when in development mode,' do
+      before do
+        # Set Rails environment to development for the test
+        allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
+
+        # Mock OmniAuth responses for different users
+        OmniAuth.config.mock_auth[:events360_user1] = OmniAuth::AuthHash.new({
+          provider: 'events360',
+          uid: 'user1_uid',
+          info: {
+            email: 'user1@example.com',
+            name: 'User One'
+          }
+        })
+
+        OmniAuth.config.mock_auth[:events360_user2] = OmniAuth::AuthHash.new({
+          provider: 'events360',
+          uid: 'user2_uid',
+          info: {
+            email: 'user2@example.com',
+            name: 'User Two'
+          }
+        })
+
+        OmniAuth.config.mock_auth[:events360_user3] = OmniAuth::AuthHash.new({
+          provider: 'events360',
+          uid: 'user3_uid',
+          info: {
+            email: 'user3@example.com',
+            name: 'User Three'
+          }
+        })
+      end
+
+      it 'authenticates as user1' do
+        session[:user] = 'user1'
+        get :events360
+
+        # Expect the user to be found or created with the mock_auth for user1
+        user = User.find_by(uid: 'user1_uid', provider: 'events360')
+        expect(user).to be_present
+
+        # Expect user to be signed in
+        expect(controller.current_user).to eq(user)
+        expect(response).to redirect_to(events_path)
+      end
+
+      it 'authenticates as user2' do
+        session[:user] = 'user2'
+        get :events360
+
+        # Expect the user to be found or created with the mock_auth for user1
+        user = User.find_by(uid: 'user2_uid', provider: 'events360')
+        expect(user).to be_present
+
+        # Expect user to be signed in
+        expect(controller.current_user).to eq(user)
+        expect(response).to redirect_to(events_path)
+      end
+
+      it 'authenticates as user3' do
+        session[:user] = 'user3'
+        get :events360
+
+        # Expect the user to be found or created with the mock_auth for user1
+        user = User.find_by(uid: 'user3_uid', provider: 'events360')
+        expect(user).to be_present
+
+        # Expect user to be signed in
+        expect(controller.current_user).to eq(user)
+        expect(response).to redirect_to(events_path)
+      end
+    end
   end
 
   describe '#failure' do
