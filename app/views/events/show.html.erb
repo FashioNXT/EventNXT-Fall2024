@@ -98,7 +98,7 @@
           <td><%= category[:guests_count] %></td>
           <td><%= category[:total_seats] %></td>
           <td><%= category[:allocated_seats] %></td>
-          <td><%= category[:committed_seats] %></td>
+          <td><%= category[:committed_seats]+category[:tickets_sold] %></td>
           <td><%= category[:tickets_sold] %></td>
           <td><%= category[:total_seats] - (category[:committed_seats]) - category[:tickets_sold] %></td> 
         </tr>
