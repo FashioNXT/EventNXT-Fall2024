@@ -3,42 +3,28 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  describe 'associations' do
+    it { should have_many(:events).dependent(:destroy) }
+  end
+
   describe 'validations' do
     it 'is valid with valid attributes' do
       user = build(:user)
       expect(user).to be_valid
     end
 
-    it 'is invalid without a uid' do
-      user = build(:user, uid: nil)
-      expect(user).to_not be_valid
-      expect(user.errors[:uid]).to include("can't be blank")
-    end
+    it { should validate_presence_of(:uid) }
+    it { should validate_presence_of(:provider) }
+    it { should validate_presence_of(:email) }
+    it { should validate_uniqueness_of(:email).case_insensitive }
 
-    it 'is invalid without a provider' do
-      user = build(:user, provider: nil)
-      expect(user).to_not be_valid
-      expect(user.errors[:provider]).to include("can't be blank")
-    end
+    subject { create(:user) }
 
-    it 'is invalid without an email' do
-      user = build(:user, email: nil)
-      expect(user).to_not be_valid
-      expect(user.errors[:email]).to include("can't be blank")
-    end
+    it 'validates uniqueness of uid scoped to provider' do
+      duplicate_user = build(:user, uid: subject.uid, provider: subject.provider)
 
-    it 'is invalid with a non-unique email' do
-      create(:user, email: 'user@example.com')
-      user = build(:user, email: 'user@example.com')
-      expect(user).to_not be_valid
-      expect(user.errors[:email]).to include('has already been taken')
-    end
-
-    it 'is invalid if the uid and provider combination is not unique' do
-      create(:user, provider: 'fake_provider', uid: '123456')
-      user = build(:user, provider: 'fake_provider', uid: '123456')
-      expect(user).to_not be_valid
-      expect(user.errors[:uid]).to include('and provider combination must be unique')
+      expect(duplicate_user).to_not be_valid
+      expect(duplicate_user.errors[:uid]).to include('and provider combination must be unique')
     end
   end
 
@@ -109,6 +95,10 @@ RSpec.describe User, type: :model do
     end
 
     context 'when user does not exist,' do
+      before do
+        User.delete_all # Ensure no users exist in the database
+      end
+
       let(:auth) do
         OmniAuth::AuthHash.new(
           provider: user.provider,
@@ -126,10 +116,10 @@ RSpec.describe User, type: :model do
         end.to change { User.count }.by(1)
 
         new_user = User.last
-        expect(new_user.uid).to eq(user.uid)
-        expect(new_user.provider).to eq(user.provider)
-        expect(new_user.email).to eq(user.email)
-        expect(new_user.name).to eq(user.name)
+        expect(new_user.uid).to eq(auth.uid)
+        expect(new_user.provider).to eq(auth.provider)
+        expect(new_user.email).to eq(auth.info.email)
+        expect(new_user.name).to eq(auth.info.name)
       end
     end
   end

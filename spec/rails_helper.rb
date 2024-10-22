@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# Load and launch SimpleCov at the very top
+# If SimpleCov starts after your application code is already loaded (via require),
+# it won't be able to track your files and their coverage!
+# The SimpleCov.start must be issued before any of your application code is required!
+require 'simplecov'
+SimpleCov.start 'rails'
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
@@ -7,12 +14,6 @@ require_relative '../config/environment'
 require 'rspec/rails'
 require 'active_job'
 require 'devise'
-
-# <!--===================-->
-# <!--to analyze test coverage-->
-require 'simplecov'
-SimpleCov.start 'rails'
-# <!--===================-->
 
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?

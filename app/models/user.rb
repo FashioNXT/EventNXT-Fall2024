@@ -12,7 +12,7 @@ class User < ApplicationRecord
   validates :uid, uniqueness: { scope: :provider, message: 'and provider combination must be unique' }
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
-  has_many :events
+  has_many :events, dependent: :destroy
 
   class << self
     def from_omniauth(auth, current_user = nil)
