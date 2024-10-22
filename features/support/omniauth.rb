@@ -13,3 +13,9 @@ OmniAuth.config.mock_auth[:events360] = OmniAuth::AuthHash.new({
 Before('@omniauth_test') do
   OmniAuth.config.test_mode = true
 end
+
+Before('@omniauth_test_failure') do
+  OmniAuth.config.test_mode = true
+  # Simulate OAuth failure
+  OmniAuth.config.mock_auth[:events360] = :invalid_credentials
+end
