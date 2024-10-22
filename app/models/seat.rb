@@ -23,7 +23,7 @@ class Seat < ApplicationRecord
   validates :total_count, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   # Custom validation to ensure uniqueness of category and section within the same event
-  validate :unique_category_and_section_within_event
+  validate :unique_category_and_section_within_event, on: :create
 
   private
 
