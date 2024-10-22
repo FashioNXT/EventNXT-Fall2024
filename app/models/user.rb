@@ -20,7 +20,7 @@ class User < ApplicationRecord
       when 'events360'
         return self.from_omniauth_events360(auth)
       end
-      current_user
+      nil
     end
 
     private

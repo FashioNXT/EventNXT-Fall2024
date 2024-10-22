@@ -51,6 +51,9 @@ Rails.application.routes.draw do
     delete 'users/sign_out', to: 'users/sessions#destroy', as: :destroy_user_session
   end
 
+  # Define custom devise routes for OmniAuth-based authentication failures
+  get '/users/auth/failure', to: 'users/omniauth_callbacks#failure'
+
   resources :events do
     resources :seats
     resources :guests do
