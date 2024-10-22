@@ -18,33 +18,41 @@ class Guest < ApplicationRecord
   validates :alloted_seats,
     numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :commited_seats,
-            numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  # validates :guest_commited, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  # validate :allocated_seats_not_exceed_total
 
+  # def allocated_seats_not_exceed_total
+  #   if category.present? && event.present?
+  #     seat = event.seats.find_by(category: category)
+  #     if seat.present?
+  #       existing_guest = event.guests.find_by(id: self.id)
+  #       if existing_guest.present?
+  #         total_allocated_seats = event.guests.where(category: category).sum(:alloted_seats) - existing_guest.alloted_seats.to_i
+  #         total_commited_seats = event.guests.where(category: category).sum(:commited_seats) - existing_guest.commited_seats.to_i
+  #       else
+  #         total_allocated_seats = event.guests.where(category: category).sum(:alloted_seats)
+  #         total_commited_seats = event.guests.where(category: category).sum(:commited_seats)
+  #       end
+  #       remaining_allocated_seats = [0, seat.total_count - total_allocated_seats].max
+  #       remaining_committed_seats = [0, total_allocated_seats + alloted_seats.to_i - total_commited_seats].max
 
-  validate :allocated_seats_within_limit          
+  #       puts event.guests.where(category: category).sum(:alloted_seats)
+  #       puts total_allocated_seats
+  #       puts alloted_seats.to_i
+  #       puts total_commited_seats
 
-  def allocated_seats_within_limit
-    return unless category.present? && event.present?
+  #       if (total_allocated_seats + alloted_seats.to_i) > seat.total_count
+  #         errors.add(:alloted_seats, "cannot exceed the total allocated seats (#{remaining_allocated_seats} remaining) for the category #{category}")
+  #       end
 
-    seat = event.seats.find_by(category: category, section: section)
-    if seat.present?
-      total_allocated_seats = event.guests.where(category: category, section: section).sum(:alloted_seats) - self.alloted_seats_was.to_i
-      total_commited_seats = event.guests.where(category: category, section: section).sum(:commited_seats) - self.commited_seats_was.to_i
+  #       if (total_commited_seats + commited_seats.to_i) > total_allocated_seats + alloted_seats.to_i
+  #         errors.add(:commited_seats, "cannot exceed the total allocated seats (#{remaining_committed_seats} remaining) for the category #{category}")
+  #       end
+  #     end
+  #   end
 
-      remaining_allocated_seats = seat.total_count - total_allocated_seats
-      remaining_committed_seats = total_allocated_seats + self.alloted_seats.to_i - total_commited_seats
-
-      if (total_allocated_seats + alloted_seats.to_i) > seat.total_count
-        errors.add(:alloted_seats, "cannot exceed the total available seats (#{remaining_allocated_seats} remaining) in the category #{category} and section #{section}")
-      end
-
-      if (total_commited_seats + commited_seats.to_i) > total_allocated_seats + alloted_seats.to_i
-        errors.add(:commited_seats, "cannot exceed the available committed seats (#{remaining_committed_seats} remaining) for the category #{category} and section #{section}")
-      end
-    else
-      errors.add(:base, "No seats available in the selected category and section")
-    end
-  end
+  # end
 
   def self.validate_import(_spreadsheet)
     { status: true, message: 'Spreadsheet validated successfully' }
