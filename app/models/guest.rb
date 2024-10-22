@@ -127,7 +127,7 @@ class Guest < ApplicationRecord
     result[:status] = true
     result[:message] = "Guests imported successfully"
     if duplicate_emails.any?
-      result[:message] += " Duplicate emails found: #{duplicate_emails.join(', ')}"
+      result[:message] = "Duplicate emails found: #{duplicate_emails.join(', ')}"
     end
   
     result[:guests] = new_guests
