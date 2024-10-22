@@ -142,6 +142,12 @@ class GuestsController < ApplicationController
       end
       if result[:message].match?(/Duplicate emails found/)
         flash[:warning] = result[:message]
+      elsif result[:message].match?(/Empty emails found/)
+        flash[:warning] = result[:message]
+      elsif result[:message].match?(/Empty categories found/)
+        flash[:warning] = result[:message]
+      elsif result[:message].match?(/Empty sections found/)
+        flash[:warning] = result[:message]
       else
         flash[:success] = result[:message]
       end

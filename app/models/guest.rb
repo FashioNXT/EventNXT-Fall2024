@@ -66,6 +66,9 @@ class Guest < ApplicationRecord
   
     new_guests = []
     duplicate_emails = []
+    empty_emails = []
+    empty_categories = []
+    empty_sections = []
     existing_guests = Guest.where(event_id: event_id).pluck(:email, :id).to_h
   
     # Iterate over each worksheet
@@ -86,7 +89,23 @@ class Guest < ApplicationRecord
         section = row['Section']
         alloted_seats = row['Allotted Seats'].to_i
         commited_seats = row['Committed Seats'].to_i
-  
+
+        # Store the row number of the empty email
+        if email.blank?
+          empty_emails << i 
+          next
+        end
+        # Store the row number of the empty category
+        if category.blank?
+          empty_categories << i
+          next
+        end
+        # Store the row number of the empty section
+        if section.blank?
+          empty_sections << i
+          next
+        end
+
         guest = Guest.find_or_initialize_by(email: email, event_id: event_id)
         if guest.new_record?
           guest.assign_attributes(
@@ -124,10 +143,21 @@ class Guest < ApplicationRecord
       end
     end
   
+    if empty_emails.any?
     result[:status] = true
-    result[:message] = "Guests imported successfully"
-    if duplicate_emails.any?
+    result[:message] = "Empty emails found at row: #{empty_emails.join(', ')}"
+    elsif duplicate_emails.any?
+      result[:status] = true
       result[:message] = "Duplicate emails found: #{duplicate_emails.join(', ')}"
+    elsif empty_categories.any?
+      result[:status] = true
+      result[:message] = "Empty categories found at row: #{empty_categories.join(', ')}"
+    elsif empty_sections.any?
+      result[:status] = true
+      result[:message] = "Empty sections found at row: #{empty_sections.join(', ')}"
+    else
+      result[:status] = true
+      result[:message] = "Guests imported successfully"
     end
   
     result[:guests] = new_guests
