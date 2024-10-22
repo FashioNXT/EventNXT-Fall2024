@@ -34,3 +34,9 @@ Scenario: Check for duplicate emails when uploading guest list
   And I attach the file "new_ticketlist.xlsx" to the field "guest-list-attach"
   And I click on the "Upload Guest" button
   Then I should see "Duplicate emails found" in the error messages
+
+Scenario: Check for empty email found when uploading guest list
+  Given I am on the event page "Fake Event"
+  And I attach the file "check_email.xlsx" to the field "guest-list-attach"
+  And I click on the "Upload Guest" button
+  Then I should see "Empty emails found" in the error messages
