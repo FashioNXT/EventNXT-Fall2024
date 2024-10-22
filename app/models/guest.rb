@@ -2,7 +2,7 @@ require('roo')
 
 class Guest < ApplicationRecord
   belongs_to :event
-  has_many :referrals, dependent: :destroy
+  has_many :email_services, dependent: :destroy
 
   before_create :generate_rsvp_link
 
@@ -45,27 +45,37 @@ class Guest < ApplicationRecord
       errors.add(:base, "No seats available in the selected category and section")
     end
   end
-
-  def self.validate_import(_spreadsheet)
+  def self.category_and_section_present?(category, section, event_id)
+    Seat.exists?(category: category, section: section, event_id: event_id)
+  end
+  def self.validate_import(__spreadsheet)
     { status: true, message: 'Spreadsheet validated successfully' }
   end
 
   def self.import_spreadsheet(spreadsheet_file, event_id)
     spreadsheet = Roo::Spreadsheet.open(spreadsheet_file.path)
-
+  
     result = validate_import(spreadsheet)
     return result if result[:status] == false
-
+  
+    new_guests = []
+    duplicate_emails = []
+    empty_emails = []
+    empty_categories = []
+    empty_sections = []
+    missing_seating_summary = []
+    existing_guests = Guest.where(event_id: event_id).pluck(:email, :id).to_h
+  
     # Iterate over each worksheet
     spreadsheet.sheets.each do |worksheet_name|
       worksheet = spreadsheet.sheet(worksheet_name)
-
+  
       # Assuming the first row is headers, get the header row
       header = worksheet.row(1)
-
-      (2..spreadsheet.last_row).each do |i|
-        row = Hash[[header, spreadsheet.row(i)].transpose]
-
+  
+      (2..worksheet.last_row).each do |i|
+        row = Hash[[header, worksheet.row(i)].transpose]
+  
         first_name = row['First Name']
         last_name = row['Last Name']
         email = row['Email']
@@ -75,36 +85,89 @@ class Guest < ApplicationRecord
         alloted_seats = row['Allotted Seats'].to_i
         commited_seats = row['Committed Seats'].to_i
 
-        guest = Guest.find_or_initialize_by(email:, event_id:)
-        if guest.new_record?
-          guest.assign_attributes(
-            {
-              first_name:,
-              last_name:,
-              email:,
-              affiliation:,
-              category:,
-              alloted_seats:,
-              commited_seats:,
-              section:,
-              event_id:
-            }
-          )
+        # Store the row number of the empty email
+        if email.blank?
+          empty_emails << i 
+          next
+        end
+        # Store the row number of the empty category
+        if category.blank?
+          empty_categories << i
+          next
+        end
+        # Store the row number of the empty section
+        if section.blank?
+          empty_sections << i
+          next
         end
 
+        unless Guest.category_and_section_present?(category, section, event_id)
+          missing_seating_summary << { row: i, category: category, section: section }
+          next
+        end
+
+        guest = Guest.find_or_initialize_by(email: email, event_id: event_id)
+        if guest.new_record?
+          guest.assign_attributes(
+            first_name: first_name,
+            last_name: last_name,
+            email: email,
+            affiliation: affiliation,
+            category: category,
+            alloted_seats: alloted_seats,
+            commited_seats: commited_seats,
+            section: section,
+            event_id: event_id
+          )
+        else
+          duplicate_emails << email
+          guest.assign_attributes(
+            first_name: first_name,
+            last_name: last_name,
+            affiliation: affiliation,
+            category: category,
+            alloted_seats: alloted_seats,
+            commited_seats: commited_seats,
+            section: section
+          )
+        end
+  
         begin
           guest.save!
-          result[:message] = "Guest #{guest.email} imported successfully"
+          new_guests << guest
         rescue ActiveRecord::RecordInvalid => e
           result[:status] = false
           result[:message] = e.message
+          return result
         end
       end
     end
-
+    if missing_seating_summary.any?
+      result[:status] = true
+      missing_seating_summary_messages = missing_seating_summary.map do |entry|
+        "Category and Section not found in Seating summary, '#{entry[:category]}', '#{entry[:section]}'"
+      end
+      result[:message] = missing_seating_summary_messages.join('. ')
+    elsif empty_emails.any?
+      result[:status] = true
+      result[:message] = "Empty emails found at row: #{empty_emails.join(', ')}"
+    elsif duplicate_emails.any?
+      result[:status] = true
+      result[:message] = "Duplicate emails found: #{duplicate_emails.join(', ')}"
+    elsif empty_categories.any?
+      result[:status] = true
+      result[:message] = "Empty categories found at row: #{empty_categories.join(', ')}"
+    elsif empty_sections.any?
+      result[:status] = true
+      result[:message] = "Empty sections found at row: #{empty_sections.join(', ')}"
+    else
+      result[:status] = true
+      result[:message] = "Guests imported successfully"
+    end
+  
+    result[:guests] = new_guests
     result
   end
-
   private
 
   def generate_rsvp_link

@@ -5,6 +5,22 @@
     border: 1px solid #ccc;
     border-radius: 5px;
   }
+  .error-messages {
+  color: #d9534f;
+  background-color: #f2dede;
+  border: 1px solid #ebccd1;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.error-messages h2 {
+  margin-top: 0;
+}
+
+.error-messages ul {
+  padding-left: 20px;
+}
 </style>
 
 <%# following changes are made:
@@ -15,17 +31,16 @@
 
 <div class="form-box" style="width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
 <%= form_with(model: [@event, guest]) do |form| %>
-  <% if guest.errors.any? %>
-    <div style="color: red">
-      <!-- <h2><%= pluralize(guest.errors.count, "error") %> prohibited this guest from being saved:</h2> -->
-
-      <ul>
-        <% guest.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+    <% if guest.errors.any? %>
+      <div class="error-messages">
+        <h2><%= pluralize(guest.errors.count, "error") %></h2>
+        <ul>
+          <% guest.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
   <div>
     <%= form.label :first_name, 'First Name', style: "display: block" %>
