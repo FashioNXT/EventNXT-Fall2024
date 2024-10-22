@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GuestsController < ApplicationController
   # <!--===================-->
   # <!--corresponding filter of the defined method for nested scaffold-->
@@ -28,18 +30,11 @@ class GuestsController < ApplicationController
   end
 
   # GET /guests/1/edit
-  def edit
-  end
-
-  # POST /guests or /guests.json
+  def edit; end
+  # New code
   def create
-    # @guest = Guest.new(guest_params)
-
-    # <!--===================-->
-    # <!--to post a new child instance-->
     @guest = @event.guests.build(guest_params)
-    # <!--===================-->
-
+  
     respond_to do |format|
       if Guest.exists?(email: @guest.email, event_id: @event.id)
         @guest.errors.add(:email, 'already exists')

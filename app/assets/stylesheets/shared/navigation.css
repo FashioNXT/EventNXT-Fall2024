@@ -1,0 +1,27 @@
+#navigation-header {
+    background-color: #333; color: #fff; 
+    padding: 10px 20px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+}
+
+#navigation-user-info {
+    font-weight: bold;
+}
+
+.navigation-link {
+    color: #fff; 
+    text-decoration: none; 
+    margin-right: 10px; 
+    display: inline-block;
+}
+
+.navigation-auth {
+    background-color: #ff5733; 
+    color: #fff; 
+    border: none; 
+    padding: 5px 10px; 
+    cursor: pointer; 
+    display: inline-block;
+}

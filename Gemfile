@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -82,6 +84,7 @@ group :test do
   gem 'faker'
   gem 'selenium-webdriver'
   gem 'webdrivers'
+  gem 'rubycritic'
   # Code coverage for Ruby
   gem 'rails-controller-testing'
   gem 'rspec-rails'
