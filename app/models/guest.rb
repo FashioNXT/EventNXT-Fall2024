@@ -53,7 +53,9 @@ class Guest < ApplicationRecord
   #   end
 
   # end
-
+  def self.category_and_section_present?(category, section, event_id)
+    Seat.exists?(category: category, section: section, event_id: event_id)
+  end
   def self.validate_import(_spreadsheet)
     { status: true, message: 'Spreadsheet validated successfully' }
   end
@@ -69,6 +71,7 @@ class Guest < ApplicationRecord
     empty_emails = []
     empty_categories = []
     empty_sections = []
+    missing_seating_summary = []
     existing_guests = Guest.where(event_id: event_id).pluck(:email, :id).to_h
   
     # Iterate over each worksheet
@@ -103,6 +106,11 @@ class Guest < ApplicationRecord
         # Store the row number of the empty section
         if section.blank?
           empty_sections << i
+          next
+        end
+
+        unless Guest.category_and_section_present?(category, section, event_id)
+          missing_seating_summary << { row: i, category: category, section: section }
           next
         end
 
@@ -142,10 +150,15 @@ class Guest < ApplicationRecord
         end
       end
     end
-  
-    if empty_emails.any?
-    result[:status] = true
-    result[:message] = "Empty emails found at row: #{empty_emails.join(', ')}"
+    if missing_seating_summary.any?
+      result[:status] = true
+      missing_seating_summary_messages = missing_seating_summary.map do |entry|
+        "Category and Section not found in Seating summary, '#{entry[:category]}', '#{entry[:section]}'"
+      end
+      result[:message] = missing_seating_summary_messages.join('. ')
+    elsif empty_emails.any?
+      result[:status] = true
+      result[:message] = "Empty emails found at row: #{empty_emails.join(', ')}"
     elsif duplicate_emails.any?
       result[:status] = true
       result[:message] = "Duplicate emails found: #{duplicate_emails.join(', ')}"

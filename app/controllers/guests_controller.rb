@@ -140,7 +140,9 @@ class GuestsController < ApplicationController
       if result[:status] == false
         return redirect_to event_path(params[:event_id]), alert: "Invalid file format: #{result[:message]}"
       end
-      if result[:message].match?(/Duplicate emails found/)
+      if result[:message].match?(/Category and Section not found in Seating summary,/)
+        flash[:warning] = result[:message]
+      elsif result[:message].match?(/Duplicate emails found/)
         flash[:warning] = result[:message]
       elsif result[:message].match?(/Empty emails found/)
         flash[:warning] = result[:message]
