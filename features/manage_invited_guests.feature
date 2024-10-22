@@ -26,3 +26,11 @@ Scenario: Upload guest list
   Then I should see "Anirith" in the guest list
   Then I should see "Rakesh" in the guest list
   Then I should see "Pavan" in the guest list
+  
+Scenario: Check for duplicate emails when uploading guest list
+  Given I am on the event page "Fake Event"
+  And I attach the file "guests.xlsx" to the field "guest-list-attach"
+  And I click on the "Upload Guest" button
+  And I attach the file "new_ticketlist.xlsx" to the field "guest-list-attach"
+  And I click on the "Upload Guest" button
+  Then I should see "Duplicate emails found" in the error messages
