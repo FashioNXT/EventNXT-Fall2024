@@ -1,96 +1,15 @@
 # frozen_string_literal: true
 
-Given('the following users exist:') do |table|
-  table.hashes.each do |user|
-    User.create user
-  end
+Given('I am on the events dashboard') do
+  visit events_path(@user)
 end
 
-Given('I am on the index page') do
-  visit root_path
+Given('I am on the event page {string}') do |event_title|
+  @event = FactoryBot.create(:event, title: event_title, user: @user)
+  visit event_path(@event)
 end
 
-When('I follow {string}') do |_string|
-  visit new_user_registration_path
-end
-
-Then('I should be on the Sign up page') do
-  visit new_user_registration_path
-end
-
-Then('I should be on the index page') do
-  visit root_path
-end
-
-Then('I should be on the sign up page') do
-  visit new_user_registration_path
-end
-
-Then('I should be on the Sign in page') do
-  visit new_user_session_path
-end
-
-# Below are the referral table feature deexamplifications.
-
-Given('we have a user') do
-  @user = User.create(email: 'aaaaaaa@aaaaaaa.aaa', password: 'aaaaaaaa')
-end
-
-Given('we visit the login page') do
-  visit new_user_session_path
-end
-
-Given("we enter {string} into 'Email'") do |string|
-  fill_in 'Email', with: string
-end
-
-Given("we enter {string} into 'Password'") do |string|
-  fill_in 'Password', with: string
-end
-
-Given("we click the 'Log in' button") do
-  click_button 'Log in'
-end
-
-Given('we have an event') do
-  the_event_parametrization = {
-    title: 'yy',
-    address: 'yyy',
-    description: 'yyy',
-    datetime: '04-01-2011 14:00:00 UTC'
-  }
-  @event = Event.create(the_event_parametrization)
-  @event.save
-end
-
-Given('we have seats') do
-  the_seats_parametrization = {
-    category: 'category1',
-    total_count: 80,
-    event_id: 1,
-    section: 1
-  }
-  @seat = Seat.create(the_seats_parametrization)
-  @seat.save
-end
-
-Given('we have guests') do
-  the_guest_parametrization = {
-    first_name: 'xx',
-    last_name: 'xx',
-    email: 'yyyyyyy@yyyyyyy.yyy',
-    affiliation: 'xx',
-    category: 'category1',
-    alloted_seats: 1,
-    commited_seats: 1,
-    guest_commited: 1,
-    event_id: 1,
-    section: 1
-  }
-  @guest = Guest.create(the_guest_parametrization)
-  @guest.save
-end
-
+# Below are the legacy step definitons for referal table featur
 When('we visit the new page for the referral') do
   visit new_referral_path(random_code: @guest.rsvp_link)
 end
