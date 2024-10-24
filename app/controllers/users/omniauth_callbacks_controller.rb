@@ -5,19 +5,7 @@ module Users
       @user = nil
       if Rails.env.development?
         # Mock behavior for development
-        mock_user = session[:user] || 'user1'
-        auth = case mock_user
-               when 'user1'
-                 OmniAuth.config.mock_auth[:events360_user1]
-               when 'user2'
-                 OmniAuth.config.mock_auth[:events360_user2]
-               when 'user3'
-                 OmniAuth.config.mock_auth[:events360_user3]
-               end
-        @user = User.find_or_create_by(uid: auth.uid, provider: auth.provider) do |user|
-          user.email = auth.info.email
-          user.name = auth.info.name
-        end
+        @user = self.mock_user
       else
         # Omniauth middleware exchange access code with token underhood
         auth = request.env['omniauth.auth']
@@ -35,6 +23,24 @@ module Users
     def failure
       flash[:alert] = 'Authentication failed. Please try again.'
       redirect_to root_path
+    end
+
+    private
+
+    def mock_user
+      mock_user = session[:user] || 'user1'
+      auth = case mock_user
+             when 'user1'
+               OmniAuth.config.mock_auth[Constants::Events360::Mock::USER1]
+             when 'user2'
+               OmniAuth.config.mock_auth[Constants::Events360::Mock::USER2]
+             when 'user3'
+               OmniAuth.config.mock_auth[Constants::Events360::Mock::USER3]
+             end
+      @user = User.find_or_create_by(uid: auth.uid, provider: auth.provider) do |user|
+        user.email = auth.info.email
+        user.name = auth.info.name
+      end
     end
   end
 end

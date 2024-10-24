@@ -4,7 +4,7 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :omniauthable, omniauth_providers: %i[events360 eventbrite]
+  devise :omniauthable, omniauth_providers: [Constants::Events360::SYM]
 
   # Custom Validations
   validates :uid, presence: true
@@ -17,7 +17,7 @@ class User < ApplicationRecord
   class << self
     def from_omniauth(auth, current_user = nil)
       case auth.provider.to_s
-      when 'events360'
+      when Constants::Events360::NAME
         return self.from_omniauth_events360(auth)
       end
       nil

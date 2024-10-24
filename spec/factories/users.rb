@@ -11,8 +11,8 @@ FactoryBot.define do
   end
 
   # Define multiple factories for the same model
-  trait :events360 do
-    provider { 'events360' }
+  trait Constants::Events360::SYM do
+    provider { Constants::Events360::NAME }
   end
 
   trait :with_invalid_email do

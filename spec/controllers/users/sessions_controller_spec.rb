@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Users::SessionsController, type: :controller do
-  let(:user) { create(:user, :events360) }
+  let(:user) { create(:user, Constants::Events360::SYM) }
 
   before do
     sign_in user
