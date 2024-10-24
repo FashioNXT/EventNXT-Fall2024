@@ -36,7 +36,6 @@ if Rails.env.development?
     provider :events360, setup: lambda { |env|
       request = Rack::Request.new(env)
 
-      Rails.logger.warn("PARAM USER: #{request.params[:user]}, #{request.params['user']}")
       # Store the 'user' parameter in the session during the request phase
       env['rack.session'][:user] = request.params['user'] if request.params['user'].present?
     }
