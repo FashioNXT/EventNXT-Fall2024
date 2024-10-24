@@ -1,8 +1,8 @@
 if Rails.env.development?
   OmniAuth.config.test_mode = true
 
-  OmniAuth.config.mock_auth[:events360_user1] = OmniAuth::AuthHash.new({
-    provider: 'events360',
+  OmniAuth.config.mock_auth[Constants::Events360::Mock::USER1] = OmniAuth::AuthHash.new({
+    provider: Constants::Events360::NAME,
     uid: 'user1_uid',
     info: {
       email: 'user1@example.com',
@@ -10,8 +10,8 @@ if Rails.env.development?
     }
   })
 
-  OmniAuth.config.mock_auth[:events360_user2] = OmniAuth::AuthHash.new({
-    provider: 'events360',
+  OmniAuth.config.mock_auth[Constants::Events360::Mock::USER2] = OmniAuth::AuthHash.new({
+    provider: Constants::Events360::NAME,
     uid: 'user2_uid',
     info: {
       email: 'user2@example.com',
@@ -19,8 +19,8 @@ if Rails.env.development?
     }
   })
 
-  OmniAuth.config.mock_auth[:events360_user3] = OmniAuth::AuthHash.new({
-    provider: 'events360',
+  OmniAuth.config.mock_auth[Constants::Events360::Mock::USER3] = OmniAuth::AuthHash.new({
+    provider: Constants::Events360::NAME,
     uid: 'user3_uid',
     info: {
       email: 'user3@example.com',
@@ -33,7 +33,7 @@ if Rails.env.development?
   OmniAuth.config.logger = Rails.logger
 
   Rails.application.config.middleware.use OmniAuth::Builder do
-    provider :events360, setup: lambda { |env|
+    provider Constants::Events360::SYM, setup: lambda { |env|
       request = Rack::Request.new(env)
 
       # Store the 'user' parameter in the session during the request phase

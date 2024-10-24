@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require Rails.root.join('lib', 'omniauth', 'strategies', 'events360.rb')
+
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -274,8 +276,8 @@ Devise.setup do |config|
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
   # OmniAuth configuration for Events360 with explicit strategy_class
   config.omniauth :events360,
-    ENV['EVENT360_CLIENT_ID'],
-    ENV['EVENT360_CLIENT_SECRET'],
+    Constants::Events360::CLIENT_ID,
+    Constants::Events360::CLIENT_SECRET,
     strategy_class: OmniAuth::Strategies::Events360
 
   # ==> Warden configuration

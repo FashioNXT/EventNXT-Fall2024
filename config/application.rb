@@ -20,6 +20,13 @@ module Fashionxt002
     # in config/environments, which are processed later.
     #
     # config.time_zone = "Central Time (US & Canada)"
+
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Autoload lib/constants in development
+    config.autoload_paths << Rails.root.join('lib', 'constants')
+
+    # Eager load lib/services in production
+    config.eager_load_paths << Rails.root.join('lib', 'constants')
   end
 end
