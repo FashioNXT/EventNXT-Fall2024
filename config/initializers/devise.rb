@@ -275,7 +275,7 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
   # OmniAuth configuration for Events360 with explicit strategy_class
-  config.omniauth :events360,
+  config.omniauth Constants::Events360::SYM,
     Constants::Events360::CLIENT_ID,
     Constants::Events360::CLIENT_SECRET,
     strategy_class: OmniAuth::Strategies::Events360

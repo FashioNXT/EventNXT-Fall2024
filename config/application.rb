@@ -26,7 +26,7 @@ module Fashionxt002
     # Autoload lib/constants in development
     config.autoload_paths << Rails.root.join('lib', 'constants')
 
-    # Eager load lib/services in production
+    # Eager load lib/constants in production
     config.eager_load_paths << Rails.root.join('lib', 'constants')
   end
 end
