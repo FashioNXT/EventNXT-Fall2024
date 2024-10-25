@@ -119,7 +119,6 @@ class EventsController < ApplicationController
 
   def calculate_seating_summary(event_id, event_box_office_data)
     seating_summary = []
-
     Seat.where(event_id: event_id).each do |seat|
       guests_in_category = Guest.where(event_id: event_id, category: seat.category)
       guests_in_section = Guest.where(event_id: event_id, section: seat.section)

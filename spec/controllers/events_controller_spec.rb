@@ -27,9 +27,6 @@ RSpec.describe EventsController, type: :controller do
         get :show, params: { id: event.id }
 
         seating_summary = assigns(:seating_summary)
-        puts "SUMMARY"
-        puts seating_summary
-
         r1_patron_summary = seating_summary.find { |summary| summary[:category] == "R1 PATRON" }
         expect(r1_patron_summary[:tickets_sold]).to eq(9) # Corrected key name to match controller logic
 
