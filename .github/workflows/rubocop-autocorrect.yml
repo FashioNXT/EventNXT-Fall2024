@@ -1,0 +1,63 @@
+name: RuboCop Autocorrect
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Ensure full history is available for merge base
+          ref: ${{ github.head_ref }}  # Checkout the branch for the PR
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0' # Adjust to your Ruby version
+
+      - name: Install RuboCop
+        run: |
+          gem install rubocop
+
+      - name: Get Changed Ruby Files
+        id: changed_files
+        run: |
+          # Fetch the target branch (main or dev) dynamically
+          BASE_BRANCH=${{ github.event.pull_request.base.ref }}
+          git fetch origin $BASE_BRANCH
+          git diff --name-only origin/$BASE_BRANCH...HEAD -- '*.rb' > changed_files.txt
+
+      - name: Run RuboCop with Autocorrect on Changed Files
+        if: success()
+        run: |
+          if [[ -s changed_files.txt ]]; then
+            rubocop -A $(cat changed_files.txt)
+          else
+            echo "No Ruby file changes detected"
+          fi
+      
+      - name: Remove changed_files.txt
+        if: always()  # Runs this step regardless of previous step's success or failure
+        run: rm -f changed_files.txt
+
+      - name: Commit and Push Changes
+        if: success()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if [[ $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "Auto-corrected RuboCop issues in modified files"
+            git push origin HEAD:${{ github.head_ref }}  # Push back to the PR branch
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

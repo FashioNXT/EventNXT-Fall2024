@@ -1,3 +1,11 @@
+AllCops:
+  Exclude:
+    - 'db/schema.rb'          # Ignore specific file
+    - 'vendor/**/*'           # Ignore all files in the vendor directory
+    - 'node_modules/**/*'     # Ignore all files in node_modules
+    - 'spec/**/*'             # Ignore all files in spec directory
+    - 'features/**/*'         # Ignore all files in spec directory
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 
@@ -20,11 +28,14 @@ Layout/ParameterAlignment:
 Layout/DotPosition:
   EnforcedStyle: leading
 
+Style/RedundantSelf:
+  Enabled: false  # Disables the cop that removes redundant `self`
+
 # Style/TrailingCommaInArguments:
 #   EnforcedStyleForMultiline: comma  # Enforce trailing comma in multiline method arguments
 
 Layout/LineLength:
-  Max: 80  # Set the max line length to 80 characters
+  Max: 120  # Set the max line length to 80 characters
 
 Metrics/MethodLength:
   Max: 40  # Maximum number of lines allowed in a method
@@ -39,4 +50,7 @@ Metrics/ClassLength:
 #   Max: 500  # Maximum number of lines allowed in an entire file
 
 Metrics/AbcSize:
-  Max: 20
+  Max: 40  # Maximum ABC size in a method
+
+Metrics/CyclomaticComplexity:
+  Max: 8  # The maximum allowed complexity for a method

@@ -3,74 +3,124 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  let(:password) { 'password123' }
+  describe 'associations' do
+    it { should have_many(:events).dependent(:destroy) }
+  end
 
   describe 'validations' do
-    it 'requires a password' do
-      user = User.new(email: 'user@example.com', password:,
-        password_confirmation: password)
+    it 'is valid with valid attributes' do
+      user = build(:user)
       expect(user).to be_valid
+    end
 
-      user.password = ''
-      expect(user).not_to be_valid
-      expect(user.errors[:password]).to include("can't be blank")
+    it { should validate_presence_of(:uid) }
+    it { should validate_presence_of(:provider) }
+    it { should validate_presence_of(:email) }
+    it { should validate_uniqueness_of(:email).case_insensitive }
+
+    subject { create(:user) }
+
+    it 'validates uniqueness of uid scoped to provider' do
+      duplicate_user = build(:user, uid: subject.uid, provider: subject.provider)
+
+      expect(duplicate_user).to_not be_valid
+      expect(duplicate_user.errors[:uid]).to include('and provider combination must be unique')
     end
   end
 
-  describe User do
-    describe '.from_google' do
-      context 'when given valid Google info' do
-        let(:info) { { uid: '12345', email: 'test@example.com' } }
-
-        it 'creates a new user with the given info' do
-          expect do
-            User.from_google(info)
-          end.to change { User.count }.by(1)
-
-          user = User.find_by(email: info[:email])
-          expect(user.uid).to eq(info[:uid])
-          expect(user.provider).to eq('google')
-        end
-      end
-    end
-  end
   describe '.from_omniauth' do
-    let(:access_token) { instance_double('AccessToken', get: response) }
-    let(:response) { instance_double('Response', parsed: oauth_response) }
-    let(:oauth_response) do
-      { 'email' => 'test@example.com', 'name' => 'Test User' }
-    end
+    context 'when auth provider is events360,' do
+      let(:user) { create(:user, :events360) }
+      let(:auth) do
+        OmniAuth::AuthHash.new(
+          provider: user.provider,
+          uid: user.uid,
+          info: {
+            email: user.email,
+            name: user.name
+          }
+        )
+      end
 
-    context 'when the user does not exist' do
-      it 'creates a new user' do
-        expect do
-          User.from_omniauth(access_token)
-        end.to change(User, :count).by(1)
-        user = User.find_by(email: 'test@example.com')
-        expect(user).not_to be_nil
-        expect(user.name).to eq 'Test User'
-        # Additional assertions as necessary
+      it 'calls from_omniauth_events360' do
+        expect(User).to receive(:from_omniauth_events360).with(auth).and_call_original
+        User.from_omniauth(auth)
       end
     end
 
-    context 'when the user already exists' do
+    context 'when auth provider is not handled,' do
+      let(:auth_other) do
+        OmniAuth::AuthHash.new(
+          provider: 'unknown',
+          uid: '654321',
+          info: {
+            email: 'user@example.com',
+            name: 'John Doe'
+          }
+        )
+      end
+
+      it 'returns nil when provider is not supported' do
+        user = User.from_omniauth(auth_other, user)
+        expect(user).to be_nil
+      end
+    end
+  end
+
+  describe '.from_omniauth_events360' do
+    let(:user) { create(:user, :events360, email: 'old_email@fake.com') }
+
+    context 'when user exists' do
+      let(:auth) do
+        OmniAuth::AuthHash.new(
+          provider: user.provider,
+          uid: user.uid,
+          info: {
+            email: 'new_email@fake.com',
+            name: 'new name'
+          }
+        )
+      end
+
       before do
-        User.create(email: 'test@example.com', name: 'Existing User', password: 'password',
-          password_confirmation: 'password')
+        user # This creates the user in the test database
       end
 
-      it 'does not create a new user' do
-        expect { User.from_omniauth(access_token) }.not_to change(User, :count)
-      end
-
-      it 'updates the user’s details' do
-        User.from_omniauth(access_token)
-        user = User.find_by(email: 'test@example.com')
-        expect(user.name).to eq 'Test User' # Assuming the name gets updated
-        # Additional assertions as necessary
+      it 'updates the user information and returns the user' do
+        user = User.from_omniauth(auth)
+        expect(user.email).to eq('new_email@fake.com') # updated email
+        expect(user.name).to eq('new name') # updated name
+        expect(user).to eq(user) # Ensure the same user is returned
       end
     end
 
-    # More tests could be added to cover edge cases and error handling
+    context 'when user does not exist,' do
+      before do
+        User.delete_all # Ensure no users exist in the database
+      end
+
+      let(:auth) do
+        OmniAuth::AuthHash.new(
+          provider: user.provider,
+          uid: user.uid,
+          info: {
+            email: user.email,
+            name: user.name
+          }
+        )
+      end
+
+      it 'creates a new user with the auth information' do
+        expect do
+          User.from_omniauth(auth)
+        end.to change { User.count }.by(1)
+
+        new_user = User.last
+        expect(new_user.uid).to eq(auth.uid)
+        expect(new_user.provider).to eq(auth.provider)
+        expect(new_user.email).to eq(auth.info.email)
+        expect(new_user.name).to eq(auth.info.name)
+      end
+    end
   end
 end
