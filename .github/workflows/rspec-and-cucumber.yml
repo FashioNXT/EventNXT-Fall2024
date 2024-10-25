@@ -41,6 +41,5 @@ jobs:
           docker volume prune -f
           # Force-remove any remaining volumes specifically, if still in use
           docker volume rm eventnxt-fall2024_bundle_data_rspec || true
-           docker volume rm eventnxt-fall2024_bundle_data_cucumber || true
-          docker volume rm eventnxt-fall2024_db_data_test || true
+          docker volume rm eventnxt-fall2024_bundle_data_cucumber || true
           # docker image prune -f --all  # Remove unused Docker images

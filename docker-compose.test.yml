@@ -6,10 +6,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-eventnxt}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: eventnxt_db_test
-    volumes:
-      - db_data_test:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data # Store database data in memory instead of a volume
        
   test_rspec:
     build: .
@@ -36,7 +36,6 @@ services:
       - postgres
 
 volumes:
-  db_data_test:
   bundle_data_rspec:
   bundle_data_cucumber: 
   
