@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-         with:
+        with:
           fetch-depth: 0  # Ensure full history is available for merge base
 
       - name: Set up Ruby
