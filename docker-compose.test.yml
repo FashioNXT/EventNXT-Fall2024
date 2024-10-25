@@ -1,8 +1,11 @@
 version: "3"
 services:
   postgres: 
+    image: postgres:latest
     environment:
       POSTGRES_DB: eventnxt_db_test
+    volumes:
+      - db_data_test:/var/lib/postgresql/data  # Separate test volume
        
   test_rspec:
     build: .
@@ -27,3 +30,6 @@ services:
       - bundle_data:/usr/local/bundle
     depends_on:
       - postgres
+
+volumes:
+  db_data_test:
