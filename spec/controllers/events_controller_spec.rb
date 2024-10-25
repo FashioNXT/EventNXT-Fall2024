@@ -16,72 +16,6 @@ RSpec.describe EventsController, type: :controller do
     end
   end
 
-  # describe 'GET #show' do
-  #   context 'when a box office spreadsheet is uploaded with seat bookings' do
-  #     let(:spreadsheet_file) do
-  #       fixture_file_upload(Rails.root.join('test', 'fixtures', 'files', 'new_ticketlist.xlsx'))
-  #     end
-
-  #     # Mock the spreadsheet data to simulate the rows being read from the spreadsheet
-  #     let(:spreadsheet_data) do
-  #       [
-  #         ['John', 'Holmes', 'john.holmes@sq1.com', 'test', 'R1 PATRON', 4, 'A', 125],
-  #         ['joanne', 'burdick', 'jdburdickpdx@gmail.com', 'test', 'R1 PATRON', 4, 'A', 125],
-  #         ['Peta', 'Sklarz', 'petasklarz@gmail.com', 'test', 'PREF R5', 3, 'A', 40],
-  #         ['ANGELLA', 'THEUNISSEN', 'vegasboooty@yahoo.com', 'test', 'R1 PATRON', 1, 'A', 125],
-  #         ['Lynn', 'Laughton', 'dennislaughton1@yahoo.com', 'test', 'PREF R3', 2, 'A', 62],
-  #         ['Estefania', 'Nateras', 'salemaccidentcare@gmail.com', 'test', 'PREF R3', 2, 'A', 49.5],
-  #         ['ARIANNA', 'GARCIA', 'Ary29_p@hotmail.com', 'test', 'PREF R3', 1, 'A', 49.5],
-  #         ['SANDI', 'JARQUIN', 'SANDIJARQUIN_MUA@YAHOO.COM', 'test', 'PREF R3', 1, 'A', 49.5],
-  #         ['Alicia', 'Reese', 'alicia@sockittome.com', 'test', 'PREF R5', 4, 'A', 36],
-  #         ['Ana', 'Saavedra', 'anysaavedra21@hotmail.com', 'test', 'PREF R3', 1, 'A', 49.5]
-  #       ]
-  #     end
-
-  #     before do
-  #       # Create a mock object for the spreadsheet
-
-  #       mock_spreadsheet = instance_double(Roo::Excelx)
-      
-  #       # Mock opening the spreadsheet file to return the mock spreadsheet
-  #       allow(Roo::Spreadsheet).to receive(:open).and_return(mock_spreadsheet)
-      
-  #       # Mock returning sheet names from the spreadsheet
-  #       allow(mock_spreadsheet).to receive(:sheets).and_return(['Sheet1'])
-      
-  #       # Mock selecting a specific sheet
-  #       allow(mock_spreadsheet).to receive(:sheet).with('Sheet1').and_return(mock_spreadsheet)
-      
-  #       # Mock the streaming of rows from the sheet
-  #       allow(mock_spreadsheet).to receive(:each_row_streaming).and_return(spreadsheet_data.each)
-      
-  #       # Create seats in the event (total seat count in each category)
-  #       create(:seat, event: event, category: 'R1 PATRON', section: 'A', total_count: 100)
-  #       create(:seat, event: event, category: 'PREF R3', section: 'A', total_count: 100)
-  #       create(:seat, event: event, category: 'PREF R5', section: 'A', total_count: 100)
-  #     end
-      
-  #     it 'calculates the correct number of booked seats for each category from the spreadsheet' do
-  #       # Call the show action
-  #       get :show, params: { id: event.id }
-
-  #       # Access the seating summary that should be calculated in the controller
-  #       seating_summary = assigns(:seating_summary)
-
-  #       # Verify booked seats for R1 PATRON
-  #       r1_patron_summary = seating_summary.find { |summary| summary[:category] == 'R1 PATRON' }
-  #       expect(r1_patron_summary[:booked_seats]).to eq(9) # 4 + 4 + 1 seats booked
-
-  #       # Verify booked seats for PREF R3
-  #       pref_r3_summary = seating_summary.find { |summary| summary[:category] == 'PREF R3' }
-  #       expect(pref_r3_summary[:booked_seats]).to eq(7) # 2 + 2 + 1 + 1 + 1 seats booked
-
-  #       # Verify booked seats for PREF R5
-  #       pref_r5_summary = seating_summary.find { |summary| summary[:category] == 'PREF R5' }
-  #       expect(pref_r5_summary[:booked_seats]).to eq(7) # 3 + 4 seats booked
-  #     end
-  #   end
-  # end
   describe 'GET #show' do
     context 'when a box office spreadsheet is uploaded with seat bookings' do
       # let(:event) { create(:event, user: user) } # Define event here
@@ -98,9 +32,9 @@ RSpec.describe EventsController, type: :controller do
         get :show, params: { id: event.id }
 
         seating_summary = assigns(:seating_summary)
-
+        puts "SUMMARY"
         puts seating_summary
-        
+
         r1_patron_summary = seating_summary.find { |summary| summary[:category] == "R1 PATRON" }
         expect(r1_patron_summary[:tickets_sold]).to eq(9) # Corrected key name to match controller logic
 

@@ -23,8 +23,6 @@ class EventsController < ApplicationController
         row.each { |cell| row_data << cell.value }
         @event_box_office_data << row_data
       end
-      
-      puts @event_box_office_data
       Rails.logger.info "Event Box Office Data: #{@event_box_office_data.inspect}"
   
       @referral_data = Referral.where(event_id: @event.id)
