@@ -14,6 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0 # Ensure full history is available for merge base
           ref: ${{ github.head_ref }}  # Checkout the branch for the PR
 
       - name: Set up Ruby
@@ -45,7 +46,6 @@ jobs:
       - name: Remove changed_files.txt
         if: always()  # Runs this step regardless of previous step's success or failure
         run: rm -f changed_files.txt
-
 
       - name: Commit and Push Changes
         if: success()
