@@ -1,3 +1,11 @@
+AllCops:
+  Exclude:
+    - 'db/schema.rb'          # Ignore specific file
+    - 'vendor/**/*'           # Ignore all files in the vendor directory
+    - 'node_modules/**/*'     # Ignore all files in node_modules
+    - 'spec/**/*'             # Ignore all files in spec directory
+    - 'features/**/*'             # Ignore all files in spec directory
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 

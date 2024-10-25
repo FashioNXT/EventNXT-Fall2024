@@ -17,14 +17,27 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2.2'
+          ruby-version: '3.0' # Adjust to your Ruby version
 
       - name: Install RuboCop
         run: |
           gem install rubocop
 
-      - name: Run RuboCop with Autocorrect
-        run: rubocop -A
+      - name: Get Changed Ruby Files
+        id: changed_files
+        run: |
+          # Fetch the target branch (main or dev) dynamically
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD -- '*.rb' > changed_files.txt
+
+      - name: Run RuboCop with Autocorrect on Changed Files
+        if: success()
+        run: |
+          if [[ -s changed_files.txt ]]; then
+            rubocop -A $(cat changed_files.txt)
+          else
+            echo "No Ruby file changes detected"
+          fi
 
       - name: Commit and Push Changes
         if: success()
@@ -32,7 +45,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Auto-corrected RuboCop issues"
+          git commit -m "Auto-corrected RuboCop issues in modified files"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
