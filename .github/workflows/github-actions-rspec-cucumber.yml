@@ -14,21 +14,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: eventnxt
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: eventnxt_db_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U eventnxt" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -38,14 +23,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
-      - name: Set up Docker Compose
-        run: docker-compose -f docker-compose.test.yml up --build -d
+      - name: Set up Docker Compose with Combined Configurations
+        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build -d
 
       - name: Run RSpec Tests
-        run: docker-compose -f docker-compose.test.yml run test_rspec
+        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml run test_rspec
 
       - name: Run Cucumber Tests
-        run: docker-compose -f docker-compose.test.yml run test_cucumber
+        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml run test_cucumber
 
       - name: Tear Down Docker Compose
-        run: docker-compose -f docker-compose.test.yml down
+        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml down
