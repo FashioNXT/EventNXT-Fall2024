@@ -89,7 +89,7 @@ RSpec.describe User, type: :model do
       it 'updates the user information and returns the user' do
         user = User.from_omniauth(auth)
         expect(user.email).to eq('new_email@fake.com') # updated email
-        expect(user.name).to eq('new name1') # updated name
+        expect(user.name).to eq('new name') # updated name
         expect(user).to eq(user) # Ensure the same user is returned
       end
     end

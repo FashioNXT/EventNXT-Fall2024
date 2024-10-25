@@ -11,7 +11,7 @@ Scenario: Sign in with Events360
 Scenario: Access feature without sign-in
   Given I am on the index page
   When I click on "Email Service"
-  Then I should see "You need to sign in or sign up before continuing."
+  Then I should see "You need to sign in or sign up before continuing. HAHA"
   And I should be on the index page
   And I should not see "Welcome"
 
