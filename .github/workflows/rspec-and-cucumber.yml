@@ -28,8 +28,8 @@ jobs:
 
       - name: Prepare Test Database
         run: | 
-          RAILS_ENV=test bundle exec rails db:drop || true
-          RAILS_ENV=test bundle exec rails db:prepare
+          docker-compose -f docker-compose.yml -f docker-compose.test.yml run bundle exec rails db:drop || true
+          docker-compose -f docker-compose.yml -f docker-compose.test.yml run bundle exec rails db:prepare
 
       - name: Run RSpec Tests
         run: docker-compose -f docker-compose.yml -f docker-compose.test.yml run test_rspec
