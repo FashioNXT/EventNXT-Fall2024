@@ -24,7 +24,8 @@ class GuestsController < ApplicationController
     # @guest = Guest.new
 
     # <!--===================-->
-    # <!--to create a child object that’s associated with the specific parent instance -->
+    # <!--to create a child object that’s associated
+    # with the specific parent instance -->
     @guest = @event.guests.build
     # <!--===================-->
   end
@@ -43,7 +44,6 @@ class GuestsController < ApplicationController
 
     respond_to do |format|
       if @guest.save
-        # format.html { redirect_to guest_url(@guest), notice: "Guest was successfully created." }
         format.html do
           redirect_to event_url(@event),
             notice: 'Guest was successfully created.'
@@ -81,7 +81,6 @@ class GuestsController < ApplicationController
     @guest.destroy
 
     respond_to do |format|
-      # format.html { redirect_to guests_url, notice: "Guest was successfully destroyed." }
       format.html do
         redirect_to event_guests_path(@event),
           notice: 'Guest was successfully destroyed.'
@@ -161,7 +160,8 @@ class GuestsController < ApplicationController
     # @guest = Guest.find(params[:id])
 
     # <!--===================-->
-    # <!--to search for a matching id in the collection of children associated with a particular parent-->
+    # <!--to search for a matching id in the collection of children associated
+    # with a particular parent-->
     @guest = Guest.find(params[:id])
     # <!--===================-->
   end
@@ -169,8 +169,8 @@ class GuestsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def guest_params
     params.require(:guest).permit(
-      :first_name, :last_name, :email, :affiliation, :category, :section, :alloted_seats,
-      :commited_seats, :status, :event_id
+      :first_name, :last_name, :email, :affiliation, :category, :section,
+      :alloted_seats, :commited_seats, :status, :event_id
     )
   end
 end

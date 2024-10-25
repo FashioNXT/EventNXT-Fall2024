@@ -63,9 +63,10 @@ class EventsController < ApplicationController
     @seats = Seat.where(event_id: @event.id)
     @seating_summary = calculate_seating_summary(@event.id)
     @guest_details = Guest.where(event_id: @event.id)
-    @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
-      [referraldatum[:referred], referraldatum[:email]]
-    end
+    @referral_data = Referral.where(event_id: @event.id).sort_by 
+      do |referraldatum|
+        [referraldatum[:referred], referraldatum[:email]]
+      end
     # <!--===================-->
   end
 
@@ -137,8 +138,10 @@ class EventsController < ApplicationController
       guests_in_category = Guest.where(event_id:, category: seat.category)
       guests_in_section = Guest.where(event_id:, section: seat.section)
       total_guests = guests_in_category.and(guests_in_section).distinct.count
-      committed_seats = guests_in_category.and(guests_in_section).sum(:commited_seats)
-      allocated_seats = guests_in_category.and(guests_in_section).sum(:alloted_seats)
+      committed_seats = guests_in_category.and(
+        guests_in_section).sum(:commited_seats)
+      allocated_seats = guests_in_category.and(
+        guests_in_section).sum(:alloted_seats)
       total_seats = seat.total_count
 
       seating_summary << {
@@ -166,8 +169,8 @@ class EventsController < ApplicationController
     # <!--===================-->
     # <!--to add upload field-->
     # params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar)
-    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar,
-      :event_box_office)
+    params.require(:event).permit(:title, :address, :description, 
+      :datetime, :last_modified, :event_avatar, :event_box_office)
     # <!--===================-->
   end
 end

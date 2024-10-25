@@ -18,20 +18,23 @@ class EmailServicesController < ApplicationController
 
     # the referral link takes the form of '/refer_a_friend?:ref_code'.
     # params[:ref_code] = guest.id will be the parameter value to be used.
-    # we have the referral link takes the form of '/refer_a_friend?guest.id' to transfer the parameters.
+    # we have the referral link takes the form of '/refer_a_friend?guest.id'
+    # to transfer the parameters.
     # random_code_generated = SecureRandom.hex(20)
 
-    # referral_url = Rails.application.routes.url_helpers.new_referral_url(host: 'localhost:3000', random_code: guest.rsvp_link)
+    # referral_url = Rails.application.routes.url_helpers.new_referral_url
+    # (host: 'localhost:3000', random_code: guest.rsvp_link)
     referral_url = Rails.application.routes.url_helpers.new_referral_url(
-      host: 'https://eventnxt-0fcb166cb5ae.herokuapp.com/', random_code: guest.rsvp_link
+      host: 'https://eventnxt-0fcb166cb5ae.herokuapp.com/',
+      random_code: guest.rsvp_link
     )
 
     # referral_url = ENV['localhost:3000'].to_s + new_referral_path(guest.id)
 
     updated_body = email_service.body.gsub('PLACEHOLDER_LINK', referral_url)
 
-    ApplicationMailer.send_email(email_service.to, email_service.subject, updated_body, event, guest,
-      full_url).deliver_later
+    ApplicationMailer.send_email(email_service.to, email_service.subject,
+      updated_body, event, guest, full_url).deliver_later
 
     flash[:success] = 'Email sent!'
     email_service.update(sent_at: Time.current)
@@ -211,9 +214,11 @@ class EmailServicesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def email_service_params
     # params.require(:email_service).permit(:to, :subject, :body)
-    # params.require(:email_service).permit(:to, :subject, :body, :sent_at, :committed_at)
-    # params.require(:email_service).permit(:to, :subject, :body, :sent_at, :committed_at, :event_id)
-    params.require(:email_service).permit(:email_template_id, :to, :subject, :body, :sent_at, :committed_at,
-      :event_id, :guest_id)
+    # params.require(:email_service).permit(:to, :subject, :body,
+    # :sent_at, :committed_at)
+    # params.require(:email_service).permit(:to, :subject, :body,
+    # :sent_at, :committed_at, :event_id)
+    params.require(:email_service).permit(:email_template_id, :to, :subject,
+      :body, :sent_at, :committed_at, :event_id, :guest_id)
   end
 end
