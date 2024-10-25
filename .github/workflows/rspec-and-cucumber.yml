@@ -35,7 +35,11 @@ jobs:
       - name: Tear Down Docker Compose
         if: always()
         run: |
-          docker-compose -f docker-compose.yml -f docker-compose.test.yml down -v --rmi
-          docker volume rm $(docker volume ls -q) || true
-          docker volume prune -f  # Remove unused Docker volumes
-          docker image prune -f --all  # Remove unused Docker images
+            # Stop and remove containers forcefully
+          docker-compose -f docker-compose.yml -f docker-compose.test.yml down -v --remove-orphans
+          # Prune any dangling volumes
+          docker volume prune -f
+          # Force-remove any remaining volumes specifically, if still in use
+          docker volume rm eventnxt-fall2024_bundle_data || true
+          docker volume rm eventnxt-fall2024_db_data || true
+          # docker image prune -f --all  # Remove unused Docker images
