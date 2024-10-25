@@ -35,7 +35,7 @@ jobs:
       - name: Tear Down Docker Compose
         if: always()
         run: |
-            # Stop and remove containers forcefully
+          # Stop and remove containers forcefully
           docker-compose -f docker-compose.yml -f docker-compose.test.yml down -v --remove-orphans
           # Prune any dangling volumes
           docker volume prune -f
