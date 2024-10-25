@@ -16,7 +16,10 @@ services:
     environment:
       - RAILS_ENV=test
       - BUNDLE_WITHOUT=development
-    command: bash -c "bundle install && bundle exec rails db:drop db:prepare && bundle exec rspec"
+    command: bash -c "bundle install && \
+      bundle exec rails db:drop && \
+      bundle exec rails db:prepare && \
+      bundle exec rspec"
     volumes:
       - .:/eventnxt
       - bundle_data_rspec:/usr/local/bundle
@@ -28,7 +31,10 @@ services:
     environment:
       - RAILS_ENV=test
       - BUNDLE_WITHOUT=development
-    command: bash -c "bundle install && bundle exec rails db:drop db:prepare && bundle exec cucumber"
+    command: bash -c "bundle install && \
+      bundle exec rails db:drop && \
+      bundle exec rails db:prepare && \
+      bundle exec cucumber"
     volumes:
       - .:/eventnxt
       - bundle_data_cucumber:/usr/local/bundle

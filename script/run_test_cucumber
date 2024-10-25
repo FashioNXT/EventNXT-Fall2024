@@ -4,7 +4,7 @@
 docker_run = 'docker-compose -f docker-compose.test.yml run --rm test_cucumber'
 
 if ARGV.length.positive?
-  cmd = 'bundle install && bundle exec rails db:drop db:prepare && bundle exec cucumber'
+  cmd = 'bundle install && bundle exec rails db:drop && bundle exec rails db:prepare && bundle exec cucumber'
   ARGV.each do |arg|
     cmd += if arg.include?(' ')
              " \"#{arg}\""
