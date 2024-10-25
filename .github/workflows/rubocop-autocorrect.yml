@@ -13,12 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Fetch All Branches
-        run: |
-          # Fetch the full history for both main and dev branches
-          git fetch origin main:main
-          git fetch origin dev:dev
+         with:
+          fetch-depth: 0  # Ensure full history is available for merge base
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -32,9 +28,10 @@ jobs:
       - name: Get Changed Ruby Files
         id: changed_files
         run: |
-          # Use the base branch for comparison (either main or dev)
+          # Fetch the target branch (main or dev) dynamically with full history
           BASE_BRANCH=${{ github.event.pull_request.base.ref }}
-          git diff --name-only $BASE_BRANCH...HEAD -- '*.rb' > changed_files.txt
+          git fetch origin $BASE_BRANCH --depth=1
+          git diff --name-only origin/$BASE_BRANCH...HEAD -- '*.rb' > changed_files.txt
 
       - name: Run RuboCop with Autocorrect on Changed Files
         if: success()
