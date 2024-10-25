@@ -1,18 +1,22 @@
 version: "3"
 services:
-  postgres: 
+  postgres:
     image: postgres:latest
     environment:
+      POSTGRES_USER: ${POSTGRES_USER:-eventnxt}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: eventnxt_db_test
     volumes:
-      - db_data_test:/var/lib/postgresql/data  # Separate test volume
+      - db_test_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
        
   test_rspec:
     build: .
     environment:
       - RAILS_ENV=test
       - BUNDLE_WITHOUT=development
-    command: bash -c "bundle install && bundle exec rspec"
+    command: bash -c "bundle install && bundle exec rails db:drop db:prepare && bundle exec rspec"
     volumes:
       - .:/eventnxt
       - bundle_data:/usr/local/bundle
@@ -24,7 +28,7 @@ services:
     environment:
       - RAILS_ENV=test
       - BUNDLE_WITHOUT=development
-    command: bash -c "bundle install && bundle exec cucumber"
+    command: bash -c "bundle install && bundle exec rails db:drop db:prepare && bundle exec cucumber"
     volumes:
       - .:/eventnxt
       - bundle_data:/usr/local/bundle
@@ -32,4 +36,6 @@ services:
       - postgres
 
 volumes:
-  db_data_test:
+  db_test_data:
+  bundle_data:
+  

@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-docker_run = 'docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec'
+docker_run = 'docker-compose -f docker-compose.test.yml run --rm test_rspec'
 
 if ARGV.length.positive?
-  cmd = 'bundle install && bundle exec rspec'
+  cmd = 'bundle install && bundle exec rails db:drop db:prepare && bundle exec rspec'
   ARGV.each do |arg|
     cmd += if arg.include?(' ')
              " \"#{arg}\""
