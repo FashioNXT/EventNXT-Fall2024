@@ -6,8 +6,6 @@ class Guest < ApplicationRecord
 
   before_create :generate_rsvp_link
 
-  # ===================================
-  # required to have to pass Rspec tests
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, presence: true
