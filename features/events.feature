@@ -1,4 +1,4 @@
-Feature : Adding and Managing events 
+Feature: Adding and Managing events 
 
 Scenario: Edit event details
   Given I am on the events page

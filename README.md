@@ -1,4 +1,4 @@
-# Team EventNXT  
+# Team EventNXT
 
 TEAM Fall 2024
 
