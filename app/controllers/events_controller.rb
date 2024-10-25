@@ -4,7 +4,6 @@ class EventsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_event, only: %i[show edit update destroy]
 
-  # GET /events or /events.json
   def index
     @events = current_user.events
   end
@@ -12,7 +11,6 @@ class EventsController < ApplicationController
   def show
     @event = current_user.events.find(params[:id])
   
-    # Initialize event_box_office_data as an empty array by default
     @event_box_office_data = []
   
     if @event.event_box_office.present?
@@ -57,7 +55,6 @@ class EventsController < ApplicationController
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
   
-    # Pass @event_box_office_data only if it's not empty, otherwise pass an empty array
     @seating_summary = calculate_seating_summary(@event.id, @event_box_office_data.any? ? @event_box_office_data : [])
   
     @guest_details = Guest.where(event_id: @event.id)
@@ -66,15 +63,12 @@ class EventsController < ApplicationController
     end
   end
   
-  # GET /events/new
   def new
     @event = current_user.events.new
   end
 
-  # GET /events/1/edit
   def edit; end
 
-  # POST /events or /events.json
   def create
     @event = current_user.events.new(event_params)
 
@@ -94,7 +88,6 @@ class EventsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /events/1 or /events/1.json
   def update
     respond_to do |format|
       if @event.update(event_params)
@@ -112,7 +105,6 @@ class EventsController < ApplicationController
     end
   end
 
-  # DELETE /events/1 or /events/1.json
   def destroy
     @event.destroy
     respond_to do |format|
@@ -139,19 +131,14 @@ class EventsController < ApplicationController
       tickets_sold = 0
 
       unless event_box_office_data.empty?
-        # Assuming first row of event_box_office_data is the header row with the column names
         header_row = event_box_office_data.first
 
-        # Get the index of Category, Section, and Tickets columns
         category_index = header_row.index('Category')
         section_index = header_row.index('Section')
         tickets_index = header_row.index('Tickets') # Column name for tickets
 
-        # Ensure indexes are not nil, meaning the headers exist
         if category_index && section_index && tickets_index
-          # Iterate over the remaining rows (box office data)
           event_box_office_data.drop(1).each do |row|
-            # Ensure that category and section match
             if row[category_index] == seat.category && row[section_index] == seat.section
               tickets_sold += row[tickets_index].to_i # Convert ticket value to integer
             end
@@ -175,20 +162,12 @@ class EventsController < ApplicationController
     seating_summary
   end
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_event
     @event = current_user.events.find(params[:id])
   end
 
-  # Only allow a list of trusted parameters through.
   def event_params
-    # params.require(:event).permit(:title, :address, :description, :datetime, :last_modified)
-
-    # <!--===================-->
-    # <!--to add upload field-->
-    # params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar)
     params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar,
       :event_box_office)
-    # <!--===================-->
   end
 end
