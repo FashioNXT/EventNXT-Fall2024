@@ -16,7 +16,6 @@ RSpec.describe EventsController, type: :controller do
 
   describe 'GET #show' do
     context 'when a box office spreadsheet is uploaded with seat bookings' do
-      # let(:event) { create(:event, user: user) } # Define event here
       let(:spreadsheet_file) do
         fixture_file_upload(Rails.root.join('test', 'fixtures', 'files', 'new_ticketlist.xlsx'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
       end
@@ -149,7 +148,7 @@ RSpec.describe EventsController, type: :controller do
         initial_count = Event.count
         expect do
           delete :destroy, params: { id: @event.id }
-          # end.to change(Event, :count).by(-1)
+          
         end.to change(Event, :count).from(initial_count).to(initial_count - 1)
       end
 
