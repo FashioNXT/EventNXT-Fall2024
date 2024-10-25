@@ -5,6 +5,25 @@
   }
 </style>
 
+
+<% if flash[:alert] %>
+  <div class="alert alert-danger">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
+
+<% if flash[:warning] %>
+  <div class="alert alert-warning">
+    <%= flash[:warning] %>
+  </div>
+<% end %>
+
+<% if flash[:success] %>
+  <div class="alert alert-success">
+    <%= flash[:success] %>
+  </div>
+<% end %>
+
 <div class="container">
   <div class="row">
     <div class="col-md-6">
@@ -72,6 +91,7 @@
         <th>Total Seats</th>
         <th>Allocated Seats</th>
         <th>Committed Seats</th>
+        <th>Booked Seats</th>
         <th>Remaining Seats</th>
       </tr>
     </thead>
@@ -83,8 +103,9 @@
           <td><%= category[:guests_count] %></td>
           <td><%= category[:total_seats] %></td>
           <td><%= category[:allocated_seats] %></td>
-          <td><%= category[:committed_seats] %></td>
-          <td><%= category[:total_seats] - (category[:committed_seats]) %></td> 
+          <td><%= category[:committed_seats]+category[:tickets_sold] %></td>
+          <td><%= category[:tickets_sold] %></td>
+          <td><%= category[:total_seats] - (category[:committed_seats]) - category[:tickets_sold] %></td> 
         </tr>
       <% end %>
     </tbody>
@@ -141,7 +162,7 @@
     <%= form_with(url: import_spreadsheet_event_guests_path(@event), multipart: true) do |form|%>
       <div class="form-field">
         <%= form.label "Choose Spreadsheet File" %>
-        <%= form.file_field :file, id: "guest-list-attach" %>%>
+        <%= form.file_field :file, id: "guest-list-attach" %>
         <%= form.hidden_field :event_id, value:@event.id %>
       </div>
 
@@ -150,8 +171,6 @@
       </div>
     <% end %>
   </div>
-  
-
 </div>
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Box Office Sales</h2>
 <strong>NOTIFICATION (!): Please upload .xlsx file having column names exactly 'Email', 'Tickets' and 'Amount', among other chosen columns, otherwise the corresponding data cannot be 
