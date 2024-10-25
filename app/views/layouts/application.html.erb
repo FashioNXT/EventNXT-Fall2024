@@ -20,12 +20,12 @@
   </head>
 
   <body>
-    
-    <!--===================-->
-    <!--to add shared links based on user authentication-->
-    <%= render "shared/user_detail"%>
-    <!--===================-->
-    
+    <div>
+      <%= render "shared/navigation"%>
+    </div>
+    <div>
+      <%= render 'shared/flash' %>
+    </div>
     
     <%= yield %>
   </body>
