@@ -10,9 +10,9 @@ class EventsController < ApplicationController
 
   def show
     @event = current_user.events.find(params[:id])
-  
+
     @event_box_office_data = []
-  
+
     if @event.event_box_office.present?
       event_box_office_file = @event.event_box_office.current_path
       event_box_office_xlsx = Roo::Spreadsheet.open(event_box_office_file)
@@ -21,9 +21,9 @@ class EventsController < ApplicationController
         row.each { |cell| row_data << cell.value }
         @event_box_office_data << row_data
       end
-  
+
       @referral_data = Referral.where(event_id: @event.id)
-  
+
       email_index = 0
       tickets_index = 0
       amount_index = 0
@@ -38,7 +38,7 @@ class EventsController < ApplicationController
           amount_index = k
         end
       end
-  
+
       @event_box_office_data.drop(1).each do |datum|
         @referral_data.each do |referraldatum|
           if referraldatum.referred == datum[email_index]
@@ -46,22 +46,21 @@ class EventsController < ApplicationController
           end
         end
       end
-  
+
     else
       flash[:notice] = 'No box office spreadsheet uploaded for this event'
     end
-  
+
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
-  
     @seating_summary = calculate_seating_summary(@event.id, @event_box_office_data.any? ? @event_box_office_data : [])
-  
+
     @guest_details = Guest.where(event_id: @event.id)
     @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
       [referraldatum[:referred], referraldatum[:email]]
     end
   end
-  
+
   def new
     @event = current_user.events.new
   end
@@ -118,9 +117,9 @@ class EventsController < ApplicationController
 
   def calculate_seating_summary(event_id, event_box_office_data)
     seating_summary = []
-    Seat.where(event_id: event_id).each do |seat|
-      guests_in_category = Guest.where(event_id: event_id, category: seat.category)
-      guests_in_section = Guest.where(event_id: event_id, section: seat.section)
+    Seat.where(event_id:).each do |seat|
+      guests_in_category = Guest.where(event_id:, category: seat.category)
+      guests_in_section = Guest.where(event_id:, section: seat.section)
       total_guests = guests_in_category.and(guests_in_section).distinct.count
       committed_seats = guests_in_category.and(guests_in_section).sum(:commited_seats)
       allocated_seats = guests_in_category.and(guests_in_section).sum(:alloted_seats)
@@ -142,7 +141,7 @@ class EventsController < ApplicationController
             end
           end
         else
-          Rails.logger.error "Error: Unable to find necessary columns in event box office data."
+          Rails.logger.error 'Error: Unable to find necessary columns in event box office data.'
         end
       end
 
@@ -150,10 +149,10 @@ class EventsController < ApplicationController
         category: seat.category,
         section: seat.section,
         guests_count: total_guests,
-        committed_seats: committed_seats,
-        allocated_seats: allocated_seats,
-        total_seats: total_seats,
-        tickets_sold: tickets_sold
+        committed_seats:,
+        allocated_seats:,
+        total_seats:,
+        tickets_sold:
       }
     end
 

@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 RSpec.describe EventsController, type: :controller do
-  let(:user) { create(:user) } 
+  let(:user) { create(:user) }
   before do
-    sign_in user 
+    sign_in user
   end
   describe 'GET #show' do
     it 'returns a success response' do
@@ -17,28 +17,32 @@ RSpec.describe EventsController, type: :controller do
   describe 'GET #show' do
     context 'when a box office spreadsheet is uploaded with seat bookings' do
       let(:spreadsheet_file) do
-        fixture_file_upload(Rails.root.join('test', 'fixtures', 'files', 'new_ticketlist.xlsx'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        fixture_file_upload(Rails.root.join('test', 'fixtures', 'files', 'new_ticketlist.xlsx'),
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
       end
       let(:event) do
-        create(:event, user: user, event_box_office: spreadsheet_file)
+        create(:event, user:, event_box_office: spreadsheet_file)
       end
-      
-      it "calculates the correct number of booked seats for each category from the spreadsheet" do
+
+      it 'calculates the correct number of booked seats for each category from the spreadsheet' do
+        create(:seat, event:, category: 'R1 PATRON', section: 'A', total_count: 100)
+        create(:seat, event:, category: 'PREF R3', section: 'A', total_count: 100)
+        create(:seat, event:, category: 'PREF R5', section: 'A', total_count: 100)
+
         get :show, params: { id: event.id }
 
         seating_summary = assigns(:seating_summary)
-        r1_patron_summary = seating_summary.find { |summary| summary[:category] == "R1 PATRON" }
+        r1_patron_summary = seating_summary.find { |summary| summary[:category] == 'R1 PATRON' }
         expect(r1_patron_summary[:tickets_sold]).to eq(9) # Corrected key name to match controller logic
 
-        pref_r3_summary = seating_summary.find { |summary| summary[:category] == "PREF R3" }
+        pref_r3_summary = seating_summary.find { |summary| summary[:category] == 'PREF R3' }
         expect(pref_r3_summary[:tickets_sold]).to eq(7)
 
-        pref_r5_summary = seating_summary.find { |summary| summary[:category] == "PREF R5" }
+        pref_r5_summary = seating_summary.find { |summary| summary[:category] == 'PREF R5' }
         expect(pref_r5_summary[:tickets_sold]).to eq(7)
       end
     end
   end
-
 
   describe 'GET #index' do
     it 'returns a success response' do
@@ -145,7 +149,6 @@ RSpec.describe EventsController, type: :controller do
         initial_count = Event.count
         expect do
           delete :destroy, params: { id: @event.id }
-          
         end.to change(Event, :count).from(initial_count).to(initial_count - 1)
       end
 
