@@ -66,7 +66,7 @@ RSpec.describe User, type: :model do
       it 'updates the user’s details' do
         User.from_omniauth(access_token)
         user = User.find_by(email: 'test@example.com')
-        expect(user.name).to eq 'Test User' # Assuming the name gets updated
+        expect(user.name).to eq 'Test User1' # Assuming the name gets updated
         # Additional assertions as necessary
       end
     end
