@@ -1,0 +1,45 @@
+name: RSpec and Cucumber
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Set up Docker Compose with Combined Configurations
+        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build -d
+
+      - name: Run RSpec Tests
+        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml run test_rspec
+
+      - name: Run Cucumber Tests
+        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml run test_cucumber
+
+      - name: Tear Down Docker Compose
+        if: always()
+        run: |
+          # Stop and remove containers forcefully
+          docker-compose -f docker-compose.yml -f docker-compose.test.yml down -v --remove-orphans
+          # Prune any dangling volumes
+          docker volume prune -f
+          # Force-remove any remaining volumes specifically, if still in use
+          docker volume rm eventnxt-fall2024_bundle_data || true
+          docker volume rm eventnxt-fall2024_db_data || true
+          # docker image prune -f --all  # Remove unused Docker images
