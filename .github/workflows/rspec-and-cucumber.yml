@@ -35,6 +35,7 @@ jobs:
       - name: Tear Down Docker Compose
         if: always()
         run: |
-          docker-compose -f docker-compose.yml -f docker-compose.test.yml down
+          docker-compose -f docker-compose.yml -f docker-compose.test.yml down -v --rmi
+          docker volume rm $(docker volume ls -q) || true
           docker volume prune -f  # Remove unused Docker volumes
           docker image prune -f --all  # Remove unused Docker images
