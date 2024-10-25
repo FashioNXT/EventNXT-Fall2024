@@ -33,4 +33,8 @@ jobs:
         run: docker-compose -f docker-compose.yml -f docker-compose.test.yml run test_cucumber
 
       - name: Tear Down Docker Compose
-        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml down -v --rmi
+        if: always()
+        run: |
+          docker-compose -f docker-compose.yml -f docker-compose.test.yml down
+          docker volume prune -f  # Remove unused Docker volumes
+          docker image prune -f --all  # Remove unused Docker images
