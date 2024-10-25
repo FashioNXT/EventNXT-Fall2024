@@ -2,15 +2,13 @@
 
 require 'rails_helper'
 RSpec.describe EventsController, type: :controller do
-  let(:user) { create(:user) } # Create a user for authentication
+  let(:user) { create(:user) } 
   before do
-    sign_in user # Sign in the user before running the tests
+    sign_in user 
   end
   describe 'GET #show' do
     it 'returns a success response' do
-      # Use the factory to create a sample event
       event = create(:event, user:)
-      # Perform your test using the created event
       get :show, params: { id: event.to_param }
       expect(response).to be_successful
     end
@@ -19,11 +17,9 @@ RSpec.describe EventsController, type: :controller do
   describe 'GET #show' do
     context 'when a box office spreadsheet is uploaded with seat bookings' do
       # let(:event) { create(:event, user: user) } # Define event here
-
       let(:spreadsheet_file) do
         fixture_file_upload(Rails.root.join('test', 'fixtures', 'files', 'new_ticketlist.xlsx'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
       end
-      # puts :spreadsheet_file
       let(:event) do
         create(:event, user: user, event_box_office: spreadsheet_file)
       end
@@ -44,21 +40,6 @@ RSpec.describe EventsController, type: :controller do
         pref_r5_summary = seating_summary.find { |summary| summary[:category] == "PREF R5" }
         expect(pref_r5_summary[:tickets_sold]).to eq(7)
       end
-      # it 'calculates the correct number of booked seats for each category from the spreadsheet' do
-      #   get :show, params: { id: event.id }
-      
-      #   seating_summary = assigns(:seating_summary)
-      
-      #   r1_patron_summary = seating_summary.find { |summary| summary[:category] == 'R1 PATRON' }
-      #   expect(r1_patron_summary[:tickets_sold]).to eq(9) # Ensure this matches controller logic
-      
-      #   pref_r3_summary = seating_summary.find { |summary| summary[:category] == 'PREF R3' }
-      #   expect(pref_r3_summary[:tickets_sold]).to eq(7)
-      
-      #   pref_r5_summary = seating_summary.find { |summary| summary[:category] == 'PREF R5' }
-      #   expect(pref_r5_summary[:tickets_sold]).to eq(7)
-      # end
-      
     end
   end
 
