@@ -34,6 +34,9 @@ jobs:
       - name: Run RSpec Tests
         run: docker-compose -f docker-compose.yml -f docker-compose.test.yml run test_rspec
 
+      - name: Remove RSpec Containers and Volumes
+        run: docker-compose -f docker-compose.yml -f docker-compose.test.yml rm -svf test_rspec
+
       - name: Run Cucumber Tests
         run: docker-compose -f docker-compose.yml -f docker-compose.test.yml run test_cucumber
 
