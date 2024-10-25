@@ -1,4 +1,4 @@
-name: RSpec and Cucumber
+name: CI
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - dev
 
 jobs:
-  test:
+  rspec-and-cucumber:
     runs-on: ubuntu-latest
 
     steps:
