@@ -31,8 +31,8 @@ services:
   test_cucumber:
     build: .
     environment:
-      - RAILS_ENV=test
-      - BUNDLE_WITHOUT=development
+      RAILS_ENV: test
+      BUNDLE_WITHOUT: development
     entrypoint: ["/bin/bash", "-cx"]
     command:
       - |
