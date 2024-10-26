@@ -16,6 +16,7 @@ services:
     environment:
       - RAILS_ENV=test
       - BUNDLE_WITHOUT=development
+      - PATH=$PATH:/usr/local/bundle/bin
     command: bash -c "bundle install && \
       bundle exec rails db:drop && \
       bundle exec rails db:prepare && \
@@ -31,6 +32,7 @@ services:
     environment:
       - RAILS_ENV=test
       - BUNDLE_WITHOUT=development
+      - PATH=$PATH:/usr/local/bundle/bin
     command: bash -c "bundle install && \
       bundle exec rails db:drop && \
       bundle exec rails db:prepare && \

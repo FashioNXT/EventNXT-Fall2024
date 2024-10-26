@@ -29,9 +29,6 @@ jobs:
           docker-compose -f docker-compose.test.yml down -v --remove-orphans
           # Prune any dangling volumes
           docker volume prune -f
-          # Force-remove any remaining volumes specifically, if still in use
-          docker volume rm eventnxt-fall2024_bundle_data_rspec || true
-          docker volume rm eventnxt-fall2024_bundle_data_cucumber || true
 
       - name: Set up Docker Compose with Combined Configurations
         run: docker-compose -f docker-compose.test.yml up --build -d
@@ -49,7 +46,4 @@ jobs:
           docker-compose -f docker-compose.test.yml down -v --remove-orphans
           # Prune any dangling volumes
           docker volume prune -f
-          # Force-remove any remaining volumes specifically, if still in use
-          docker volume rm eventnxt-fall2024_bundle_data_rspec || true
-          docker volume rm eventnxt-fall2024_bundle_data_cucumber || true
           # docker image prune -f --all  # Remove unused Docker images
