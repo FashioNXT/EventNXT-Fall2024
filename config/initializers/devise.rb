@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require Rails.root.join('lib', 'omniauth', 'strategies', 'events360.rb')
+require Rails.root.join('lib', 'omniauth', 'strategies', 'eventbrite.rb')
 
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
@@ -279,6 +280,11 @@ Devise.setup do |config|
     Constants::Events360::CLIENT_ID,
     Constants::Events360::CLIENT_SECRET,
     strategy_class: OmniAuth::Strategies::Events360
+  # OmniAuth configuration for Eventbrite with explicit strategy_class
+  config.omniauth :eventbrite,
+    Constants::Eventbrite::CLIENT_ID,
+    Constants::Eventbrite::CLIENT_SECRET,
+    strategy_class: OmniAuth::Strategies::Eventbrite
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

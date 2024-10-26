@@ -20,6 +20,21 @@ module Users
       end
     end
 
+    def eventbrite
+      # Omniauth middleware exchange access code with token underhood
+      auth = request.env['omniauth.auth']
+      Rails.logger.debug "Omniauth Auth Hash: #{auth.inspect}"
+      @user = User.from_omniauth(auth, current_user)
+
+      if @user.present? && @user.persisted?
+        flash[:notice] = 'Eventbrite account linked successfully.'
+      else
+        session['devise.eventbrite_data'] = auth.except('extra')
+        flash[:alert] = "Failed to link Eventbrite account: #{@user.errors.full_messages.join("\n")}"
+      end
+      redirect_to events_path
+    end
+
     def failure
       flash[:alert] = 'Authentication failed. Please try again.'
       redirect_to root_path

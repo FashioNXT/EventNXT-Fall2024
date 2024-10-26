@@ -12,4 +12,13 @@ module Constants
       USER3 = :events360_user3
     end
   end
+
+  module Eventbrite
+    SYM = :eventbrite
+    NAME = 'eventbrite'.freeze
+    URL = ENV['EVENTBRITE_URL'] || 'https://www.eventbrite.com'
+    API_URL = ENV['EVENTBRITE_API_URL'] || 'https://www.eventbriteapi.com/v3'
+    CLIENT_ID = ENV['EVENTBRITE_CLIENT_ID']
+    CLIENT_SECRET = ENV['EVENTBRITE_CLIENT_SECRET']
+  end
 end
