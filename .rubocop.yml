@@ -1,10 +1,13 @@
+# Not Enable this for now
+# require: rubocop-rspec 
+
 AllCops:
   Exclude:
-    - 'db/schema.rb'          # Ignore specific file
-    - 'vendor/**/*'           # Ignore all files in the vendor directory
-    - 'node_modules/**/*'     # Ignore all files in node_modules
-    - 'spec/**/*'             # Ignore all files in spec directory
-    - 'features/**/*'         # Ignore all files in spec directory
+    - db/schema.rb          # Ignore specific file
+    - vendor/**/*           # Ignore all files in the vendor directory
+    - node_modules/**/*     # Ignore all files in node_modules
+    - spec/**/*             # Ignore all files in spec directory
+    - features/**/*         # Ignore all files in spec directory
 
 Style/FrozenStringLiteralComment:
   Enabled: false
@@ -12,12 +15,8 @@ Style/FrozenStringLiteralComment:
 Layout/HashAlignment:
   Enabled: true
 
-Layout/FirstHashElementLineBreak:
-  EnforcedStyle: consistent  # Ensure consistent single indentation after a line break
-
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented  # Indent method calls, but do not align with the receiver
-  IndentRelativeToReceiver: false  # Prevent alignment relative to the method receiver
 
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation  # Use fixed indentation for arguments, no alignment based on first argument

@@ -38,7 +38,7 @@ jobs:
         if: success()
         run: |
           if [[ -s changed_files.txt ]]; then
-            rubocop -A $(cat changed_files.txt)
+            rubocop -A --force-exclusion $(cat changed_files.txt)
           else
             echo "No Ruby file changes detected"
           fi
