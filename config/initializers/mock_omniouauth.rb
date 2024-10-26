@@ -2,7 +2,7 @@ if Rails.env.development?
   OmniAuth.config.test_mode = true
 
   OmniAuth.config.mock_auth[:events360_user1] = OmniAuth::AuthHash.new({
-    provider: "events360",
+    provider: 'events360',
     uid: 'user1_uid',
     info: {
       email: 'user1@example.com',
