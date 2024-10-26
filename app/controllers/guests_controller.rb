@@ -31,28 +31,25 @@ class GuestsController < ApplicationController
 
   # GET /guests/1/edit
   def edit; end
-
-  # POST /guests or /guests.json
+  # New code
   def create
-    # @guest = Guest.new(guest_params)
-
-    # <!--===================-->
-    # <!--to post a new child instance-->
     @guest = @event.guests.build(guest_params)
-    # <!--===================-->
-
+  
     respond_to do |format|
-      if @guest.save
-        # format.html { redirect_to guest_url(@guest), notice: "Guest was successfully created." }
-        format.html do
-          redirect_to event_url(@event),
-            notice: 'Guest was successfully created.'
-        end
-        format.json { render :show, status: :created, location: @guest }
-      else
+      if Guest.exists?(email: @guest.email, event_id: @event.id)
+        @guest.errors.add(:email, 'already exists')
         format.html { render :new, status: :unprocessable_entity }
-        format.json do
-          render json: @guest.errors, status: :unprocessable_entity
+        format.json { render json: @guest.errors, status: :unprocessable_entity }
+      else
+        if @guest.save
+          format.html do
+            redirect_to event_url(@event),
+                        notice: 'Guest was successfully created.'
+          end
+          format.json { render :show, status: :created, location: @guest }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @guest.errors, status: :unprocessable_entity }
         end
       end
     end
@@ -129,20 +126,31 @@ class GuestsController < ApplicationController
     end
   end
 
+  # import excel sheet functionality
   def import_spreadsheet
     if params[:file].blank?
-      return redirect_to event_path(@event), alert: 'No file uploaded.'
+      redirect_to event_path(params[:event_id]), alert: 'No file uploaded.'
+    else
+      result = Guest.import_spreadsheet(params[:file], params[:event_id])
+      if result[:status] == false
+        return redirect_to event_path(params[:event_id]), alert: "Invalid file format: #{result[:message]}"
+      end
+      if result[:message].match?(/Category and Section not found in Seating summary,/)
+        flash[:warning] = result[:message]
+      elsif result[:message].match?(/Duplicate emails found/)
+        flash[:warning] = result[:message]
+      elsif result[:message].match?(/Empty emails found/)
+        flash[:warning] = result[:message]
+      elsif result[:message].match?(/Empty categories found/)
+        flash[:warning] = result[:message]
+      elsif result[:message].match?(/Empty sections found/)
+        flash[:warning] = result[:message]
+      else
+        flash[:success] = result[:message]
+      end
+
+      redirect_to event_path(params[:event_id])
     end
-
-    spreadsheet_file = params[:file]
-    result = Guest.import_spreadsheet(spreadsheet_file, @event.id)
-
-    if result[:status] == false
-      return redirect_to event_path(@event),
-        alert: "Invalid file format: #{result[:message]}"
-    end
-
-    redirect_to event_path(@event), notice: 'Guests imported'
   end
 
   private
