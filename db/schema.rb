@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_18_015004) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_26_215202) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,7 +46,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_18_015004) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "event_avatar"
-    t.string "event_box_office"
     t.bigint "user_id", default: 1
     t.index ["user_id"], name: "index_events_on_user_id"
   end
@@ -105,6 +104,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_18_015004) do
     t.string "provider"
     t.string "uid"
     t.string "name"
+    t.string "eventbrite_uid"
+    t.string "eventbrite_token"
+    t.string "eventbrite_refresh_token"
+    t.datetime "eventbrite_token_expires_at"
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
