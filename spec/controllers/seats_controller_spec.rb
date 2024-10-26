@@ -6,17 +6,11 @@ RSpec.describe SeatsController, type: :controller do
   let!(:user) { create(:user) }
   let!(:event) { create(:event, user:) }
   before do
-    sign_in user # Sign in the user before running the tests
-    # get_event event.id
+    sign_in user 
+
   end
 
   describe 'GET #index' do
-    # it "assigns all seats associated with the event to @seats" do
-    #  seat1 = create(:seat, event: event)
-    #  seat2 = create(:seat, event: event)
-    #  get :index, params: { event_id: event.id }
-    #  expect(assigns(:seats)).to match_array([seat1, seat2])
-    # end
 
     it 'renders the index template' do
       get :index, params: { event_id: event.id }
@@ -72,9 +66,6 @@ RSpec.describe SeatsController, type: :controller do
     end
     let(:valid_attributes) { { category: 'B', total_count: 10, section: 1 } }
     let(:invalid_attributes) { { total_count: -1 } }
-    # @event = Event.find(params[:event_id])
-    # let(:valid_params) { { seat: { category: 'A', total_count: 100, event_id: event.id } } }
-    # let(:invalid_params) { { seat: { category: 'A', total_count: -1, event_id: event.id } } }
 
     context 'with valid parameters' do
       it 'creates a new seat' do
