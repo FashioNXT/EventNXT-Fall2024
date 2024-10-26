@@ -34,3 +34,11 @@ end
 Then('I should not see {string}') do |message|
   expect(page).not_to have_content(message)
 end
+
+When('I click on the {string} button') do |button_text|
+  click_button(button_text)
+end
+
+Then('I should see {string} in the error messages') do |message|
+  expect(page).to have_text(/#{Regexp.escape(message)}/)
+end
