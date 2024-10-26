@@ -1,0 +1,21 @@
+name: Post Autocorrect Check
+
+on:
+  workflow_run:
+    workflows: ["Rubocop Autocorrect"]
+    types:
+      - push  # Trigger only if a push was made by the primary workflow
+
+jobs:
+  re-run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Re-run Checks
+        # Add the steps here to rerun any checks, e.g., RuboCop without auto-correct
+        run: |
+          gem install rubocop
+          rubocop --fail-level E
