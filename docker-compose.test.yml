@@ -20,7 +20,7 @@ services:
     command: bash -c "bundle install && \
       bundle exec rails db:drop && \
       bundle exec rails db:prepare && \
-      bundle exec rspec"
+      bundle exec rspec --color --format documentation"
     volumes:
       - .:/eventnxt
       - bundle_data_rspec:/usr/local/bundle
@@ -36,7 +36,7 @@ services:
     command: bash -c "bundle install && \
       bundle exec rails db:drop && \
       bundle exec rails db:prepare && \
-      bundle exec cucumber"
+      bundle exec cucumber --color"
     volumes:
       - .:/eventnxt
       - bundle_data_cucumber:/usr/local/bundle

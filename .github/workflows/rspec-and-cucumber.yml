@@ -17,6 +17,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        
+      - name: Set up environment for colorized output
+        env:
+          RAILS_ENV: test
+          CI: true  # Forces color output in some tools like Bundler and Rails
       
       - name: Install Docker Compose
         run: |
