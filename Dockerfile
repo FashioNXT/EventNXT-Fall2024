@@ -9,7 +9,7 @@ COPY . /eventnxt
 ENV RAILS_ENV=${RAILS_ENV:-"production"}
 ENV BUNDLE_WITHOUT=${BUNDLE_WITHOUT:-"development:test"}
 
-RUN gem install bundler
+RUN gem install bundler -v 2.4.12
 
 CMD bash -c "rm -f tmp/pids/server.pid && \
   bundle install && \
