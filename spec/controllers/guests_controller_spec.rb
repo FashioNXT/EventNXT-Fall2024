@@ -4,12 +4,11 @@ require 'rails_helper'
 require 'factory_bot'
 
 RSpec.describe GuestsController, type: :controller do
-  # Create a parent event to associate with guests
-  let(:user) { create(:user) } # Create a user for authentication
+  let(:user) { create(:user) } 
   let(:event) { create(:event, user:) }
 
   before do
-    sign_in user # Sign in the user before running the tests
+    sign_in user 
   end
 
   let(:valid_attributes) { attributes_for(:guest, event_id: event.id) }
