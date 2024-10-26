@@ -1,12 +1,11 @@
-Feature: Adding and managing Seating level for the event
+Feature: Checking Seats Functionality
 
-Scenario: Add a seating level for the event
-  Given I am on the events page
-  When I click on the Event
-  And I click on the "Add New Seat" button
-  And I fill in "Category" with "Guest List"
+@pre_authenticated
+Scenario: Add a guest to an event
+  Given I am on the event page "Fake Event"
+  When I click on "Add New Seat"
+  And I fill in "Category" with "R1"
   And I fill in "Section" with "VIP"
-  And I fill in "Total Count" with "40"
-  And I click on the "Create Seat" button
-  Then I should see "Guest List" in the Manage Seating Levels list
-
+  And I fill in "Total count" with "10"
+  And I click on "Create Seat" 
+  Then I should see "10" in the seat list
