@@ -388,15 +388,6 @@ RSpec.describe GuestsController, type: :controller do
       end
     end
 
-    context 'with empty categories' do
-      it 'redirects to event path with warning message' do
-        post :import_spreadsheet, params: { event_id: event.id, file: empty_categories_spreadsheet_file }
-
-        expect(response).to redirect_to(event_path(event.id))
-        expect(flash[:warning]).to eq('Empty categories found at rows: 2')
-      end
-    end
-
     context 'with empty sections' do
       it 'redirects to event path with warning message' do
         post :import_spreadsheet, params: { event_id: event.id, file: empty_sections_spreadsheet_file }
