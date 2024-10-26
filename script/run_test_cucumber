@@ -1,21 +1,21 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-docker_run = 'docker-compose -f docker-compose.test.yml run --rm test_cucumber'
+docker_run = 'docker-compose -f docker-compose.test.yml run --rm'
 
 if ARGV.length.positive?
-  cmd = 'bundle install && bundle exec rails db:drop && bundle exec rails db:prepare && bundle exec cucumber'
+  args = []
   ARGV.each do |arg|
-    cmd += if arg.include?(' ')
-             " \"#{arg}\""
-           else
-             " #{arg}"
-           end
+    args << if arg.include?(' ')
+              "\"#{arg}\""
+            else
+              arg
+            end
   end
-  cmd = "bash -c '#{cmd}'"
+  args = args.join(' ')
 end
 
-cmd = "#{docker_run} #{cmd}"
+cmd = "#{docker_run} --env CMD_ARGS=#{args} test_cucumber"
 
 puts("Running Cmd: #{cmd}")
 system(cmd)

@@ -14,13 +14,15 @@ services:
   test_rspec:
     build: .
     environment:
-      - RAILS_ENV=test
-      - BUNDLE_WITHOUT=development
-      - PATH=$PATH:/usr/local/bundle/bin
-    command: bash -c "bundle install && \
-      bundle exec rails db:drop && \
-      bundle exec rails db:prepare && \
-      bundle exec rspec --color --format documentation"
+      RAILS_ENV: test
+      BUNDLE_WITHOUT: development
+    entrypoint: ["/bin/bash", "-cx"]
+    command:
+      - |
+        bundle install
+        bundle exec rake db:drop
+        bundle exec rake db:prepare
+        bundle exec rspec --color --format documentation $${CMD_ARGS}
     volumes:
       - .:/eventnxt
       - bundle_data_rspec:/usr/local/bundle
@@ -32,11 +34,13 @@ services:
     environment:
       - RAILS_ENV=test
       - BUNDLE_WITHOUT=development
-      - PATH=$PATH:/usr/local/bundle/bin
-    command: bash -c "bundle install && \
-      bundle exec rails db:drop && \
-      bundle exec rails db:prepare && \
-      bundle exec cucumber --color"
+    entrypoint: ["/bin/bash", "-cx"]
+    command:
+      - |
+        bundle install
+        bundle exec rake db:drop
+        bundle exec rake db:prepare
+        bundle exec cucumber --color $${CMD_ARGS}
     volumes:
       - .:/eventnxt
       - bundle_data_cucumber:/usr/local/bundle
