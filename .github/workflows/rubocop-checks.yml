@@ -1,4 +1,4 @@
-name: RuboCop Autocorrect
+name: RuboCop Checks
 
 on:
   pull_request:
@@ -47,17 +47,17 @@ jobs:
         if: always()  # Runs this step regardless of previous step's success or failure
         run: rm -f changed_files.txt
 
-      - name: Commit and Push Changes
-        if: success()
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if [[ $(git status --porcelain) ]]; then
-            git add .
-            git commit -m "Auto-corrected RuboCop issues in modified files"
-            git push origin HEAD:${{ github.head_ref }}  # Push back to the PR branch
-          else
-            echo "No changes to commit"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Commit and Push Changes
+      #   if: success()
+      #   run: |
+      #     git config --global user.name "github-actions[bot]"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      #     if [[ $(git status --porcelain) ]]; then
+      #       git add .
+      #       git commit -m "Auto-corrected RuboCop issues in modified files"
+      #       git push origin HEAD:${{ github.head_ref }}  # Push back to the PR branch
+      #     else
+      #       echo "No changes to commit"
+      #     fi
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
