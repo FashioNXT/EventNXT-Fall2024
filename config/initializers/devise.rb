@@ -286,6 +286,8 @@ Devise.setup do |config|
     Constants::Eventbrite::CLIENT_SECRET,
     strategy_class: OmniAuth::Strategies::Eventbrite
 
+  OmniAuth.config.logger = Rails.logger
+
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.

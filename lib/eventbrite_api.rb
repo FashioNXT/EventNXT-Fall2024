@@ -2,6 +2,7 @@ require 'oauth2'
 require Rails.root.join('lib', 'constants')
 
 # Eventbrite API wrapper
+# Currently Eventbrite does not provide an expiration time for the access token
 class EventbriteApi
   def initialize(user)
     @user = user
@@ -14,39 +15,32 @@ class EventbriteApi
     )
     @access_token = OAuth2::AccessToken.new(
       @client,
-      @user.eventbrite_token,
-      refresh_token: @user.eventbrite_refresh_token,
-      expires_at: @user.eventbrite_token_expires_at.to_i
+      @user.eventbrite_token
     )
   end
 
   # Fetch events owned by the user
-  def user_owned_events
-    self.refresh_token_if_needed!
+  def user_owned_event
     self.get('/v3/users/me/owned_events/')
   end
 
   # Fetch a specific event
   def get_event(event_id)
-    self.refresh_token_if_needed!
     self.get("/v3/events/#{event_id}/")
   end
 
   # Fetch ticket classes (types) for an event
   def get_ticket_classes(event_id)
-    self.refresh_token_if_needed!
     self.get("/v3/events/#{event_id}/ticket_classes/")
   end
 
   # Fetch attendee data for an event
   def get_attendees(event_id)
-    self.refresh_token_if_needed!
     self.get("/v3/events/#{event_id}/attendees/")
   end
 
   # Fetch sales data for an event (requires special permissions)
   def get_event_sales(event_id)
-    self.refresh_token_if_needed!
     self.get("/v3/reports/events/#{event_id}/sales/")
   end
 
@@ -57,22 +51,6 @@ class EventbriteApi
     JSON.parse(response.body)
   rescue OAuth2::Error => e
     handle_oauth_error(e)
-  end
-
-  def refresh_token_if_needed!
-    return unless @access_token.expired?
-
-    new_token = @access_token.refresh!
-
-    # Update the user's tokens
-    @user.update(
-      eventbrite_token: new_token.token,
-      eventbrite_refresh_token: new_token.refresh_token,
-      eventbrite_token_expires_at: Time.at(new_token.expires_at)
-    )
-
-    # Update the access token instance
-    @access_token = new_token
   end
 
   def handle_oauth_error(error)

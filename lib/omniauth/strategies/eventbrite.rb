@@ -13,28 +13,23 @@ module OmniAuth
       option :client_options, {
         site: Constants::Eventbrite::API_URL,
         authorize_url: "#{Constants::Eventbrite::URL}/oauth/authorize",
-        token_url: "#{Constants::Eventbrite::URL}/oauth/token",
-        scope: 'event_management offline_access'
+        token_url: "#{Constants::Eventbrite::URL}/oauth/token"
       }
 
-      # def build_access_token
-      #   # super
-      #   #
-      #   #  # Ensure client_id and client_secret are added explicitly in the token exchange request body
-      #   token_params = {
-      #     client_id: options.client_id,
-      #     client_secret: options.client_secret,
-      #     code: request.params['code'],
-      #     grant_type: 'authorization_code',
-      #     redirect_uri: callback_url
-      #   }
-      #   Rails.logger.warn "Token Request Params: #{token_params.inspect}, PARAMS: #{request.params}, Full Request: #{request.env.inspect}"
-
-      #   # Call super with the overridden token parameters to add them to the token exchange request
-      #   client.get_token(token_params, deep_symbolize(options.auth_token_params))
-      # rescue OAuth2::Error => e
-      #   fail!(:invalid_credentials, e)
-      # end
+      def build_access_token
+        #  Ensure client_id and client_secret are added explicitly in the token exchange request body
+        token_params = {
+          client_id: options.client_id,
+          client_secret: options.client_secret,
+          code: request.params['code'],
+          grant_type: 'authorization_code',
+          redirect_uri: callback_url
+        }
+        # Call super with the overridden token parameters to add them to the token exchange request
+        client.get_token(token_params, deep_symbolize(options.auth_token_params))
+      rescue OAuth2::Error => e
+        fail!(:invalid_credentials, e)
+      end
 
       uid { raw_info['id'] }
 

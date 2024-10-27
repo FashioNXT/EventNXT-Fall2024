@@ -51,9 +51,7 @@ class User < ApplicationRecord
 
       user.update(
         eventbrite_uid: auth.uid,
-        eventbrite_token: auth.credentials.token,
-        eventbrite_refresh_token: auth.credentials.refresh_token,
-        eventbrite_token_expires_at: Time.at(auth.credentials.expires_at)
+        eventbrite_token: auth.credentials.token
       )
       user
     end

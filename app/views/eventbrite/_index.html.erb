@@ -1,6 +1,7 @@
 <h1>Your Eventbrite Events</h1>
 
-<% if @ext_events.any? %>
+<div>
+ <% if @ext_events.any? %>
   <ul>
     <% @ext_events.each do |event| %>
       <li>
@@ -12,3 +13,4 @@
 <% else %>
   <p>No events found.</p>
 <% end %>
+</div>

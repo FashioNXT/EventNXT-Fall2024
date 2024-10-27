@@ -82,9 +82,9 @@ group :test do
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'rubycritic'
   gem 'selenium-webdriver'
   gem 'webdrivers'
-  gem 'rubycritic'
   # Code coverage for Ruby
   gem 'rails-controller-testing'
   gem 'rspec-rails'
@@ -105,12 +105,11 @@ gem 'roo', '~> 2.10'
 # to authenticate
 gem 'devise', '~> 4.9', '>= 4.9.2'
 
-# Google Login
-# gem 'omniauth-google-oauth2', '~> 1.1', '>= 1.1.1'
-# gem 'omniauth-rails_csrf_protection', '~> 1.0', '>= 1.0.1'
-
 # for central login
 gem 'oauth2', '~> 2.0'
 gem 'omniauth', '>= 1.9', '< 3'
 gem 'omniauth-oauth2', '~> 1.7', '>= 1.7.1'
 gem 'omniauth-rails_csrf_protection'
+
+# Offers enhanced formatting options and structured logging capabilities.
+gem 'semantic_logger'

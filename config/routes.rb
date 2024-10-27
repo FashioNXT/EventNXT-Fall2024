@@ -17,8 +17,6 @@ Rails.application.routes.draw do
   post '/refer_a_friend/:random_code', to: 'referrals#referral_creation',
     as: 'referral_creation'
 
-  get '/buy_tickets', to: 'tickets#new', as: 'new_ticket_purchase'
-
   resources :email_services do
     member do
       get 'send_email'
@@ -30,8 +28,6 @@ Rails.application.routes.draw do
   resources :events do
     resources :referrals, only: %i[new referral_creation edit update]
   end
-
-  resources :tickets, only: %i[new create]
 
   root 'home#index'
 
@@ -64,6 +60,5 @@ Rails.application.routes.draw do
     end
   end
 
-  # resources :seats
-  # resources :guests
+  resources :eventbrite, only: %i[index]
 end

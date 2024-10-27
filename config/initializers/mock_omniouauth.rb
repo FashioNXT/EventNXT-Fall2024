@@ -30,8 +30,6 @@ if Rails.env.development?
 
   # Add more users as needed...
 
-  OmniAuth.config.logger = Rails.logger
-
   Rails.application.config.middleware.use OmniAuth::Builder do
     provider Constants::Events360::SYM, setup: lambda { |env|
       request = Rack::Request.new(env)

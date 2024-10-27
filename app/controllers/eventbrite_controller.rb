@@ -1,5 +1,5 @@
 # Eventbrite Events Controller
-class EventbriteEventsController < ApplicationController
+class EventbriteController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_eventbrite_connected
 
@@ -14,6 +14,10 @@ class EventbriteEventsController < ApplicationController
       @ext_events = []
       flash.now[:alert] = 'Could not fetch events from Eventbrite.'
     end
+  end
+
+  def disconnect
+    current_user.eventbrite_token = nil
   end
 
   private
