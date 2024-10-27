@@ -1,12 +1,12 @@
 <h1>Your Eventbrite Events</h1>
 
 <div>
- <% if @ext_events.any? %>
+ <% if external_events.present? && external_events.any? %>
   <ul>
-    <% @ext_events.each do |event| %>
+    <% external_events.each do |event| %>
       <li>
-        <%= link_to event['name']['text'], eventbrite_event_path(event['id']) %>
-        <p><%= event['description']['text'].truncate(100) %></p>
+        <p><strong><%= event[:name] %> <strong></p>
+        <p><%= event[:url] %></p>
       </li>
     <% end %>
   </ul>

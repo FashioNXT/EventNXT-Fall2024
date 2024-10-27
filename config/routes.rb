@@ -59,6 +59,4 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  resources :eventbrite, only: %i[index]
 end

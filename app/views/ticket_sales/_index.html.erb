@@ -7,7 +7,7 @@
         method: :post, data: { turbo: false }, class: 'btn btn-primary' %>
     <% else %>
       <p>Your Eventbrite account is connected.</p>
-      <%= render partial: "eventbrite/index", locals: { event: @event } %>
+      <%= render partial: "eventbrite/index", locals: { event: @event, external_events: @external_events } %>
     <% end %>
   <% end %>
 </div>

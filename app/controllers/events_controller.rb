@@ -16,6 +16,18 @@ class EventsController < ApplicationController
     @seating_summary = @event.calculate_seating_summary
 
     @guest_details = Guest.where(event_id: @event.id)
+
+    if current_user.eventbrite_token
+      eventbrite = EventbriteApiService.new(current_user)
+      response = eventbrite.events
+      if response.status
+        @external_events = response.data
+      else
+        @external_events = []
+        flash[:alert] = response.error_message
+      end
+    end
+
     @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
       [referraldatum[:referred], referraldatum[:email]]
     end
