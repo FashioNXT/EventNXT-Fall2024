@@ -38,11 +38,16 @@ jobs:
         if: success()
         run: |
           if [[ -s changed_files.txt ]]; then
-            rubocop -A --force-exclusion $(cat changed_files.txt)
+            # Filter out deleted files
+            existing_files=$(cat changed_files.txt | xargs -I {} test -e {} && echo {})
+            if [[ -n "$existing_files" ]]; then
+              rubocop -A --force-exclusion $existing_files
+            else
+              echo "No existing Ruby files to check"
+            fi
           else
             echo "No Ruby file changes detected"
           fi
-      
       - name: Remove changed_files.txt
         if: always()  # Runs this step regardless of previous step's success or failure
         run: rm -f changed_files.txt
