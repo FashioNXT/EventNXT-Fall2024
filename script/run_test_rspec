@@ -1,21 +1,20 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-docker_run = 'docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm test_rspec'
-
+docker_run = 'docker-compose -f docker-compose.test.yml run --rm'
 if ARGV.length.positive?
-  cmd = 'bundle install && bundle exec rspec'
+  args = []
   ARGV.each do |arg|
-    cmd += if arg.include?(' ')
-             " \"#{arg}\""
-           else
-             " #{arg}"
-           end
+    args << if arg.include?(' ')
+              "\"#{arg}\""
+            else
+              arg
+            end
   end
-  cmd = "bash -c '#{cmd}'"
+  args = args.join(' ')
 end
 
-cmd = "#{docker_run} #{cmd}"
+cmd = "#{docker_run} --env CMD_ARGS=#{args} test_rspec"
 
 puts("Running Cmd: #{cmd}")
 system(cmd)

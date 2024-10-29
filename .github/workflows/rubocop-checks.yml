@@ -1,0 +1,53 @@
+name: RuboCop Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Ensure full history is available for merge base
+          ref: ${{ github.head_ref }}  # Checkout the branch for the PR
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0' # Adjust to your Ruby version
+
+      - name: Install RuboCop
+        run: |
+          gem install rubocop
+
+      - name: Get Changed Ruby Files
+        id: changed_files
+        run: |
+          # Fetch the target branch (main or dev) dynamically
+          BASE_BRANCH=${{ github.event.pull_request.base.ref }}
+          git fetch origin $BASE_BRANCH
+          git diff --name-only origin/$BASE_BRANCH...HEAD -- '*.rb' > changed_files.txt
+
+      - name: Run RuboCop with Autocorrect on Changed Files
+        if: success()
+        run: |
+          if [[ -s changed_files.txt ]]; then
+            # Filter out deleted files
+            existing_files=$(cat changed_files.txt | xargs -I {} test -e {} && echo {})
+            if [[ -n "$existing_files" ]]; then
+              rubocop -A --force-exclusion $existing_files
+            else
+              echo "No existing Ruby files to check"
+            fi
+          else
+            echo "No Ruby file changes detected"
+          fi
+      - name: Remove changed_files.txt
+        if: always()  # Runs this step regardless of previous step's success or failure
+        run: rm -f changed_files.txt
