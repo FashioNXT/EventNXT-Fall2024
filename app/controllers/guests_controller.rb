@@ -112,7 +112,8 @@ class GuestsController < ApplicationController
       total_seats = @guest.commited_seats + new_commited_seats
 
       if total_seats <= @guest.alloted_seats
-        @guest.commited_seats = total_seats
+        @guest.commited_seats = new_commited_seats
+        
 
         if @guest.save
           flash[:notice] = 'Committed seats updated successfully.'
