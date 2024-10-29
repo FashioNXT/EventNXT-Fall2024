@@ -15,8 +15,7 @@ Rails.application.configure do
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
   # only allow certain domain to access this app.
-  config.hosts << URI.parse(ENV['APP_URL']).host
-  config.hosts << URI.parse(ENV['EVENT360_URL']).host
+  config.hosts << URI.parse(ENV['APP_URL'] || 'http://localhost').host
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true

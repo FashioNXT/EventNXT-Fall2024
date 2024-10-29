@@ -21,7 +21,7 @@ module TicketVendor
     end
 
     def compose_ticket_sales
-      email_source_key = config.
+      email_source_key = 'profiles.'
     end
 
     def fetch_events
@@ -33,30 +33,35 @@ module TicketVendor
       end
     end
 
-    def fetch_ticket_classes
+    def fetch_ticket_classes_by_id
       response = @eventbrite.tickets_classes(@event_id)
+      ticket_classes_by_id = {}
       if response.status
-        @ticket_sales = response.data
+        ticket_classes_by_id = response.data.each_with_object({}) do |ticket_class, classes_by_id|
+          classes_by_id[ticket_class['id']] = ticket_class
+        end
       else
         @error_message ||= ticket_response.error_message
       end
+      ticket_classes_by_id
     end
 
     def fetch_ticket_class_fields
-      ticket_classes = self.fetch_ticket_classes
+      ticket_classes_by_id = self.fetch_ticket_classes_by_id
       return [] if ticket_classes.nil? || ticket_classes.empty?
 
-      self.get_nested_keys(ticket_classes[0])
+      self.get_nested_keys(ticket_classes_by_id.values.first)
     end
 
     def fetch_attendees
       response = @eventbrite.attendees(@event_id)
-
+      attendees = []
       if response.status
-        @ticket_sales = response.data
+        attendees = response.data
       else
         @error_message ||= ticket_response.error_message
       end
+      attendees
     end
 
     private
@@ -75,7 +80,7 @@ module TicketVendor
 
     def get_nested_value(hash, nested_key)
       keys = nested_key.split('.')
-      keys.reduce(hash) do |value, key| 
+      keys.reduce(hash) do |value, key|
         value.is_a?(Hash) ? value[key] : nil
       end
     end
