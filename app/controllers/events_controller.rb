@@ -88,7 +88,8 @@ class EventsController < ApplicationController
 
   def show_ticket_sales
     external_event_id = params[:external_event_id] || @event.external_event_id
-    eventbrite_service = EventbriteHandlerService.new(current_user, external_event_id)
+    config = TicketVendor::Config.new(external_event_id)
+    eventbrite_service = EventbriteHandlerService.new(current_user, config)
     show_eventbrite(eventbrite_service) if eventbrite_service.authorized?
 
     if params[:extenral_event_id].present? && params[:external_event_id] != external_event_id
@@ -98,8 +99,12 @@ class EventsController < ApplicationController
   end
 
   def show_eventbrite(eventbrite_service)
-    @external_events = eventbrite_service.events
-    @ticket_sales = eventbrite_service.tickets_sales
+    @external_events = eventbrite_service.fetch_events
+
+    return if eventbrite_service.event_id.blank?
+
+    @table_field_sources = eventbrite_service.fetch_ticket_class_fields
+
     flash[:alert] = eventbrite_service.error_message if eventbrite_service.error_message.present?
   end
 end
