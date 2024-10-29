@@ -4,26 +4,26 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe 'associations' do
-    it { should have_many(:events).dependent(:destroy) }
+    it { is_expected.to have_many(:events).dependent(:destroy) }
   end
 
   describe 'validations' do
+    subject { create(:user) }
+
     it 'is valid with valid attributes' do
       user = build(:user)
       expect(user).to be_valid
     end
 
-    it { should validate_presence_of(:uid) }
-    it { should validate_presence_of(:provider) }
-    it { should validate_presence_of(:email) }
-    it { should validate_uniqueness_of(:email).case_insensitive }
-
-    subject { create(:user) }
+    it { is_expected.to validate_presence_of(:uid) }
+    it { is_expected.to validate_presence_of(:provider) }
+    it { is_expected.to validate_presence_of(:email) }
+    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
 
     it 'validates uniqueness of uid scoped to provider' do
       duplicate_user = build(:user, uid: subject.uid, provider: subject.provider)
 
-      expect(duplicate_user).to_not be_valid
+      expect(duplicate_user).not_to be_valid
       expect(duplicate_user.errors[:uid]).to include('and provider combination must be unique')
     end
   end
@@ -43,8 +43,8 @@ RSpec.describe User, type: :model do
       end
 
       it 'calls from_omniauth_events360' do
-        expect(User).to receive(:from_omniauth_events360).with(auth).and_call_original
-        User.from_omniauth(auth)
+        expect(described_class).to receive(:from_omniauth_events360).with(auth).and_call_original
+        described_class.from_omniauth(auth)
       end
     end
 
@@ -61,7 +61,7 @@ RSpec.describe User, type: :model do
       end
 
       it 'returns nil when provider is not supported' do
-        user = User.from_omniauth(auth_other, user)
+        user = described_class.from_omniauth(auth_other, user)
         expect(user).to be_nil
       end
     end
@@ -87,7 +87,7 @@ RSpec.describe User, type: :model do
       end
 
       it 'updates the user information and returns the user' do
-        user = User.from_omniauth(auth)
+        user = described_class.from_omniauth(auth)
         expect(user.email).to eq('new_email@fake.com') # updated email
         expect(user.name).to eq('new name') # updated name
         expect(user).to eq(user) # Ensure the same user is returned
@@ -96,7 +96,7 @@ RSpec.describe User, type: :model do
 
     context 'when user does not exist,' do
       before do
-        User.delete_all # Ensure no users exist in the database
+        described_class.delete_all # Ensure no users exist in the database
       end
 
       let(:auth) do
@@ -112,10 +112,10 @@ RSpec.describe User, type: :model do
 
       it 'creates a new user with the auth information' do
         expect do
-          User.from_omniauth(auth)
-        end.to change { User.count }.by(1)
+          described_class.from_omniauth(auth)
+        end.to change(described_class, :count).by(1)
 
-        new_user = User.last
+        new_user = described_class.last
         expect(new_user.uid).to eq(auth.uid)
         expect(new_user.provider).to eq(auth.provider)
         expect(new_user.email).to eq(auth.info.email)
