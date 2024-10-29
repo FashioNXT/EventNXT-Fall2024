@@ -2,14 +2,8 @@
 
 <div>
  <% if external_events.present? && external_events.any? %>
-  <ul>
-    <% external_events.each do |event| %>
-      <li>
-        <p><strong><%= event[:name] %> <strong></p>
-        <p><%= event[:url] %></p>
-      </li>
-    <% end %>
-  </ul>
+  <%= render partial: "eventbrite/form_select", 
+    locals: { event: event, external_events: external_events } %>
 <% else %>
   <p>No events found.</p>
 <% end %>

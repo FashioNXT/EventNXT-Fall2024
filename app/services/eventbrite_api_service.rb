@@ -73,24 +73,10 @@ class EventbriteApiService
     Response.new(true, data: events)
   end
 
-  # Fetch a specific event
-  def get_event(event_id)
-    self.get("/v3/events/#{event_id}/")
-  end
-
-  # Fetch ticket classes (types) for an event
-  def get_ticket_classes(event_id)
-    self.get("/v3/events/#{event_id}/ticket_classes/")
-  end
-
-  # Fetch attendee data for an event
-  def get_attendees(event_id)
-    self.get("/v3/events/#{event_id}/attendees/")
-  end
-
-  # Fetch sales data for an event (requires special permissions)
-  def get_event_sales(event_id)
-    self.get("/v3/reports/events/#{event_id}/sales/")
+  def ticket_classes(event_id)
+    endpoint = "/v3/events/#{event_id}/ticket_classes/"
+    ticket_classes = []
+    self.get('')
   end
 
   private

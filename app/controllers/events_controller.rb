@@ -17,16 +17,7 @@ class EventsController < ApplicationController
 
     @guest_details = Guest.where(event_id: @event.id)
 
-    if current_user.eventbrite_token
-      eventbrite = EventbriteApiService.new(current_user)
-      response = eventbrite.events
-      if response.status
-        @external_events = response.data
-      else
-        @external_events = []
-        flash[:alert] = response.error_message
-      end
-    end
+    self.show_ticket_sales
 
     @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
       [referraldatum[:referred], referraldatum[:email]]
@@ -93,5 +84,22 @@ class EventsController < ApplicationController
 
   def event_params
     params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar)
+  end
+
+  def show_ticket_sales
+    external_event_id = params[:external_event_id] || @event.external_event_id
+    eventbrite_service = EventbriteHandlerService.new(current_user, external_event_id)
+    show_eventbrite(eventbrite_service) if eventbrite_service.authorized?
+
+    if params[:extenral_event_id].present? && params[:external_event_id] != external_event_id
+      @event.update(eventernal_event_id: params[:eventernal_event_id])
+    end
+    external_event_id
+  end
+
+  def show_eventbrite(eventbrite_service)
+    @external_events = eventbrite_service.events
+    @ticket_sales = eventbrite_service.tickets_sales
+    flash[:alert] = eventbrite_service.error_message if eventbrite_service.error_message.present?
   end
 end
