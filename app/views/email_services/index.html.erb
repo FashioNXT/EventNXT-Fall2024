@@ -1,26 +1,51 @@
 <style>
   .highlight-heading {
-    background-color: #333; /* or any other dark grey color you prefer */
-    color: #fff; /* text color for better visibility */
+    background-color: #333;
+    color: #fff;
   }
 
   .small-body-container {
-    width: 600px; /* Set the width */
-    height: 100px; /* Maintain aspect ratio */
+    width: 600px;
+    height: 100px;
     border: 1px solid #ccc;
-    overflow: auto; /* Add overflow to allow scrolling if content is larger */
+    overflow: auto;
   }
 
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .section-heading {
+    margin-left: 20%;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    font-size: 56px;
+    color: #333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .no-emails-message {
+    text-align: center;
+    color: #777;
+    margin: 20px 0;
+  }
 </style>
+
 <p style="color: green"><%= notice %></p>
 
 <h1>Email Service</h1>
 
-
 <%= render 'email_template' %>
-   
 
-<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Unsent Email Services Summary</h2>
+<!-- Unsent Email Services Section -->
+<h2 class="section-heading">Unsent Email Services Summary</h2>
 <div class="container">
   <table class="table table-striped table-hover">
     <thead>
@@ -33,7 +58,7 @@
         <th>Destroy Email</th>
       </tr>
     </thead>
-    <% if @unsent_emails && !@unsent_emails.empty? %>
+    <% if @unsent_emails.present? %>
       <tbody>
         <% @unsent_emails.each do |email| %>
           <tr>
@@ -44,26 +69,22 @@
                 <%= email[:body].html_safe %>
               </div>
             </td>
-            <td>
-              <%= link_to 'Send', send_email_email_service_path(email), style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
-            </td>
-            <td>
-              <%= link_to 'Edit', edit_email_service_path(email), style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
-            </td>
-            <td>
-              <%= link_to "Destroy", [email], method: :delete, style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
-            </td>
+            <td><%= link_to 'Send', send_email_email_service_path(email), class: 'button' %></td>
+            <td><%= link_to 'Edit', edit_email_service_path(email), class: 'button' %></td>
+            <td><%= link_to 'Destroy', email, method: :delete, data: { confirm: 'Are you sure?' }, class: 'button' %></td>
           </tr>
         <% end %>
       </tbody>
+    <% else %>
+      <p class="no-emails-message">No unsent emails available.</p>
     <% end %>
   </table>
 </div>
 
-<%= link_to 'Add New Email', new_email_service_path(@event), style: 'display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;margin-left:25%;margin-bottom:30px', class: 'button' %>
+<%= link_to 'Add New Email', new_email_service_path(@event), class: 'button', style: 'margin-left: 25%; margin-bottom: 30px;' %>
 
-
-<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Sent Email Services Summary</h2>
+<!-- Sent Email Services Section -->
+<h2 class="section-heading">Sent Email Services Summary</h2>
 <div class="container">
   <table class="table table-striped table-hover">
     <thead>
@@ -76,7 +97,7 @@
         <th>Destroy Email</th>
       </tr>
     </thead>
-    <% if @sent_emails && !@sent_emails.empty? %>
+    <% if @sent_emails.present? %>
       <tbody>
         <% @sent_emails.each do |email| %>
           <tr>
@@ -87,18 +108,14 @@
                 <%= email[:body].html_safe %>
               </div>
             </td>
-            <td>
-              <%= link_to 'Send', send_email_email_service_path(email), style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
-            </td>
-            <td>
-              <%= link_to 'Edit', edit_email_service_path(email), style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
-            </td>
-            <td>
-              <%= link_to "Destroy", [email], method: :delete, style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
-            </td>
+            <td><%= link_to 'Re-Send', send_email_email_service_path(email), class: 'button' %></td>
+            <td><%= link_to 'Edit', edit_email_service_path(email), class: 'button' %></td>
+            <td><%= link_to 'Destroy', email, method: :delete, data: { confirm: 'Are you sure?' }, class: 'button' %></td>
           </tr>
         <% end %>
       </tbody>
+    <% else %>
+      <p class="no-emails-message">No sent emails available.</p>
     <% end %>
   </table>
 </div>

@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 class EmailService < ApplicationRecord
-  # attr_accessible :email_template_id, :to, :subject, :body, :event_id, :guest_id
-  belongs_to :event, optional: true
-  belongs_to :guest, optional: true
+  belongs_to :event
+  belongs_to :guest
+  belongs_to :email_template, optional: true
+
+  validates :to, :subject, :body, presence: true
+  # Keeps track of the email sent status with `sent_at` timestamp.
 end
+

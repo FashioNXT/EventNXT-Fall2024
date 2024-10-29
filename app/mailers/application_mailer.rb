@@ -1,24 +1,18 @@
-# frozen_string_literal: true
-
 class ApplicationMailer < ActionMailer::Base
-  # <!--===================-->
-  # <!--to set the default mailer address-->
-  default from: 'eventnxtapp@gmail.com' # same email can be found at "/config/environments/development.rb"
-  # <!--===================-->
-
+  # Set default sender email
+  default from: 'eventnxtapp@gmail.com'
   layout 'mailer'
 
-  # <!--===================-->
-  # <!--to set the default mailer address-->
+  # Sends an email with dynamic event and guest information, and optionally includes RSVP and referral URLs
   def send_email(to, subject, body, event, guest, rsvp_url, referral_url = nil)
     @event = event
     @guest = guest
     @rsvp_url = rsvp_url
-    @referral_url = referral_url # 新添加的行
-    mail(to:, subject:) do |format|
+    @referral_url = referral_url || new_referral_url(random_code: guest.rsvp_link)
+  
+    # Render body with dynamic content
+    mail(to: to, subject: subject) do |format|
       format.html { render inline: ERB.new(body).result(binding).html_safe }
     end
   end
-
-  # <!--===================-->
 end

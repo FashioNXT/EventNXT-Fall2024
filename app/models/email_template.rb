@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class EmailTemplate < ApplicationRecord
-  validates :name, presence: true
-  validates :body, presence: true
+  has_many :email_services
+
+  validates :name, :subject, :body, presence: true
 end
