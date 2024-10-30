@@ -64,27 +64,7 @@ module TicketVendor
       @attendees
     end
 
-    def fetch_attendees_fields
-      @attendees = self.fetch_attendees if @attendees.nil
-
-      return [] if @attendees.empty
-
-      self.get_nested_keys(attendees.first)
-    end
-
     private
-
-    def get_nested_keys(hash, parent_key = '')
-      keys = []
-      hash.each do |key, value|
-        full_key = parent_key.empty? ? key.to_s : "#{parent_key}.#{key}"
-        if value.is_a?(Hash)
-          keys.concat(fetch_nested_keys(value, full_key))
-        else
-          keys << full_key
-        end
-      end
-    end
 
     def get_nested_value(hash, nested_key)
       keys = nested_key.split('.')
