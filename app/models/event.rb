@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Model of events created by the user
 class Event < ApplicationRecord
   mount_uploader :event_avatar, AvatarUploader
   belongs_to :user

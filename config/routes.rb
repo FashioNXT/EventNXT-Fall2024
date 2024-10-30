@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Rails.application.routes.draw do
+Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get '/book_seats/:rsvp_link', to: 'guests#book_seats', as: 'book_seats'
   get '/email_services/new_email_template',
     to: 'email_services#new_email_template', as: 'new_email_template'
