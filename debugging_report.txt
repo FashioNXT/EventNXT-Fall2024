@@ -1,1 +1,0 @@
-1. (May 14 2024, Spring 2024 CSCE 606 EventNXT Team) Testing failures because of the added Section attribute. Cucumber deexamplification failures because of the added Section attribute.
