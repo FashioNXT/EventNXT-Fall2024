@@ -5,14 +5,20 @@ module TicketVendor
 
     def initialize(user, config)
       @user = user
-      @config = config
+      @config = Config.new(
+        event_id: config.event_id,
+        category_source_key: 'ticket_class_name',
+        section_source_key: 'ticket_class_name',
+        tickets_source_key: 'quantity',
+        cost_source_key: 'costs.base_price'
+      )
       @eventbrite = EventbriteApiService.new(user) if user.eventbrite_token
 
       @event_id = config.event_id
-
-      @events = self.fetch_events
-      @ticket_class_fields = self.fetch_ticket_class_fields
-      @ticket_sales = self.compose_ticket_sales
+      @events = []
+      @attendees = []
+      @attendees_fields = []
+      @ticket_sales = []
       @error_message = nil
     end
 
@@ -21,47 +27,50 @@ module TicketVendor
     end
 
     def compose_ticket_sales
-      email_source_key = 'profiles.'
+      email_source_key = 'profile.email'
+      @attendees = self.fetch_attendees
+      @ticket_sales = []
+
+      @attendees.each do |attendee|
+        ticket_sale = {}
+        ticket_sale[:email] = self.get_nested_value(attendee, email_source_key)
+        ticket_sale[:category] = self.get_nested_value(attendee, @config.category_source_key)
+        ticket_sale[:section] = self.get_nested_value(attendee, @config.section_source_key)
+        ticket_sale[:tickets] = self.get_nested_value(attendee, @config.tickets_source_key)
+        ticket_sale[:cost] = self.get_nested_value(attendee, @config.cost_source_key)
+        ticket_sales << ticket_sale
+      end
+      ticket_sales
     end
 
     def fetch_events
       response = @eventbrite.events
       if response.status
-        @external_events = response.data
-      else
-        @error_message = response.error_message
-      end
-    end
-
-    def fetch_ticket_classes_by_id
-      response = @eventbrite.tickets_classes(@event_id)
-      ticket_classes_by_id = {}
-      if response.status
-        ticket_classes_by_id = response.data.each_with_object({}) do |ticket_class, classes_by_id|
-          classes_by_id[ticket_class['id']] = ticket_class
+        @events = response.data.map do |event|
+          { id: event['id'], name: event['name']['text'], url: event['url'] }
         end
       else
-        @error_message ||= ticket_response.error_message
+        @error_message ||= response.error_message
       end
-      ticket_classes_by_id
-    end
-
-    def fetch_ticket_class_fields
-      ticket_classes_by_id = self.fetch_ticket_classes_by_id
-      return [] if ticket_classes.nil? || ticket_classes.empty?
-
-      self.get_nested_keys(ticket_classes_by_id.values.first)
+      @events
     end
 
     def fetch_attendees
       response = @eventbrite.attendees(@event_id)
-      attendees = []
       if response.status
-        attendees = response.data
+        @attendees = response.data
       else
-        @error_message ||= ticket_response.error_message
+        @error_message ||= response.error_message
       end
-      attendees
+      @attendees
+    end
+
+    def fetch_attendees_fields
+      @attendees = self.fetch_attendees if @attendees.nil
+
+      return [] if @attendees.empty
+
+      self.get_nested_keys(attendees.first)
     end
 
     private

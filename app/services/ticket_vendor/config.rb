@@ -15,6 +15,7 @@ module TicketVendor
       cost_source_key
     )
       @event_id = event_id
+      @email_source_key = email_source_key
       @category_source_key = category_source_key
       @section_source_key = section_source_key
       @tickets_source_key = tickets_source_key

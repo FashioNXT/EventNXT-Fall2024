@@ -67,22 +67,9 @@ module TicketVendor
       self.each_paged_response(endpoint) do |response|
         return response unless response.status
 
-        events.concat(response.data['events'].map do |event|
-          { id: event['id'], name: event['name']['text'], url: event['url'] }
-        end)
+        events.concat(response.data['events'])
       end
       Response.new(true, data: events)
-    end
-
-    def ticket_classes(event_id)
-      endpoint = "/events/#{event_id}/ticket_classes/"
-      ticket_classes = []
-      self.each_paged_response(endpoint) do |response|
-        return response unless response.status
-
-        ticket_classes.concat(response.data['ticket_classes'])
-      end
-      Response.new(true, data: ticket_classes)
     end
 
     def attendees(event_id)
@@ -91,14 +78,14 @@ module TicketVendor
       self.each_paged_response(endpoint) do |response|
         return response unless response.status
 
-        ticket_classes.concat(response.data['attendees'])
+        attendees.concat(response.data['attendees'])
       end
       Response.new(true, data: attendees)
     end
 
     private
 
-    def get(endpoint, opt = {})
+    def get(endpoint, opt: {})
       # For Unknown reason omniauth2 fails to concat client.site + endpoint
       # So I expilicity set the api url here
       response = @access_token.get("#{Constants::Eventbrite::API_URL}#{endpoint}", opt:)
@@ -109,19 +96,19 @@ module TicketVendor
       handle_oauth_error(e)
     end
 
-    def each_paged_response(endpoint, opt = {})
+    def each_paged_response(endpoint, opt: {})
       response = self.get(endpoint, opt:)
       pagination = response.data['pagination']
       yield response
 
       while pagination['has_more_items']
-        if opt[:parameters].present?
+        if opt.key?(:parameters)
           opt[:parameters][:continuation] = pagination['continuation']
         else
           opt[:parameters] = { continuation: pagination['continuation'] }
         end
 
-        response = self.get(endpoint, opt)
+        response = self.get(endpoint, opt:)
         pagination = response.data['pagination']
         yield response
       end

@@ -11,21 +11,25 @@
 
 <%# Ticket Sales Table %>
 <% if @ticket_sales.present? %>
-  <h3>Ticket Sales for <%= @selected_event_name %></h3>
+  <h3>Ticket Sales</h3>
   <table>
     <thead>
       <tr>
-        <th>Ticket Type</th>
-        <th>Quantity Sold</th>
-        <th>Total Sales</th>
+        <th>Email</th>
+        <th>Category</th>
+        <th>Section</th>
+        <th>Tickets</th>
+        <th>Cost</th>
       </tr>
     </thead>
     <tbody>
-      <% @ticket_sales.each do |ticket| %>
+      <% @ticket_sales.each do |ticket_sale| %>
         <tr>
-          <td><%= ticket['name'] %></td>
-          <td><%= ticket['quantity_sold'] %></td>
-          <td><%= number_to_currency(ticket['sales_total']) %></td>
+          <td><%= ticket_sale[:email] %></td>
+          <td><%= ticket_sale[:category]%></td>
+          <td><%= ticket_sale[:section]%></td>
+          <td><%= ticket_sale[:tickets]%></td>
+          <td><%= number_to_currency(ticket_sale[:cost]) %></td>
         </tr>
       <% end %>
     </tbody>

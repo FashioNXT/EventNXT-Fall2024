@@ -99,12 +99,8 @@ class EventsController < ApplicationController
   end
 
   def show_eventbrite(eventbrite_service)
-    @external_events = eventbrite_service.fetch_events
-
-    return if eventbrite_service.event_id.blank?
-
-    @table_field_sources = eventbrite_service.fetch_ticket_class_fields
-
+    @external_events = eventbrite_service.fetch_event
+    @ticket_sales = eventbrite_service.compose_ticket_sales
     flash[:alert] = eventbrite_service.error_message if eventbrite_service.error_message.present?
   end
 end

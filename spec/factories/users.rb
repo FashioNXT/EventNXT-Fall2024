@@ -15,6 +15,11 @@ FactoryBot.define do
     provider { Constants::Events360::NAME }
   end
 
+  trait Constants::Eventbrite::SYM do
+    eventbrite_uid { Faker::Number.unique.number(digits: 12).to_s }
+    eventbrite_token { 'fake-token' }
+  end
+
   trait :with_invalid_email do
     email { 'invalid-email' }
   end
