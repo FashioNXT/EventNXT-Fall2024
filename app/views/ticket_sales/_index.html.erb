@@ -1,13 +1,26 @@
 <h2 id="ticket-sales-title">Box Office Sales</h2>
 
 <div>
-  <% if user_signed_in? %>
-    <% unless current_user.eventbrite_token.present? %>
-      <%= button_to 'Connect to Eventbrite', user_eventbrite_omniauth_authorize_path, 
-        method: :post, data: { turbo: false }, class: 'btn btn-primary' %>
-    <% else %>
-      <p>Your Eventbrite account is connected.</p>
-      <%= render partial: "eventbrite/index", locals: { event: @event, external_events: @external_events } %>
-    <% end %>
+  <% unless current_user.eventbrite_token.present? %>
+    <%=
+      button_to 'Connect to Eventbrite', user_eventbrite_omniauth_authorize_path, 
+      method: :post, data: { turbo: false }, class: 'btn btn-primary' 
+    %>
+  <% else %>
+    <p>Your Eventbrite account is connected.</p>
+    <%= 
+      render partial: "ticket_sales/eventbrite/index", locals: { 
+        event: event,
+        external_events: external_events,
+      }
+    %>
   <% end %>
+
+  <div class="container">
+    <%= 
+      render partial: "ticket_sales/table", locals: { 
+        ticket_sales: ticket_sales
+      }
+    %>
+  </div>
 </div>

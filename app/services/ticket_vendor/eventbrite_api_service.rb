@@ -88,9 +88,10 @@ module TicketVendor
     def get(endpoint, opt: {})
       # For Unknown reason omniauth2 fails to concat client.site + endpoint
       # So I expilicity set the api url here
-      response = @access_token.get("#{Constants::Eventbrite::API_URL}#{endpoint}", opt:)
+      full_url = "#{Constants::Eventbrite::API_URL}#{endpoint}"
+      response = @access_token.get(full_url, opt:)
       data = JSON.parse(response.body)
-      Rails.logger.info("Eventbrite Response Body: #{data}")
+      Rails.logger.info("Eventbrite Response for #{endpoint}: #{data}")
       Response.new(true, data:)
     rescue OAuth2::Error => e
       handle_oauth_error(e)
@@ -98,8 +99,8 @@ module TicketVendor
 
     def each_paged_response(endpoint, opt: {})
       response = self.get(endpoint, opt:)
-      pagination = response.data['pagination']
       yield response
+      pagination = response.data['pagination']
 
       while pagination['has_more_items']
         if opt.key?(:parameters)
@@ -109,8 +110,8 @@ module TicketVendor
         end
 
         response = self.get(endpoint, opt:)
-        pagination = response.data['pagination']
         yield response
+        pagination = response.data['pagination']
       end
       response
     end

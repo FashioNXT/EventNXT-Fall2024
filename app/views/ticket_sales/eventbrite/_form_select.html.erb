@@ -1,0 +1,10 @@
+<%# Dropdown for selecting an Eventbrite event %>
+<%= form_with url: event_path(event), method: :get, local: true do |f| %>
+  <%= f.label :eventbrite_event, "Select an Eventbrite Event" %>
+  <%= 
+    f.select :external_event_id, options_for_select(
+      external_events.map { |event| [event[:name], event[:id]] }, params[:external_event_id]), 
+      include_blank: "Select Event" 
+  %>
+  <%= f.submit "Show Ticket Sales" %>
+<% end %>

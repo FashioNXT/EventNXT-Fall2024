@@ -87,20 +87,24 @@ class EventsController < ApplicationController
   end
 
   def show_ticket_sales
-    external_event_id = params[:external_event_id] || @event.external_event_id
-    config = TicketVendor::Config.new(external_event_id)
-    eventbrite_service = EventbriteHandlerService.new(current_user, config)
-    show_eventbrite(eventbrite_service) if eventbrite_service.authorized?
-
-    if params[:extenral_event_id].present? && params[:external_event_id] != external_event_id
-      @event.update(eventernal_event_id: params[:eventernal_event_id])
+    if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
+      @event.update(external_event_id: params[:external_event_id])
     end
-    external_event_id
+    Rails.logger.debug("External Event Id: #{@event.external_event_id}")
+    config = TicketVendor::Config.new(event_id: @event.external_event_id)
+    eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
+
+    self.show_eventbrite(eventbrite_service) if eventbrite_service.authorized?
   end
 
   def show_eventbrite(eventbrite_service)
-    @external_events = eventbrite_service.fetch_event
-    @ticket_sales = eventbrite_service.compose_ticket_sales
-    flash[:alert] = eventbrite_service.error_message if eventbrite_service.error_message.present?
+    @external_events = eventbrite_service.fetch_events
+    @ticket_sales = eventbrite_service.compose_ticket_sales if eventbrite_service.config.event_id.present?
+
+    if eventbrite_service.error_message.present?
+      flash[:alert] = eventbrite_service.error_message
+    else
+      flash[:notice] = 'Succuessfully call Eventbrite API!'
+    end
   end
 end

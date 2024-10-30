@@ -158,7 +158,13 @@
 <!-- Ticket Sales -->
 <div>
   <!-- pass locals vars to the partial rendered template -->
-  <%= render partial: "ticket_sales/index", locals: { event: @event, external_events: @external_events } %>
+  <%= 
+    render partial: "ticket_sales/index", locals: { 
+      event: @event, 
+      external_events: @external_events, 
+      ticket_sales: @ticket_sales
+    } 
+  %>
 </div>
 
 
