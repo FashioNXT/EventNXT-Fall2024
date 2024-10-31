@@ -41,7 +41,7 @@
             <td><%= email_template[:subject] %></td>
             <td>
               <div class="small-body-container">
-                <%= email_template[:body].html_safe %>
+              <%= render_template_with_generic_placeholders(email_template).html_safe %>
               </div>
             </td>
             <td>
