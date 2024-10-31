@@ -33,7 +33,7 @@ class Guest < ApplicationRecord
     return result if result[:status] == false
   
     new_guests = []
-    duplicate_emails = []
+    duplicate_emails = Set.new
     empty_emails = []
     empty_categories = []
     empty_sections = []
@@ -133,13 +133,7 @@ class Guest < ApplicationRecord
     event.update_seating_summary(seating_summary)
     messages = []
 
-    if missing_seating_summary.any?
-      result[:status] = true
-      missing_seating_summary_messages = missing_seating_summary.map do |entry|
-        "Category and Section not found in Seating summary, '#{entry[:category]}', '#{entry[:section]}'"
-      end
-      result[:message] = missing_seating_summary_messages.join('. ')
-    elsif empty_emails.any?
+    if empty_emails.any?
       result[:status] = true
       result[:message] = "Empty emails found at rows: #{empty_emails.join(', ')}"
     elsif duplicate_emails.any?
@@ -151,6 +145,12 @@ class Guest < ApplicationRecord
     elsif empty_sections.any?
       result[:status] = true
       result[:message] = "Empty sections found at rows: #{empty_sections.join(', ')}"
+    elsif missing_seating_summary.any?
+      result[:status] = true
+      missing_seating_summary_messages = missing_seating_summary.map do |entry|
+        "Category and Section not found in Seating summary, '#{entry[:category]}', '#{entry[:section]}'"
+      end
+      result[:message] = missing_seating_summary_messages.join('. ')
     else
       result[:status] = true
       result[:message] = "Guests imported successfully"
