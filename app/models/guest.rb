@@ -134,30 +134,27 @@ class Guest < ApplicationRecord
     messages = []
 
     if missing_seating_summary.any?
-      
+      result[:status] = true
       missing_seating_summary_messages = missing_seating_summary.map do |entry|
         "Category and Section not found in Seating summary, '#{entry[:category]}', '#{entry[:section]}'"
       end
-      messages << missing_seating_summary_messages.join('. ')
+      result[:message] = missing_seating_summary_messages.join('. ')
+    elsif empty_emails.any?
+      result[:status] = true
+      result[:message] = "Empty emails found at rows: #{empty_emails.join(', ')}"
+    elsif duplicate_emails.any?
+      result[:status] = true
+      result[:message] = "Duplicate emails found: #{duplicate_emails.join(', ')}"
+    elsif empty_categories.any?
+      result[:status] = true
+      result[:message] = "Empty categories found at rows: #{empty_categories.join(', ')}"
+    elsif empty_sections.any?
+      result[:status] = true
+      result[:message] = "Empty sections found at rows: #{empty_sections.join(', ')}"
+    else
+      result[:status] = true
+      result[:message] = "Guests imported successfully"
     end
-    if empty_emails.any?
-      messages << "Empty emails found at rows: #{empty_emails.join(', ')}"
-    end
-    if duplicate_emails.any?
-      messages << "Duplicate emails found: #{duplicate_emails.join(', ')}"
-    end
-    if empty_categories.any?
-      messages << "Empty categories found at rows: #{empty_categories.join(', ')}"
-    end
-    if empty_sections.any?
-      messages << "Empty sections found at rows: #{empty_sections.join(', ')}"
-    end
-
-    # Set the result status and message
-    result[:status] = true
-    result[:message] = messages.join('. ')
-    result[:message] = "Guests imported successfully" if messages.empty?
-
     result[:guests] = new_guests
     result
   end
