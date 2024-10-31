@@ -31,16 +31,4 @@ class Event < ApplicationRecord
 
     seating_summary
   end
-  def update_seating_summary(seating_summary)
-    seating_summary.each do |entry|
-      seating_summary_record = Seat.find_by(event_id: id, category: entry[:category], section: entry[:section])
-      if seating_summary_record
-        seating_summary_record.update(
-          commited_seats: entry[:commited_seats],
-          alloted_seats: entry[:alloted_seats],
-          remaining_seats: entry[:remaining_seats]
-        )
-      end
-    end
-  end
 end

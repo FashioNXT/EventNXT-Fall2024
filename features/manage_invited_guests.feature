@@ -48,4 +48,4 @@ Scenario: Check for empty categories found when uploading guest list
   Given I am on the event page "Fake Event"
   And I attach the file "guests_with_empty_categories.xlsx" to the field "guest-list-attach"
   And I click on the "Upload Guest" button
-  Then I should see "Category and Section not found in Seating summary" in the error messages
+  Then I should see "Category can't be blank" in the error messages
