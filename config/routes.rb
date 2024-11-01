@@ -51,6 +51,15 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # Define custom devise routes for OmniAuth-based authentication failures
   get '/users/auth/failure', to: 'users/omniauth_callbacks#failure'
 
+  # Custom routes to disconnect external accounts
+  namespace :users do
+    resource :eventbrite, only: [] do
+      collection do
+        delete 'disconnect', to: 'eventbrite#disconnect', as: :disconnect
+      end
+    end
+  end
+
   resources :events do
     resources :seats
     resources :guests do

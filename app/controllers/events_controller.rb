@@ -10,15 +10,12 @@ class EventsController < ApplicationController
   end
 
   def show
-    @event = current_user.events.find(params[:id])
-
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
+
+    @external_events, @ticket_sales = self.fetch_and_show_ticket_sales
+
     @seating_summary = @event.calculate_seating_summary
-
-    @guest_details = Guest.where(event_id: @event.id)
-
-    self.show_ticket_sales
 
     @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
       [referraldatum[:referred], referraldatum[:email]]
@@ -87,25 +84,32 @@ class EventsController < ApplicationController
     params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar)
   end
 
-  def show_ticket_sales
+  def fetch_and_show_ticket_sales
+    external_events = []
+    ticket_sales = []
+
     if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
       @event.update(external_event_id: params[:external_event_id])
     end
-    Rails.logger.debug("External Event Id: #{@event.external_event_id}")
-    config = TicketVendor::Config.new(event_id: @event.external_event_id)
-    eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
 
-    self.show_eventbrite(eventbrite_service) if eventbrite_service.authorized?
+    config = TicketVendor::Config.new(event_id: @event.external_event_id)
+    @eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
+
+    external_events, ticket_sales = self.fetch_and_show_eventbrite if @eventbrite_service.authorized?
+    [external_events, ticket_sales]
   end
 
-  def show_eventbrite(eventbrite_service)
-    @external_events = eventbrite_service.fetch_events
-    @ticket_sales = eventbrite_service.compose_ticket_sales if eventbrite_service.config.event_id.present?
+  def fetch_and_show_eventbrite
+    ticket_sales = []
+    external_events = @eventbrite_service.fetch_events
+    ticket_sales =  @eventbrite_service.compose_ticket_sales if @eventbrite_service.config.event_id.present?
 
-    if eventbrite_service.error_message.present?
-      flash[:alert] = eventbrite_service.error_message
+    if @eventbrite_service.error_message.present?
+      flash[:alert] = @eventbrite_service.error_message
     else
       flash[:notice] = 'Succuessfully call Eventbrite API!'
     end
+
+    [external_events, ticket_sales]
   end
 end

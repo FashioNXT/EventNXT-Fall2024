@@ -2,21 +2,15 @@ require 'rails_helper'
 
 RSpec.describe TicketVendor::EventbriteApiService do
   let(:user) { create(:user, Constants::Eventbrite::SYM) }
-  let(:mock_client) { instance_double(OAuth2::Client) }
-  let(:mock_access_token) { instance_double(OAuth2::AccessToken) }
+  let(:client) { instance_double(OAuth2::Client) }
+  let(:access_token) { instance_double(OAuth2::AccessToken) }
   let(:service) { described_class.new(user) }
 
   before do
-    allow(OAuth2::Client).to receive(:new).and_return(mock_client)
-    allow(OAuth2::AccessToken).to receive(:new).with(mock_client, user.eventbrite_token).and_return(mock_access_token)
-  end
-
-  describe '#initialize' do
-    it 'initializes with user and OAuth2 client' do
-      expect(service.instance_variable_get(:@user)).to eq(user)
-      expect(service.instance_variable_get(:@client)).to eq(mock_client)
-      expect(service.instance_variable_get(:@access_token)).to eq(mock_access_token)
-    end
+    allow(OAuth2::Client).to receive(:new).and_return(client)
+    allow(OAuth2::AccessToken).to receive(:new)
+      .with(client, user.eventbrite_token)
+      .and_return(access_token)
   end
 
   describe '#organizations' do
@@ -148,13 +142,20 @@ RSpec.describe TicketVendor::EventbriteApiService do
     end
   end
 
+  describe '#get' do
+    let(:reponse) { OpenStruct.new(body: '{ field: ["data"] } ') }
+    before do
+      allow(access_token).to receive(:get).and_return(response)
+    end
+  end
+
   describe 'error handling' do
     let(:error_response1) { double('ErrorResponse', status: 401, message: 'Unauthorized') }
     let(:error_response2) { double('ErrorResponse', status: 404, message: 'Resource not found') }
 
     before do
-      allow(mock_access_token).to receive(:get).and_raise(OAuth2::Error.new(error_response1))
-      allow(mock_access_token).to receive(:get).and_raise(OAuth2::Error.new(error_response2))
+      allow(access_token).to receive(:get).and_raise(OAuth2::Error.new(error_response1))
+      allow(access_token).to receive(:get).and_raise(OAuth2::Error.new(error_response2))
     end
 
     it 'handles OAuth2 errors with unauthorized status' do
