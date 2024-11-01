@@ -29,6 +29,13 @@ RSpec.describe TicketVendor::EventbriteHandlerService do
     end
   end
 
+  describe '#disonnect' do
+    it 'delete eventbrite_token from the current user' do
+      service.disconnect
+      expect(user.eventbrite_token).to be nil
+    end
+  end
+
   describe '#compose_ticket_sales' do
     let(:attendees) do
       [

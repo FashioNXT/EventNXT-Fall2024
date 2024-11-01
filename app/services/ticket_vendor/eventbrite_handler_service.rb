@@ -26,6 +26,10 @@ module TicketVendor
       @user.eventbrite_token.present?
     end
 
+    def disconnect
+      @user.update(eventbrite_token: nil)
+    end
+
     def compose_ticket_sales
       email_source_key = 'profile.email'
       @attendees = self.fetch_attendees

@@ -15,7 +15,7 @@ module Users
       if @user.present? && @user.persisted?
         sign_in_and_redirect @user, event: :authentication
       else
-        session['devise.event360_data'] = auth.except('extra')
+        flash[:alert] = 'Failed to login Event360'
         redirect_to root_path
       end
     end
@@ -29,8 +29,7 @@ module Users
       if @user.present? && @user.persisted?
         flash[:notice] = 'Eventbrite account linked successfully.'
       else
-        session['devise.eventbrite_data'] = auth.except('extra')
-        flash[:alert] = 'Failed to link Eventbrite account'
+        flash[:alert] = 'Failed to connect Eventbrite account'
       end
       redirect_to events_path
     end

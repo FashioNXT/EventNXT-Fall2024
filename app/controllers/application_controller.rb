@@ -3,9 +3,6 @@
 #  A base controller for the application,
 #  providing a common set of methods and behavior for other controllers to inherit from.
 class ApplicationController < ActionController::Base
-  before_action :authenticate_user!
-  skip_before_action :authenticate_user!, only: [:home]
-
   protected
 
   # Redirect to the specific route after sign-in
