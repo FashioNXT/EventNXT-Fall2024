@@ -83,13 +83,11 @@ module TicketVendor
       Response.new(true, data: attendees)
     end
 
-    private
-
-    def get(endpoint, opt: {})
+    def get(endpoint, opts: {})
       # For Unknown reason omniauth2 fails to concat client.site + endpoint
       # So I expilicity set the api url here
       full_url = "#{Constants::Eventbrite::API_URL}#{endpoint}"
-      response = @access_token.get(full_url, opt:)
+      response = @access_token.get(full_url, opts)
       data = JSON.parse(response.body)
       Rails.logger.info("Eventbrite Response for #{endpoint}: #{data}")
       Response.new(true, data:)
@@ -97,19 +95,21 @@ module TicketVendor
       handle_oauth_error(e)
     end
 
-    def each_paged_response(endpoint, opt: {})
-      response = self.get(endpoint, opt:)
+    private
+
+    def each_paged_response(endpoint, opts: {})
+      response = self.get(endpoint, opts:)
       yield response
       pagination = response.data['pagination']
 
       while pagination['has_more_items']
-        if opt.key?(:parameters)
-          opt[:parameters][:continuation] = pagination['continuation']
+        if opts.key?(:parameters)
+          opts[:parameters][:continuation] = pagination['continuation']
         else
-          opt[:parameters] = { continuation: pagination['continuation'] }
+          opts[:parameters] = { continuation: pagination['continuation'] }
         end
 
-        response = self.get(endpoint, opt:)
+        response = self.get(endpoint, opts:)
         yield response
         pagination = response.data['pagination']
       end
@@ -118,7 +118,7 @@ module TicketVendor
 
     def handle_oauth_error(error)
       Rails.logger.debug("#API ERROR: #{error.inspect}")
-
+      puts("ERROR #{error.response.status}")
       case error.response.status
       when 401
         # Unauthorized - token might be invalid or expired
