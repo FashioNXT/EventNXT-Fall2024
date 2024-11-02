@@ -10,8 +10,8 @@ class Seat < ApplicationRecord
   private
 
   def unique_category_and_section_within_event
-    if Seat.exists?(category: category, section: section, event_id: event_id)
-      errors.add(:base, "These seats already exist for this event")
-    end
+    return unless Seat.exists?(category:, section:, event_id:)
+
+    errors.add(:base, 'These seats already exist for this event')
   end
 end
