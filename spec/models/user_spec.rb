@@ -2,6 +2,20 @@
 
 require 'rails_helper'
 
+def mock_auth(user, uid: nil, provider: nil, token: nil)
+  OmniAuth::AuthHash.new(
+    provider: provider || user.provider,
+    uid: uid || user.uid,
+    info: {
+      email: user.email,
+      name: user.name
+    },
+    credentials: {
+      token: token
+    }
+  )
+end
+
 RSpec.describe User, type: :model do
   describe 'associations' do
     it { is_expected.to have_many(:events).dependent(:destroy) }
@@ -29,48 +43,69 @@ RSpec.describe User, type: :model do
   end
 
   describe '.from_omniauth' do
-    context 'when auth provider is events360,' do
-      let(:user) { create(:user, Constants::Events360::SYM) }
-      let(:auth) do
-        OmniAuth::AuthHash.new(
-          provider: user.provider,
-          uid: user.uid,
-          info: {
-            email: user.email,
-            name: user.name
-          }
-        )
-      end
+    let(:user) { create(:user) }
+    before do
+      allow(described_class).to receive(:from_omniauth_events360)
+      allow(user).to receive(:from_omniauth_eventbrite)
+    end
 
-      it 'calls from_omniauth_events360' do
-        expect(described_class).to receive(:from_omniauth_events360).with(auth).and_call_original
+    context  'when no current user and the provider is Events360' do
+      let(:auth) { mock_auth(user) }
+
+      it 'should call from_omniauth_events360' do
         described_class.from_omniauth(auth)
+        expect(described_class).to have_received(:from_omniauth_events360).with(auth)
+      end
+    end
+
+    context  'when no current user and the provider is not Events360' do
+      let(:auth) { mock_auth(user, provider: Constants::Eventbrite::NAME) }
+
+      it 'should return nil without further callings' do
+        result_user =  described_class.from_omniauth(auth)
+        expect(described_class).not_to have_received(:from_omniauth_events360)
+        expect(user).not_to have_received(:from_omniauth_eventbrite)
+        expect(result_user).to be nil
+      end
+    end
+
+    context 'when auth provider is Eventbrite' do
+      let(:auth) { mock_auth(user, provider: Constants::Eventbrite::NAME) }
+      
+      it 'should call from_omniauth_eventbrite' do
+        described_class.from_omniauth(auth, user)
+        expect(user).to have_received(:from_omniauth_eventbrite).with(auth)
       end
     end
 
     context 'when auth provider is not handled,' do
-      let(:auth_other) do
-        OmniAuth::AuthHash.new(
-          provider: 'unknown',
-          uid: '654321',
-          info: {
-            email: 'user@example.com',
-            name: 'John Doe'
-          }
-        )
-      end
-
+      let(:auth) { mock_auth(user, provider: 'unknown provider') }
+      
       it 'returns nil when provider is not supported' do
-        user = described_class.from_omniauth(auth_other, user)
-        expect(user).to be_nil
+        result_user = described_class.from_omniauth(auth, user)
+        expect(described_class).not_to have_received(:from_omniauth_events360)
+        expect(user).not_to have_received(:from_omniauth_eventbrite)
+        expect(result_user).to be_nil
       end
     end
   end
 
   describe '.from_omniauth_events360' do
-    let(:user) { create(:user, Constants::Events360::SYM, email: 'old_email@fake.com') }
+    context 'when user does not exist, ' do
+      let(:user) { build(:user) }
+      let(:auth) { mock_auth(user) }
+
+      it 'creates a new user with the auth information' do
+        result_user = described_class.from_omniauth(auth)
+        expect(described_class.count).to eq(1)
+        expect(result_user.uid).to eq(auth.uid)
+        expect(result_user.provider).to eq(auth.provider)
+        expect(result_user.email).to eq(auth.info.email)
+      end
+    end
 
     context 'when user exists' do
+      let(:user) { create(:user, email: 'old_email@fake.com') }
       let(:auth) do
         OmniAuth::AuthHash.new(
           provider: user.provider,
@@ -82,44 +117,68 @@ RSpec.describe User, type: :model do
         )
       end
 
-      before do
-        user # This creates the user in the test database
-      end
-
       it 'updates the user information and returns the user' do
-        user = described_class.from_omniauth(auth)
-        expect(user.email).to eq('new_email@fake.com') # updated email
-        expect(user.name).to eq('new name') # updated name
-        expect(user).to eq(user) # Ensure the same user is returned
+        result_user = described_class.from_omniauth(auth)
+        user.reload
+        expect(result_user).to eq(user)
+        expect(user.email).to eq('new_email@fake.com')
+        expect(user.name).to eq('new name') 
+      end
+    end
+  end
+
+  describe '.from_omniauth_eventbrite' do
+    context 'when current user does not have token' do
+      let(:user) { create(:user) }
+      let(:eventbrite_uid) {'eventbrite_uid' }
+      let(:eventbrite_token) { 'token' }
+      let(:auth) { 
+        mock_auth(
+          user, 
+          uid: eventbrite_uid, 
+          provider: Constants::Eventbrite::NAME, 
+          token: eventbrite_token
+        ) 
+      }
+
+      it 'adds uid and access token into current user' do
+        result_user = user.from_omniauth_eventbrite(auth)
+        user.reload
+        expect(result_user).to eq(user)
+        expect(user.eventbrite_uid).to eq(eventbrite_uid)
+        expect(user.eventbrite_token).to eq(eventbrite_token)
       end
     end
 
-    context 'when user does not exist,' do
-      before do
-        described_class.delete_all # Ensure no users exist in the database
-      end
+    context 'when current user has an access token' do
+      let(:old_uid) { 'old_uid' }
+      let(:old_token) { 'old_token' }
+      let(:new_uid) { 'new_uid' }
+      let(:new_token) { 'new_token' }
 
-      let(:auth) do
-        OmniAuth::AuthHash.new(
-          provider: user.provider,
-          uid: user.uid,
-          info: {
-            email: user.email,
-            name: user.name
-          }
-        )
-      end
-
-      it 'creates a new user with the auth information' do
-        expect do
-          described_class.from_omniauth(auth)
-        end.to change(described_class, :count).by(1)
-
-        new_user = described_class.last
-        expect(new_user.uid).to eq(auth.uid)
-        expect(new_user.provider).to eq(auth.provider)
-        expect(new_user.email).to eq(auth.info.email)
-        expect(new_user.name).to eq(auth.info.name)
+      let(:user) do
+        create(:user, 
+          Constants::Eventbrite::SYM, 
+          eventbrite_uid: old_uid, 
+          eventbrite_token: old_token
+        ) 
+      end 
+      
+      let(:auth) { 
+        mock_auth(
+          user, 
+          uid: new_uid,
+          provider: Constants::Eventbrite::NAME, 
+          token: new_token
+        ) 
+      }
+      
+      it 'updates access token into current user' do
+        result_user = user.from_omniauth_eventbrite(auth)
+        user.reload
+        expect(result_user).to eq(user)
+        expect(user.eventbrite_uid).to eq(new_uid)
+        expect(user.eventbrite_token).to eq(new_token)
       end
     end
   end

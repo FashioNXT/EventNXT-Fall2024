@@ -5,7 +5,7 @@ require 'faker'
 FactoryBot.define do
   factory :user do
     uid { Faker::Number.unique.number(digits: 6).to_s }
-    provider { 'fake-provider' }
+    provider { Constants::Events360::NAME }
     name { Faker::Name.name }
     email { Faker::Internet.unique.email }
   end
@@ -18,9 +18,5 @@ FactoryBot.define do
   trait Constants::Eventbrite::SYM do
     eventbrite_uid { Faker::Number.unique.number(digits: 12).to_s }
     eventbrite_token { 'fake-token' }
-  end
-
-  trait :with_invalid_email do
-    email { 'invalid-email' }
   end
 end

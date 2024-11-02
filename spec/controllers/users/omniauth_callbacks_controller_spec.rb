@@ -12,22 +12,23 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
   let(:user) { create(:user, Constants::Events360::SYM) }
    
-  describe '#events360' do
+  describe '.events360' do
     before do
       # Mock OmniAuth response
       request.env['omniauth.auth'] = OmniAuth::AuthHash.new({
         provider: Constants::Events360::NAME,
-        uid: '123456',
+        uid: user.uid,
         info: {
-          email: 'user@example.com',
-          name: 'John Doe'
+          email: user.email,
+          name: user.name
         }
       })
-      # Mock the from_omniauth() method in the controller
-      allow(User).to receive(:from_omniauth).and_return(user)
     end
 
-    context 'when user exists and is persisted' do
+    context 'when user exists and is persisted,' do
+      before do
+         allow(User).to receive(:from_omniauth).and_return(user)
+      end
       it 'signs in the user and redirects to the root path' do
         get Constants::Events360::SYM
         expect(controller.current_user).to eq(user)
@@ -35,11 +36,9 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
       end
     end
 
-    context 'when user is not persisted' do
+    context 'when user does not exist, ' do
       before do
-        invalid_user = User.new
-        invalid_user.errors.add(:base, 'User could not be saved')
-        allow(User).to receive(:from_omniauth).and_return(invalid_user)
+        allow(User).to receive(:from_omniauth).and_return(nil)
       end
 
       it 'does not sign in the user and redirects to root with alert' do
@@ -138,7 +137,7 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
       allow(User).to receive(:from_omniauth).and_return(user)
     end 
 
-    context 'when user exists and is persisted' do
+    context 'when user exists and is persisted,' do
       it 'show notice' do
         get Constants::Eventbrite::SYM
         expect(flash[:notice]).to be_present
@@ -146,11 +145,9 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
       end
     end
 
-    context 'when user is not persisted' do
+    context 'when user does not exist' do
       before do
-        invalid_user = User.new
-        invalid_user.errors.add(:base, 'User could not be saved')
-        allow(User).to receive(:from_omniauth).and_return(invalid_user)
+        allow(User).to receive(:from_omniauth).and_return(nil)
       end
 
       it 'show alert' do

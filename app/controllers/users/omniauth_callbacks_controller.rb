@@ -9,7 +9,7 @@ module Users
       else
         # Omniauth middleware exchange access code with token underhood
         auth = request.env['omniauth.auth']
-        @user = User.from_omniauth(auth, current_user)
+        @user = User.from_omniauth(auth)
       end
 
       if @user.present? && @user.persisted?
