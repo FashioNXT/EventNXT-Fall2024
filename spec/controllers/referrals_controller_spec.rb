@@ -4,16 +4,6 @@
 require 'rails_helper'
 
 RSpec.describe ReferralsController, type: :controller do
-  # describe 'POST #create' do
-  #  it 'sends a referral email and responds with no content' do
-  #    expect(UserMailer).to receive_message_chain(:referral_confirmation, :deliver_now)
-  #
-  #    post :create, params: { friend_email: 'friend@example.com' }
-  #
-  #    expect(response).to have_http_status(:no_content)
-  #  end
-  # end
-
   let(:user) { create(:user) }
   before do
     sign_in user
@@ -31,10 +21,6 @@ RSpec.describe ReferralsController, type: :controller do
                   friend_email: 'aaaaaaa@aaaaaaa.???' }
 
       expect(Referral.last.referred).to eq('aaaaaaa@aaaaaaa.???')
-
-      #   doublization_of_the_email_delivery = double('delivery of the email')
-      #   expect(UserMailer).to receive(:referral_confirmation).and_return(doublization_of_the_email_delivery)
-      #   expect{post create_referrall_path, params: {guest_id: guest.id, friend_email: aaaaaaa@aaaaaaa.???}}.to change(Referral, :count).by(1)
     end
   end
 

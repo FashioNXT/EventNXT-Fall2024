@@ -36,10 +36,40 @@
       <div class="col-md-5 p-lg-5 mx-auto my-5">
         <h1 class="display-4 fw-bold text-white">EventNXT</h1>
         <p class="lead fw-bold text-white">Unlock exclusive rewards and discounts by joining EventNXT's Referral Rewards Program, where every friend you invite brings you one step closer to your next unforgettable experience!</p>
-        <%= link_to 'Login / Register', new_user_session_path, class: 'btn btn-primary fw-bold' %>
-        <%= form_tag '/oauth/authorize', method: :post do %>
-            <%= button_tag "Sign in with Events 360", type: :submit, data: { turbo: "false" }, class: 'btn btn-success fw-bold', style: "margin-top: 10%" %>
+        
+       <% if Rails.env.development? && !user_signed_in? %>
+          <script>
+            function setUserParam(user) {
+              const form = document.querySelector('#events360_login_form');
+              // If the form already contains a hidden input for 'user', remove it first
+              let existingInput = form.querySelector('input[name="user"]');
+              if (existingInput) {
+                existingInput.remove();
+              }
+              // Create and append the hidden input with the selected user value
+              const input = document.createElement('input')
+              input.type = 'hidden';
+              input.name = 'user';
+              input.value = user;
+              form.appendChild(input);
+            }
+            
+            setUserParam("user1");
+          </script>
+
+          <label for="user_select">Choose a Mock User (Development Mode):</label>
+          <select id="user_select" onchange="setUserParam(this.value)">
+            <option value="user1">User One</option>
+            <option value="user2">User Two</option>
+            <option value="user3">User Three</option>
+          </select>
         <% end %>
+
+        <% unless user_signed_in? %>
+          <%= button_to 'Sign in with Events360', user_events360_omniauth_authorize_path, 
+            method: :post, data: {turbo: false}, form: { id: 'events360_login_form' }, class: 'btn btn-success fw-bold' %>
+        <% end %>
+        
       </div>
       <div class="product-device shadow-sm d-none d-md-block"></div>
       <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>

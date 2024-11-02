@@ -1,8 +1,9 @@
 Feature: Adding and managing invited guests
 
+@pre_authenticated
 Scenario: Add a guest to an event
   Given I am on the event page "Fake Event"
-  Then I add the following seats for the event "Fake Event"
+  And I have the following seats
   | category | section | total_count |
   | VIP      | A       | 100          |
   When I click on "Add Guest"
@@ -18,11 +19,33 @@ Scenario: Add a guest to an event
   And I click on "Create Guest" 
   Then I should see "John Doe" in the guest list
 
+@pre_authenticated
 Scenario: Upload guest list 
   Given I am on the event page "Fake Event"
   #And I click on "Choose File"
   And I attach the file "guests.xlsx" to the field "guest-list-attach"
-  And I click on the "Upload Guest" button
+  And I click on "Upload Guest"
   Then I should see "Anirith" in the guest list
   Then I should see "Rakesh" in the guest list
   Then I should see "Pavan" in the guest list
+
+@pre_authenticated
+Scenario: Check for empty email found when uploading guest list
+  Given I am on the event page "Fake Event"
+  And I attach the file "guests_with_empty_emails.xlsx" to the field "guest-list-attach"
+  And I click on the "Upload Guest" button
+  Then I should see "Empty emails found" in the error messages
+
+@pre_authenticated
+Scenario: Check for empty section found when uploading guest list
+  Given I am on the event page "Fake Event"
+  And I attach the file "guests_with_empty_sections.xlsx" to the field "guest-list-attach"
+  And I click on the "Upload Guest" button
+  Then I should see "Empty sections found" in the error messages
+
+@pre_authenticated
+Scenario: Check for empty categories found when uploading guest list
+  Given I am on the event page "Fake Event"
+  And I attach the file "guests_with_empty_categories.xlsx" to the field "guest-list-attach"
+  And I click on the "Upload Guest" button
+  Then I should see "Category can't be blank" in the error messages

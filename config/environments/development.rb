@@ -79,13 +79,6 @@ Rails.application.configure do
   config.hosts = ENV['ALLOWED_HOST']
 
   # <!--===================-->
-  # <!--to define the google authentication Oauth credentials-->
-  ENV['GOOGLE_OAUTH_CLIENT_ID'] =
-    '142286611338-da6dp21qiuujfdk07nrjs6cpok8nou49.apps.googleusercontent.com'
-  ENV['GOOGLE_OAUTH_CLIENT_SECRET'] = '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'
-  # <!--===================-->
-
-  # <!--===================-->
   # <!--to configure action_mailer for Gmail-->
   config.action_mailer.delivery_method = :smtp # replace with your own url
   # config.action_mailer.default_url_options = { host: host }

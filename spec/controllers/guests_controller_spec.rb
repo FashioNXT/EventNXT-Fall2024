@@ -4,12 +4,11 @@ require 'rails_helper'
 require 'factory_bot'
 
 RSpec.describe GuestsController, type: :controller do
-  # Create a parent event to associate with guests
-  let(:user) { create(:user) } # Create a user for authentication
+  let(:user) { create(:user) } 
   let(:event) { create(:event, user:) }
 
   before do
-    sign_in user # Sign in the user before running the tests
+    sign_in user 
   end
 
   let(:valid_attributes) { attributes_for(:guest, event_id: event.id) }
@@ -291,12 +290,17 @@ RSpec.describe GuestsController, type: :controller do
   end
 
   describe '#import_spreadsheet' do
-    let(:spreadsheet_file) do
-      fixture_file_upload(
-        'guests.xlsx',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      )
-    end
+    let(:event) { create(:event) }
+    let(:file_path) { Rails.root.join('spec', 'fixtures', 'files', 'guests.xlsx') }
+    let(:duplicate_emails_file_path) { Rails.root.join('spec', 'fixtures', 'files', 'guests_with_duplicate_emails.xlsx') }
+    let(:empty_emails_file_path) { Rails.root.join('spec', 'fixtures', 'files', 'guests_with_empty_emails.xlsx') }
+    let(:empty_categories_file_path) { Rails.root.join('spec', 'fixtures', 'files', 'guests_with_empty_categories.xlsx') }
+    let(:empty_sections_file_path) { Rails.root.join('spec', 'fixtures', 'files', 'guests_with_empty_sections.xlsx') }
+    let(:spreadsheet_file) { Rack::Test::UploadedFile.new(file_path, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') }
+    let(:duplicate_emails_spreadsheet_file) { Rack::Test::UploadedFile.new(duplicate_emails_file_path, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') }
+    let(:empty_emails_spreadsheet_file) { Rack::Test::UploadedFile.new(empty_emails_file_path, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') }
+    let(:empty_categories_spreadsheet_file) { Rack::Test::UploadedFile.new(empty_categories_file_path, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') }
+    let(:empty_sections_spreadsheet_file) { Rack::Test::UploadedFile.new(empty_sections_file_path, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') }
 
     context 'without file' do
       it 'not call Guest#import_spreadsheet' do
@@ -307,10 +311,9 @@ RSpec.describe GuestsController, type: :controller do
       end
 
       it 'redirects to event path with error message' do
-        post :import_spreadsheet,
-          params: { event_id: event.id, file: nil }
+        post :import_spreadsheet, params: { event_id: event.id, file: nil }
 
-        expect(response).to redirect_to(event_path(event))
+        expect(response).to redirect_to(event_path(event.id))
         expect(flash[:alert]).to eq('No file uploaded.')
       end
     end
@@ -331,11 +334,12 @@ RSpec.describe GuestsController, type: :controller do
       end
 
       it 'redirects to event path with success message' do
-        post :import_spreadsheet,
-          params: { event_id: event.id, file: spreadsheet_file }
+        allow(Guest).to receive(:import_spreadsheet).and_return({ status: true, message: 'Guests imported successfully' })
 
-        expect(response).to redirect_to(event_path(event))
-        expect(flash[:notice]).to eq('Guests imported')
+        post :import_spreadsheet, params: { event_id: event.id, file: spreadsheet_file }
+
+        expect(response).to redirect_to(event_path(event.id))
+        expect(flash[:success]).to eq('Guests imported successfully')
       end
     end
 
@@ -353,6 +357,43 @@ RSpec.describe GuestsController, type: :controller do
 
         expect(response).to redirect_to(event_path(event))
         expect(flash[:alert]).to eq('Invalid file format: fake error message')
+      end
+      it 'redirects to event path with alert message' do
+        allow(Guest).to receive(:import_spreadsheet).and_return({ status: false, message: 'Invalid file format' })
+
+        post :import_spreadsheet, params: { event_id: event.id, file: spreadsheet_file }
+
+        expect(response).to redirect_to(event_path(event.id))
+        expect(flash[:alert]).to eq('Invalid file format: Invalid file format')
+      end
+    end
+
+    context 'with duplicate emails' do
+      it 'redirects to event path with warning message' do
+        # Create existing guests with duplicate emails
+        create(:guest, email: 'Anirith@sample.com', event: event)
+
+        post :import_spreadsheet, params: { event_id: event.id, file: duplicate_emails_spreadsheet_file }
+
+        expect(response).to redirect_to(event_path(event.id))
+        expect(flash[:warning]).to eq('Duplicate emails found: Anirith@sample.com')
+      end
+    end
+    context 'with empty emails' do
+      it 'redirects to event path with warning message' do
+        post :import_spreadsheet, params: { event_id: event.id, file: empty_emails_spreadsheet_file }
+
+        expect(response).to redirect_to(event_path(event.id))
+        expect(flash[:warning]).to eq('Empty emails found at rows: 2')
+      end
+    end
+
+    context 'with empty sections' do
+      it 'redirects to event path with warning message' do
+        post :import_spreadsheet, params: { event_id: event.id, file: empty_sections_spreadsheet_file }
+
+        expect(response).to redirect_to(event_path(event.id))
+        expect(flash[:warning]).to eq('Empty sections found at rows: 2')
       end
     end
   end
