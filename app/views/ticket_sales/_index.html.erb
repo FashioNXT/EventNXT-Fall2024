@@ -7,18 +7,25 @@
       method: :post, data: { turbo: false }, class: 'btn btn-primary' 
     %>
   <% else %>
-    <p>Your Eventbrite account is connected.</p>
-    <%= 
-      render partial: "ticket_sales/eventbrite/index", locals: { 
-        event: event,
-        external_events: external_events,
-      }
-    %>
+    <p>Connected: Eventbrite</p>
     <%=
       button_to 'Disconnect Eventbrite', disconnect_users_eventbrite_path,
       method: :delete, data: { turbo: false }, class: 'btn btn-primary' 
     %>
   <% end %>
+
+  <div class="container">
+     <% if external_events.present? && external_events.any? %>
+      <%= 
+        render partial: "ticket_sales/form_select", locals: { 
+          event: event, 
+          external_events: external_events, 
+        } 
+      %>
+    <% else %>
+      <p>No events found.</p>
+    <% end %>
+  </div>
 
   <div class="container">
     <%= 

@@ -11,55 +11,53 @@ class Event < ApplicationRecord
   has_many :referrals, dependent: :destroy
   def calculate_seating_summary(ticket_sales)
     seating_summary = []
-  
+
     # Fetch seats for the event
     seats = self.seats
     guests = self.guests
-  
+
     # Initialize a hash to accumulate ticket sales data
     ticket_summary = Hash.new { |hash, key| hash[key] = { tickets_sold: 0 } }
-  
+
     # Process ticket sales to accumulate data
     ticket_sales.each do |sale|
       category = sale[:category]
       section = sale[:section]
-    
+
       ticket_summary[[category, section]][:tickets_sold] += sale[:tickets].to_i
     end
-  
+
     # Iterate through each seat to build the summary
     seats.each do |seat|
       # Fetch guests in the same category and section
       guests_in_category = guests.where(category: seat.category, section: seat.section)
-  
+
       # Use the correct column names
       committed_seats = guests_in_category.sum(:commited_seats) || 0
       allocated_seats = guests_in_category.sum(:alloted_seats) || 0
-  
+
       # Add ticket sales data to the summary
       ticket_data = ticket_summary[[seat.category, seat.section]]
-      
+
       tickets_sold = ticket_data[:tickets_sold]
-  
+
       # Total seats for this category and section
       total_seats = seat.total_count || 0
-      
+
       remaining_seats = total_seats - (tickets_sold + committed_seats)
-  
+
       seating_summary << {
         category: seat.category,
         section: seat.section,
         guests_count: guests_in_category.count,
-        total_seats: total_seats,
-        allocated_seats: allocated_seats,
+        total_seats:,
+        allocated_seats:,
         commited_seats: committed_seats,
-        tickets_sold: tickets_sold,
-        remaining_seats: remaining_seats
+        tickets_sold:,
+        remaining_seats:
       }
     end
-  
+
     seating_summary
   end
-  
-  
 end
