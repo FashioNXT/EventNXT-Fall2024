@@ -5,20 +5,6 @@
   }
 </style>
 
-<p style="color: green"><%= notice %></p>
-
-<% if flash[:alert] %>
-  <div class="alert alert-danger">
-    <%= flash[:alert] %>
-  </div>
-<% end %>
-
-<% if flash[:notice] %>
-  <div class="alert alert-success">
-    <%= flash[:notice] %>
-  </div>
-<% end %>
-
 <div class="container">
   <div class="row">
     <div class="col-md-6">
@@ -86,6 +72,7 @@
         <th>Total Seats</th>
         <th>Allocated Seats</th>
         <th>Committed Seats</th>
+        <th>Booked Seats</th>
         <th>Remaining Seats</th>
       </tr>
     </thead>
@@ -97,8 +84,9 @@
           <td><%= category[:guests_count] %></td>
           <td><%= category[:total_seats] %></td>
           <td><%= category[:allocated_seats] %></td>
-          <td><%= category[:committed_seats] %></td>
-          <td><%= category[:total_seats] - (category[:committed_seats]) %></td> 
+          <td><%= category[:committed_seats]+category[:tickets_sold] %></td>
+          <td><%= category[:tickets_sold] %></td>
+          <td><%= category[:total_seats] - (category[:committed_seats]) - category[:tickets_sold] %></td> 
         </tr>
       <% end %>
     </tbody>
