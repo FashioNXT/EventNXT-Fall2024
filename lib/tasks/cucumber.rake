@@ -10,9 +10,7 @@ unless ARGV.any? do |a|
   a =~ /^gems/
 end
   vendored_cucumber_bin = Dir["#{Rails.root}/vendor/{gems,plugins}/cucumber*/bin/cucumber"].first
-  unless vendored_cucumber_bin.nil?
-    $LOAD_PATH.unshift("#{File.dirname(vendored_cucumber_bin)}/../lib")
-  end
+  $LOAD_PATH.unshift("#{File.dirname(vendored_cucumber_bin)}/../lib") unless vendored_cucumber_bin.nil?
 
   begin
     require 'cucumber/rake/task'
@@ -48,9 +46,7 @@ end
           ::STATS_DIRECTORIES << ['Cucumber features',
                                   'features']
         end
-        if File.exist?('features')
-          ::CodeStatistics::TEST_TYPES << 'Cucumber features'
-        end
+        ::CodeStatistics::TEST_TYPES << 'Cucumber features' if File.exist?('features')
       end
     end
 

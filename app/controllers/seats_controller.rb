@@ -35,13 +35,13 @@ class SeatsController < ApplicationController
 
   # GET /seats/1/edit
   def edit; end
-  
+
   def create
     @seat = @event.seats.build(seat_params)
-  
+
     respond_to do |format|
       if @seat.save
-        format.html { redirect_to event_url(@event), notice: "Seat was successfully created." }
+        format.html { redirect_to event_url(@event), notice: 'Seat was successfully created.' }
         format.json { render :show, status: :created, location: @seat }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -49,7 +49,6 @@ class SeatsController < ApplicationController
       end
     end
   end
-  
 
   # PATCH/PUT /seats/1 or /seats/1.json
   def update

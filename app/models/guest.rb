@@ -27,34 +27,35 @@ class Guest < ApplicationRecord
     unless ['.xlsx', '.xls', '.csv'].include?(File.extname(spreadsheet_file.original_filename))
       return { status: false, message: 'Invalid file type. Please upload a .xlsx, .xls, or .csv file.' }
     end
+
     spreadsheet = Roo::Spreadsheet.open(spreadsheet_file.path)
-  
+
     result = validate_import(spreadsheet)
     return result if result[:status] == false
-  
+
     new_guests = []
     duplicate_emails = Set.new
     empty_emails = []
     empty_categories = []
     empty_sections = []
     missing_seating_summary = []
-    existing_guests = Guest.where(event_id: event_id).pluck(:email, :id).to_h
+    existing_guests = Guest.where(event_id:).pluck(:email, :id).to_h
 
     # Fetch seating summary for the event
     event = Event.find(event_id)
     seating_summary = event.calculate_seating_summary(event_id)
     seating_summary_categories_sections = seating_summary.map { |s| [s[:category], s[:section]] }
-  
+
     # Iterate over each worksheet
     spreadsheet.sheets.each do |worksheet_name|
       worksheet = spreadsheet.sheet(worksheet_name)
-  
+
       # Assuming the first row is headers, get the header row
       header = worksheet.row(1)
-  
+
       (2..worksheet.last_row).each do |i|
         row = Hash[[header, worksheet.row(i)].transpose]
-  
+
         first_name = row['First Name']
         last_name = row['Last Name']
         email = row['Email']
@@ -66,7 +67,7 @@ class Guest < ApplicationRecord
 
         # Store the row number of the empty email
         if email.blank?
-          empty_emails << i 
+          empty_emails << i
           next
         end
         # Store the row number of the empty category
@@ -81,45 +82,43 @@ class Guest < ApplicationRecord
         end
 
         # Check if category and section are present in seating summary
-        unless seating_summary_categories_sections.include?([category, section])
-          missing_seating_summary << { row: i, category: category, section: section }
-        else
+        if seating_summary_categories_sections.include?([category, section])
           # Update the seating summary
           seating_summary_entry = seating_summary.find { |s| s[:category] == category && s[:section] == section }
           seating_summary_entry[:commited_seats] -= commited_seats
           seating_summary_entry[:alloted_seats] -= alloted_seats
-          seating_summary_entry[:remaining_seats] -= (alloted_seats - commited_seats)  
+          seating_summary_entry[:remaining_seats] -= (alloted_seats - commited_seats)
+        else
+          missing_seating_summary << { row: i, category:, section: }
         end
 
-        if existing_guests[email]
-          duplicate_emails << email
-        end
-        guest = Guest.find_or_initialize_by(email: email, event_id: event_id)
+        duplicate_emails << email if existing_guests[email]
+        guest = Guest.find_or_initialize_by(email:, event_id:)
         if guest.new_record?
           guest.assign_attributes(
-            first_name: first_name,
-            last_name: last_name,
-            email: email,
-            affiliation: affiliation,
-            category: category,
-            alloted_seats: alloted_seats,
-            commited_seats: commited_seats,
-            section: section,
-            event_id: event_id
+            first_name:,
+            last_name:,
+            email:,
+            affiliation:,
+            category:,
+            alloted_seats:,
+            commited_seats:,
+            section:,
+            event_id:
           )
         else
           duplicate_emails << email
           guest.assign_attributes(
-            first_name: first_name,
-            last_name: last_name,
-            affiliation: affiliation,
-            category: category,
-            alloted_seats: alloted_seats,
-            commited_seats: commited_seats,
-            section: section
+            first_name:,
+            last_name:,
+            affiliation:,
+            category:,
+            alloted_seats:,
+            commited_seats:,
+            section:
           )
         end
-  
+
         begin
           guest.save!
           new_guests << guest
@@ -131,29 +130,23 @@ class Guest < ApplicationRecord
       end
     end
     event.update_seating_summary(seating_summary)
-    messages = []
 
+    result[:status] = true
     if empty_emails.any?
-      result[:status] = true
       result[:message] = "Empty emails found at rows: #{empty_emails.join(', ')}"
     elsif duplicate_emails.any?
-      result[:status] = true
       result[:message] = "Duplicate emails found: #{duplicate_emails.join(', ')}"
     elsif empty_categories.any?
-      result[:status] = true
       result[:message] = "Empty categories found at rows: #{empty_categories.join(', ')}"
     elsif empty_sections.any?
-      result[:status] = true
       result[:message] = "Empty sections found at rows: #{empty_sections.join(', ')}"
     elsif missing_seating_summary.any?
-      result[:status] = true
       missing_seating_summary_messages = missing_seating_summary.map do |entry|
         "Category and Section not found in Seating summary, '#{entry[:category]}', '#{entry[:section]}'"
       end
       result[:message] = missing_seating_summary_messages.join('. ')
     else
-      result[:status] = true
-      result[:message] = "Guests imported successfully"
+      result[:message] = 'Guests imported successfully'
     end
     result[:guests] = new_guests
     result
