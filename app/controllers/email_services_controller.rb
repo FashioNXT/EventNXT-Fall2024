@@ -12,8 +12,8 @@ class EmailServicesController < ApplicationController
     guest = Guest.find(email_service.guest_id)
 
     # full_url = ENV['localhost:3000'].to_s + book_seats_path(guest.rsvp_link)
-    # full_url = "http://127.0.0.1:3000/" + book_seats_path(guest.rsvp_link)
-    full_url = "https://eventnxt-0fcb166cb5ae.herokuapp.com/#{book_seats_path(guest.rsvp_link)}"
+    full_url = "http://127.0.0.1:3000/" + book_seats_path(guest.rsvp_link)
+    # full_url = "https://eventnxt-0fcb166cb5ae.herokuapp.com/#{book_seats_path(guest.rsvp_link)}"
     print full_url
 
     # the referral link takes the form of '/refer_a_friend?:ref_code'.
