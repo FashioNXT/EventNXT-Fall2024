@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require Rails.root.join('lib', 'omniauth', 'strategies', 'events360.rb')
+require Rails.root.join('lib', 'omniauth', 'strategies', 'eventbrite.rb')
+
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -14,7 +17,7 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  # config.secret_key = 'b68b99b5f5602c4bdf0ad4523c8177f3d26f7472f8b7d728419f8c839a3602ef75e836528136e7dc8bc3841443d8a1a263d17c8dbc0e2fed9446a604b1df0cec'
+  # config.secret_key = "#{key}"
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
@@ -126,7 +129,7 @@ Devise.setup do |config|
   # config.stretches = Rails.env.test? ? 1 : 12
 
   # Set up a pepper to generate the hashed password.
-  # config.pepper = '9d76b47840e122d2a7e4e165d0e945d2b78da5df64da9ba9024ef4c8cc395494f1dd5f9d4f890724241c486d1493ddd0de8b38129c6c7d3f01ea8d86220daa96'
+  # config.pepper = "#{hash}"
 
   # Send a notification to the original email when the user's email is changed.
   # config.send_email_changed_notification = false
@@ -273,10 +276,17 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
   # OmniAuth configuration for Events360 with explicit strategy_class
-  config.omniauth :events360,
-    ENV['EVENT360_CLIENT_ID'],
-    ENV['EVENT360_CLIENT_SECRET'],
+  config.omniauth Constants::Events360::SYM,
+    Constants::Events360::CLIENT_ID,
+    Constants::Events360::CLIENT_SECRET,
     strategy_class: OmniAuth::Strategies::Events360
+  # OmniAuth configuration for Eventbrite with explicit strategy_class
+  config.omniauth :eventbrite,
+    Constants::Eventbrite::CLIENT_ID,
+    Constants::Eventbrite::CLIENT_SECRET,
+    strategy_class: OmniAuth::Strategies::Eventbrite
+
+  OmniAuth.config.logger = Rails.logger
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

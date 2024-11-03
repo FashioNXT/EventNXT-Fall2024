@@ -1,0 +1,12 @@
+<div>
+ <% if external_events.present? && external_events.any? %>
+  <%= 
+    render partial: "ticket_sales/eventbrite/form_select", locals: { 
+      event: event, 
+      external_events: external_events, 
+    } 
+  %>
+<% else %>
+  <p>No events found.</p>
+<% end %>
+</div>

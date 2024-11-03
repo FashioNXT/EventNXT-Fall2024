@@ -11,8 +11,13 @@ FactoryBot.define do
   end
 
   # Define multiple factories for the same model
-  trait :events360 do
-    provider { 'events360' }
+  trait Constants::Events360::SYM do
+    provider { Constants::Events360::NAME }
+  end
+
+  trait Constants::Eventbrite::SYM do
+    eventbrite_uid { Faker::Number.unique.number(digits: 12).to_s }
+    eventbrite_token { 'fake-token' }
   end
 
   trait :with_invalid_email do

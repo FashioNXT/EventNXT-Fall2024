@@ -30,7 +30,7 @@ RSpec.describe User, type: :model do
 
   describe '.from_omniauth' do
     context 'when auth provider is events360,' do
-      let(:user) { create(:user, :events360) }
+      let(:user) { create(:user, Constants::Events360::SYM) }
       let(:auth) do
         OmniAuth::AuthHash.new(
           provider: user.provider,
@@ -68,7 +68,7 @@ RSpec.describe User, type: :model do
   end
 
   describe '.from_omniauth_events360' do
-    let(:user) { create(:user, :events360, email: 'old_email@fake.com') }
+    let(:user) { create(:user, Constants::Events360::SYM, email: 'old_email@fake.com') }
 
     context 'when user exists' do
       let(:auth) do
