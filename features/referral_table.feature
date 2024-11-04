@@ -10,8 +10,8 @@ Scenario:
   | first_name | last_name | email | affiliation | category | section | alloted_seats | commited_seats | guest_commited |
   | xx         | xx        | y@yy  | xx          | 1        | 1       | 1             | 1              | 1              |
   When we visit the new page for the referral
-  When we enter 'aaaaaaa@aaaaaaa.???' into 'Friend's Email Address'
-  When we click the 'Submit'
+  When we enter 'aaaaaaa@aaaaaaa.???' into the 'friend_emails' field
+  When we click the 'Send Referral Invitations'
   Then there will be one additional referral tuple generated with expected attibute on the referee email with 'aaaaaaa@aaaaaaa.???'
   When we have a referral with 5 tickets bought
   When we visit the show page for this event
