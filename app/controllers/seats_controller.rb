@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# SeatsController manages seat-related operations for events
+# This controller handles the CRUD operations for seats associated with specific events
+# It includes actions for listing, creating, updating, and deleting seats
 class SeatsController < ApplicationController
   # <!--===================-->
   # <!--corresponding filter of the defined method for nested scaffold-->
