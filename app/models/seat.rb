@@ -1,3 +1,4 @@
+# Seat
 class Seat < ApplicationRecord
   belongs_to :event
   validates :category, presence: true

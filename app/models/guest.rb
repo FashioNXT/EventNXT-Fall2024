@@ -1,5 +1,5 @@
 require('roo')
-
+# Guest
 class Guest < ApplicationRecord
   belongs_to :event
   has_many :referrals, dependent: :destroy
