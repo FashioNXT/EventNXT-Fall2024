@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Event
 class Event < ApplicationRecord
   mount_uploader :event_avatar, AvatarUploader
   mount_uploader :event_box_office, SpreadsheetUploader
