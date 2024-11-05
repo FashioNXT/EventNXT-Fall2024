@@ -44,13 +44,10 @@ class Guest < ApplicationRecord
     # Iterate over each worksheet
     spreadsheet.sheets.each do |worksheet_name|
       worksheet = spreadsheet.sheet(worksheet_name)
-
       # Assuming the first row is headers, get the header row
       header = worksheet.row(1)
-
       (2..worksheet.last_row).each do |i|
         row = Hash[[header, worksheet.row(i)].transpose]
-
         first_name = row['First Name']
         last_name = row['Last Name']
         email = row['Email']
@@ -59,7 +56,6 @@ class Guest < ApplicationRecord
         section = row['Section']
         alloted_seats = row['Allotted Seats'].to_i
         commited_seats = row['Committed Seats'].to_i
-
         # Store the row number of the empty email
         if email.blank?
           empty_emails << i
@@ -72,10 +68,6 @@ class Guest < ApplicationRecord
           empty_sections << i
           next
         end
-        # unless Guest.category_and_section_present?(category, section, event_id)
-        #   missing_seating_summary << { row: i, category: category, section: section }
-        #   next
-        # end
 
         if existing_guests[email]
           duplicate_emails << email
