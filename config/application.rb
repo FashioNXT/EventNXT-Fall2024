@@ -10,6 +10,7 @@ Bundler.require(*Rails.groups)
 
 # Fashionxt002
 module Fashionxt002
+  # Fashionxt002--> Application
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
