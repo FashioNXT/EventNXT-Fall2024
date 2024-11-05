@@ -13,5 +13,5 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe ReferralsHelper, type: :helper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  # No test required
 end

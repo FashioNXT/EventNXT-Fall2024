@@ -14,12 +14,12 @@ When('we visit the new page for the referral') do
   visit new_referral_path(random_code: @guest.rsvp_link)
 end
 
-When("we enter {string} into 'Friend's Email Address'") do |string|
-  fill_in "Friend's Email Address", with: string
+When("we enter {string} into the 'friend_emails' field") do |input|
+  fill_in 'friend_emails', with: input
 end
 
-When('we click the {string}') do |string|
-  click_button(string)
+When('we click the {string}') do |button_text|
+  click_button(button_text)
 end
 
 Then('there will be one additional referral tuple generated with expected attibute on the referee email with {string}') do |string|
