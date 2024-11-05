@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# AddRsvpEmailTemplate
+
 class AddRsvpEmailTemplate < ActiveRecord::Migration[7.0]
   def change
     EmailTemplate.create(
