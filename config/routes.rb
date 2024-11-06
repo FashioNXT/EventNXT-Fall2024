@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Rails.application.routes.draw do
+Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get '/book_seats/:rsvp_link', to: 'guests#book_seats', as: 'book_seats'
   get '/email_services/new_email_template',
     to: 'email_services#new_email_template', as: 'new_email_template'
@@ -17,8 +17,6 @@ Rails.application.routes.draw do
   post '/refer_a_friend/:random_code', to: 'referrals#referral_creation',
     as: 'referral_creation'
 
-  get '/buy_tickets', to: 'tickets#new', as: 'new_ticket_purchase'
-
   resources :email_services do
     member do
       get 'send_email'
@@ -30,8 +28,6 @@ Rails.application.routes.draw do
   resources :events do
     resources :referrals, only: %i[new referral_creation edit update]
   end
-
-  resources :tickets, only: %i[new create]
 
   root 'home#index'
 
@@ -45,7 +41,7 @@ Rails.application.routes.draw do
   ## == Devise OAuth ==
   devise_for :users,
     controllers: { omniauth_callbacks: 'users/omniauth_callbacks' },
-    omniauth_providers: %i[events360]
+    omniauth_providers: %i[events360 eventbrite]
 
   # Define custom sessions routes
   devise_scope :user do
@@ -55,6 +51,15 @@ Rails.application.routes.draw do
   # Define custom devise routes for OmniAuth-based authentication failures
   get '/users/auth/failure', to: 'users/omniauth_callbacks#failure'
 
+  # Custom routes to disconnect external accounts
+  namespace :users do
+    resource :eventbrite, only: [] do
+      collection do
+        delete 'disconnect', to: 'eventbrite#disconnect', as: :disconnect
+      end
+    end
+  end
+
   resources :events do
     resources :seats
     resources :guests do
@@ -63,7 +68,4 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  # resources :seats
-  # resources :guests
 end

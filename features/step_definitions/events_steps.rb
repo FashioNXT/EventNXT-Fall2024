@@ -5,7 +5,10 @@ Given('I am on the events dashboard') do
 end
 
 Given('I am on the event page {string}') do |event_title|
-  @event = FactoryBot.create(:event, title: event_title, user: @user)
+  @event = Event.find_by(user_id: @user.id, title: title)
+  if @event.nil?
+    @event = FactoryBot.create(:event, title: event_title, user: @user)
+  end
   visit event_path(@event)
 end
 

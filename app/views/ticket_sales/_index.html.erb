@@ -1,0 +1,37 @@
+<h2 id="ticket-sales-title">Box Office Sales</h2>
+
+<div>
+  <% unless current_user.eventbrite_token.present? %>
+    <%=
+      button_to 'Connect to Eventbrite', user_eventbrite_omniauth_authorize_path, 
+      method: :post, data: { turbo: false }, class: 'btn btn-primary' 
+    %>
+  <% else %>
+    <p>Connected: Eventbrite</p>
+    <%=
+      button_to 'Disconnect Eventbrite', disconnect_users_eventbrite_path,
+      method: :delete, data: { turbo: false }, class: 'btn btn-primary' 
+    %>
+  <% end %>
+
+  <div class="container">
+     <% if external_events.present? && external_events.any? %>
+      <%= 
+        render partial: "ticket_sales/form_select", locals: { 
+          event: event, 
+          external_events: external_events, 
+        } 
+      %>
+    <% else %>
+      <p>No events found.</p>
+    <% end %>
+  </div>
+
+  <div class="container">
+    <%= 
+      render partial: "ticket_sales/table", locals: { 
+        ticket_sales: ticket_sales
+      }
+    %>
+  </div>
+</div>
