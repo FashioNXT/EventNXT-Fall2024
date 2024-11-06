@@ -13,8 +13,8 @@ class EmailServicesController < ApplicationController
     guest = Guest.find(email_service.guest_id)
 
     # full_url = ENV['localhost:3000'].to_s + book_seats_path(guest.rsvp_link)
-     full_url = "http://0.0.0.0:3000/#{book_seats_path(guest.rsvp_link)}"
-    #full_url = "https://eventnxt-0fcb166cb5ae.herokuapp.com/#{book_seats_path(guest.rsvp_link)}"
+    #  full_url = "http://0.0.0.0:3000/#{book_seats_path(guest.rsvp_link)}"
+    full_url = "https://eventnxt-fall2024-demo3-c90f7940fb8e.herokuapp.com/#{book_seats_path(guest.rsvp_link)}"
     #print full_url
 
     # the referral link takes the form of '/refer_a_friend?:ref_code'.
@@ -23,7 +23,7 @@ class EmailServicesController < ApplicationController
     # random_code_generated = SecureRandom.hex(20)
 
     referral_url = Rails.application.routes.url_helpers.new_referral_url(
-      host: '0.0.0.0:3000', random_code: guest.rsvp_link
+      host: 'https://eventnxt-fall2024-demo3-c90f7940fb8e.herokuapp.com/', random_code: guest.rsvp_link
     )
     #referral_url = Rails.application.routes.url_helpers.new_referral_url(
      # host: 'https://eventnxt-0fcb166cb5ae.herokuapp.com/', random_code: guest.rsvp_link
