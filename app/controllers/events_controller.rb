@@ -14,9 +14,7 @@ class EventsController < ApplicationController
     @seats = Seat.where(event_id: @event.id)
 
     @external_events, @ticket_sales = self.fetch_and_show_ticket_sales
-    #@ticket_sales = [{email: 'kiarasims3@tamu.edu', first_name: 'kiara', last_name: 'sims', category: 'General', section: 'B', tickets: '2'}]
-
-    #@external_events = []
+    
     @seating_summary = @event.calculate_seating_summary(@ticket_sales)
 
     @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
