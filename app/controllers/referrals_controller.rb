@@ -14,30 +14,32 @@ class ReferralsController < ApplicationController
   end
 
   def referral_creation
-    friend_emails = params[:friend_emails]&.split(',').map(&:strip) # Split emails and remove extra spaces
+    friend_emails = params[:friend_emails]&.split(',')&.map(&:strip) # Split emails and remove extra spaces
     random_code = params[:random_code]
     @guest = Guest.find_by(rsvp_link: random_code)
   
     if @guest && friend_emails.present?
-      friend_emails.each do |emails|
-        # Create or find a referral for each friend's email
-        referral = Referral.find_or_create_by(
-          event_id: @guest.event_id,
-          guest_id: @guest.id,
-          email: @guest.email,
-          name: "#{@guest.first_name} #{@guest.last_name}",
-          referred: emails,
-          ref_code: @guest.id
-        )
+      friend_emails.each do |email|
+        begin
+          # Create or find a referral for each friend's email
+          referral = Referral.find_or_create_by!(
+            event_id: @guest.event_id,
+            guest_id: @guest.id,
+            email: @guest.email,
+            name: "#{@guest.first_name} #{@guest.last_name}",
+            referred: email,
+            ref_code: @guest.id
+          )
   
-        # Send referral email to each friend
-        UserMailer.referral_confirmation(emails).deliver_now if referral.persisted?
+          # Send referral email to each friend if referral persisted
+          UserMailer.referral_confirmation(email).deliver_now if referral.persisted?
+        rescue ActiveRecord::RecordInvalid => e
+          logger.error "Failed to create referral: #{e.message}"
+          flash[:alert] = "There was an error creating a referral for #{email}."
+        end
       end
   
-      respond_to do |format|
-        format.html { head :no_content }
-        format.js
-      end
+      redirect_to root_path, notice: 'Referrals sent successfully!'
     else
       flash[:alert] = "At least one friend's email is required to create referrals."
       redirect_to root_path
