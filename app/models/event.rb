@@ -60,4 +60,25 @@ class Event < ApplicationRecord
 
     seating_summary
   end
+
+  def update_referral_data(ticket_sales)
+    referral_data = self.referrals
+
+    referral_data.each do |referral|
+      total_tickets = 0
+      total_cost = 0
+      ticket_sales.each do |sale|
+        if referral.referred == sale[:email]
+          total_tickets += sale[:tickets]
+          total_cost += sale[:cost]
+        end
+      end
+
+      referral.update(status: true, tickets: total_tickets, amount: total_cost) if total_tickets.positive?
+    end
+
+    referral_data.sort_by do |referral|
+      [referral.referred, referral.email]
+    end
+  end
 end

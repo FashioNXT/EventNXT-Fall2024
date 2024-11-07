@@ -26,6 +26,7 @@ When('we click the {string}') do |button_text|
 end
 
 Then('there will be one additional referral tuple generated with expected attibute on the referee email with {string}') do |string|
+  puts(Referral.all.length)
   expect(Referral.last.referred).to match(string)
 end
 

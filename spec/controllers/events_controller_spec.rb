@@ -26,6 +26,7 @@ RSpec.describe EventsController, type: :controller do
 
     before do 
       allow_any_instance_of(Event).to receive(:calculate_seating_summary).and_return("summary data")
+      allow_any_instance_of(Event).to receive(:update_referral_data).and_return("referral data")
     end
 
     context 'without connection to external ticket vendor' do
@@ -55,6 +56,10 @@ RSpec.describe EventsController, type: :controller do
 
       it 'assigns the seating summary' do
         expect(assigns(:seating_summary)).to eq("summary data")
+      end
+
+      it 'assigns the referral_data' do
+        expect(assigns(:referral_data)).to eq("referral data")
       end
 
       it 'returns a success response' do

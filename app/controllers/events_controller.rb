@@ -14,12 +14,10 @@ class EventsController < ApplicationController
     @seats = Seat.where(event_id: @event.id)
 
     @external_events, @ticket_sales = self.fetch_and_show_ticket_sales
-    
+
     @seating_summary = @event.calculate_seating_summary(@ticket_sales)
 
-    @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
-      [referraldatum[:referred], referraldatum[:email]]
-    end
+    @referral_data = @event.update_referral_data(@ticket_sales)
   end
 
   def new
@@ -101,6 +99,7 @@ class EventsController < ApplicationController
 
   def fetch_and_show_eventbrite
     ticket_sales = []
+
     external_events = @eventbrite_service.fetch_events
     ticket_sales =  @eventbrite_service.compose_ticket_sales if @eventbrite_service.config.event_id.present?
 
