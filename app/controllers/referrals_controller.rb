@@ -14,63 +14,36 @@ class ReferralsController < ApplicationController
   end
 
   def referral_creation
-    friend_emails = params[:friend_emails]&.split(',')&.map(&:strip) # Split emails and remove extra spaces
+    friend_emails = params[:friend_emails]&.split(',').map(&:strip) # Split emails and remove extra spaces
     random_code = params[:random_code]
     @guest = Guest.find_by(rsvp_link: random_code)
   
     if @guest && friend_emails.present?
-      failed_emails = []
+      friend_emails.each do |emails|
+        # Create or find a referral for each friend's email
+        referral = Referral.find_or_create_by(
+          event_id: @guest.event_id,
+          guest_id: @guest.id,
+          email: @guest.email,
+          name: "#{@guest.first_name} #{@guest.last_name}",
+          referred: emails,
+          ref_code: @guest.id
+        )
   
-      friend_emails.each do |email|
-        begin
-          # Validate the email format
-          unless valid_email?(email)
-            logger.error "Invalid email format: #{email}"
-            failed_emails << "#{email} (Invalid format)"
-            next
-          end
-  
-          # Create or find a referral for each friend's email
-          referral = Referral.find_or_create_by!(
-            event_id: @guest.event_id,
-            guest_id: @guest.id,
-            email: @guest.email,
-            name: "#{@guest.first_name} #{@guest.last_name}",
-            referred: email,
-            ref_code: @guest.id
-          )
-  
-          # Send referral email to each friend if referral persisted
-          UserMailer.referral_confirmation(email).deliver_now if referral.persisted?
-        rescue ActiveRecord::RecordInvalid => e
-          logger.error "Failed to create referral for #{email}: #{e.message}"
-          failed_emails << "#{email} (Error: #{e.message})"
-        rescue StandardError => e
-          logger.error "Unexpected error for #{email}: #{e.inspect}"
-          logger.error e.backtrace.join("\n") # Log the stack trace
-          failed_emails << "#{email} (Unexpected Error: #{e.message})"
-        end
+        # Send referral email to each friend
+        UserMailer.referral_confirmation(emails).deliver_now if referral.persisted?
       end
   
-      if failed_emails.empty?
-        redirect_to root_path, notice: 'Referrals sent successfully!'
-      else
-        flash[:alert] = "There were issues with the following emails: #{failed_emails.join(', ')}"
-        redirect_to root_path
+      respond_to do |format|
+        format.html { head :no_content }
+        format.js
       end
     else
       flash[:alert] = "At least one friend's email is required to create referrals."
       redirect_to root_path
     end
   end
-  
-  private
-  
-  def valid_email?(email)
-    /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i.match?(email)
-  end
-  
-  
+    
 
   # GET /referrals/1/edit
   def edit; end
