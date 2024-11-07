@@ -125,6 +125,9 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
   config.filter_rails_from_backtrace!
 
+
+  ENV['APP_URL'] ||= 'http://localhost:3000'
+
   # Including the Devise::Test::ControllerHelpers module in the test suite.
   # These helper methods provide a way to simulate authentication and authorization.
   config.include Devise::Test::ControllerHelpers, type: :controller

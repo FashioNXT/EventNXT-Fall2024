@@ -6,6 +6,7 @@ RSpec.describe EmailServicesController, type: :controller do
   let(:user) { create(:user) }
   before do
     sign_in user # Sign in the user before running the tests
+    @request.host = 'localhost:3000'
   end
   let(:valid_attributes) do
     {
@@ -366,6 +367,9 @@ RSpec.describe EmailServicesController, type: :controller do
       allow(EmailService).to receive(:find).and_return(email_service)
       allow(Event).to receive(:find).and_return(event)
       allow(Guest).to receive(:find).and_return(guest)
+
+      # Ensure the email is ready to be sent
+      allow(UserMailer).to receive(:referral_confirmation).and_call_original
     end
 
     it 'sends an email and updates the email service' do
@@ -375,12 +379,13 @@ RSpec.describe EmailServicesController, type: :controller do
         post :send_email, params: { id: email_service.id }
         email_service.reload
       end.to change {
-               EmailService.where.not(sent_at: nil).count
-             }.from(initial_count).to(initial_count + 1)
+              EmailService.where.not(sent_at: nil).count
+            }.from(initial_count).to(initial_count + 1)
 
       expect(response).to redirect_to(email_services_url)
       expect(flash[:success]).to eq('Email sent!')
       expect(email_service.reload.sent_at).to be_present
+
     end
   end
 end
