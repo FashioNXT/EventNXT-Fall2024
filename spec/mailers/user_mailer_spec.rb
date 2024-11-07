@@ -2,7 +2,6 @@
 
 # spec/mailers/user_mailer_spec.rb
 require 'rails_helper'
-ENV['APP_URL'] ||= 'http://localhost:3000'
 
 RSpec.describe UserMailer, type: :mailer do
   describe 'referral_confirmation' do
