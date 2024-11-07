@@ -27,7 +27,7 @@ module OmniAuth
         }
         # Call super with the overridden token parameters to add them to the token exchange request
         client.get_token(token_params, deep_symbolize(options.auth_token_params))
-      rescue OAuth2::Error => e
+      rescue ::OAuth2::Error => e
         fail!(:invalid_credentials, e)
       end
 
