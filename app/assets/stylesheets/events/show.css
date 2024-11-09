@@ -1,0 +1,23 @@
+.btn-upload-guest-list
+{
+    display: inline-block; 
+    padding: 10px 20px; 
+    background-color: #4caf50; 
+    color: #fff; 
+    text-decoration: none; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer
+}
+
+#link-import-guest
+{
+    display: inline-block; 
+    padding: 10px 20px; 
+    background-color: #4caf50; 
+    color: #fff; 
+    text-decoration: none; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer'
+}

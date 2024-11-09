@@ -1,0 +1,80 @@
+<style>
+  .input-field {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+</style>
+
+<%# following changes are made:
+        - Changed the first line to reflect the relationship between parent and child resources:
+        - deleted the section that lists the parent_id of the related parent, 
+          since this is not essential information in the view. %>
+
+
+<div class="form-box" style="width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+<%= form_with(model: [@event, guest]) do |form| %>
+  <% if guest.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(guest.errors.count, "error") %> prohibited this guest from being saved:</h2>
+
+      <ul>
+        <% guest.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :first_name, 'First Name', style: "display: block" %>
+    <%= form.text_field :first_name %>
+  </div>
+
+  <div>
+    <%= form.label :last_name, 'Last Name', style: "display: block" %>
+    <%= form.text_field :last_name %>
+  </div>
+
+  <div>
+    <%= form.label :email, 'Email', style: "display: block" %>
+    <%= form.text_field :email %>
+  </div>
+  
+  <div>
+    <%= form.label :affiliation, 'Affiliation', style: "display: block" %>
+    <%= form.text_field :affiliation %>
+  </div>
+
+  <div>
+      <%= form.label :category, 'Category', style: "display: block" %>
+      <%= form.collection_select :category, @event.seats, :category, :category, prompt: "Select a category" %>
+  </div>
+
+  <div>
+      <%= form.label :section, 'Section', style: "display: block" %>
+      <%= form.collection_select :section, @event.seats, :section, :section, prompt: "Select a section" %>
+  </div> 
+
+  <div>
+    <%= form.label :alloted_seats, 'Allocated Seats', style: "display: block" %>
+    <%= form.number_field :alloted_seats %>
+  </div>
+
+  <div>
+    <%= form.label :commited_seats, 'Commited Seats', style: "display: block" %>
+    <%= form.number_field :commited_seats %>
+  </div>
+
+
+
+  <div>
+    <%= form.label :status, 'Status', style: "display: block" %>
+    <%= form.check_box :status %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

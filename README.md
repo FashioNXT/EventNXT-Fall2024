@@ -1,179 +1,165 @@
-#EventNXT Home Page
-**#CSCE 606 Project GitHub EventNXT Group Home Page - SPRING 2024**
+# Team EventNXT
 
-This is home page which has 2 apps: Old App & New App.
-We, the students of Spring 2024, continued to worked on the **EventNXT_new_app**. For all the verification purposes please use the new app.
+TEAM Fall 2024
 
-**New App Link:**
+# Sprint 1 MVP
 
-**Spring 2024 Heroku link:** https://eventnxt-0fcb166cb5ae.herokuapp.com/
+Heroku deployment: https://eventnxt-0fcb166cb5ae.herokuapp.com/ <br>
+Document Summary: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/documentation/Fall2024/Sprint%201%20MVP.pdf<br>
+Code climate report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/rishabh/documentation/Fall2024/code-cliamte-report.pdf
+Team agreement Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/team_agreement_report.md
 
-**Spring 2024 Github link:** https://github.com/CSCE-606-Event360/Spring2024EventNXT/tree/main/EventNXT_new_app
+# Sprint 2 MVP
 
-**Spring 2024 EventNXT code climate report:** https://codeclimate.com/github/CSCE-606-Event360/Spring2024EventNXT
+- Heroku deployment: https://eventnxt-fall2024-dev-67890e38df3f.herokuapp.com/
+- Document Summary: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/Sprint%202%20MVP.pdf
+- Code Quality Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/Sprint-2-MVP-Code-Quaility-report.pdf
+- Team agreement Report: https://github.com/FashioNXT/EventNXT-Fall2024/blob/dev/documentation/Fall2024/team_agreement_report.md
+- Linear (Project Tracker): https://linear.app/eventnxt/team/EVE
+  - Invitation link: https://linear.app/eventnxt/join/7a62856b531c96c8fd64df5b68f49ce5?s=1
+- Slack: https://app.slack.com/client/T07MYFJ1213/C07MYFJ2MAR
 
-**The debugging_report.txt file will be used for significant debugging report, erratum report and other correction related reports.**
+# How to Locally Run the Applicatiion
 
-**Spring 2024 EventNXT TEAM**
+Clone the repo: 
 
+```bash
+git clone https://github.com/FashioNXT/EventNXT-Fall2024.git
+```
 
+## Recommanded: Running in Containers by Docker
 
-**------------------------------------------------------IMPORTANT------------------------------------------------------**
+Please check you have Docker deamon running on your machine. If not, install it following https://docs.docker.com/engine/install/.
 
-We strongly suggest the Team to go through the DOCUMENTATION to understand the old and new application:
+We recommand this approach because there is no need to install any other packages to run the app. You can run and test the app by one SINGLE command, wihout extra actions or environment configurations.
 
-Documentation is common for PlanNXT, CastNXT and EventNXT:
+### Run Server
 
-Email the team if you have any questions:
+```bash
+$ ./script/run_app
+```
+It builds the images for the app and database,  create a named volume to store the data, and start running containers from the images.
 
-**Install ruby and rails**
+If errors occur, you can view the log by
+```bash
+$ docker-compose logs
+```
+- To view the log of the app:
+    ```bash
+    $ docker-compose logs eventnxt
+    ```
+- To view the log of the database:
+    ```bash
+    $ docker-compose logs postgres
+    ``` 
 
-Please check whether you have the ruby and rails installed.
+### Run Tests
 
-        ruby -v
+#### Rspec
+```
+$ ./script/run_test_rspec [rspec_args]
+```
 
+#### Cucumber
+```
+$ ./script/run_test_cucumber [cucumber_args]
+```
+
+### Tear Down
+Use this to remove the containers.
+```
+docker-compose down [-v] [--rmi all]
+```
+- `-v`: remove the nameed volumes for db data.
+- `--rmi`: remove the images built by docker-compose.
+
+## Legacy: Running directly on Your Host Machine
+
+By Team Spring-2024.
+
+Please check whether you have the ruby and rails installed. 
+```
+ruby -v
+```
 Ruby version is 3.2.2 as mentioned in Gemfile
-
-        rails -v
-
+```
+rails -v
+```
 The rails version is 7.0.4
 
 If you don't have the ruby or rails. Please follow the below processes.
 
-- Install ruby-3.2.0 using Ruby version manager
-   
-        rvm get stable
-        rvm install "ruby-3.2.0" or try rvm install "ruby-3.2.2"
-        rvm use 3.2.0 or try rvm use 3.2.2
+* Install ruby-3.2.0 using Ruby version manager
+  * `rvm get stable`
+  * `rvm install "ruby-3.2.0"` or try `rvm install "ruby-3.2.2"`
+  * `rvm use 3.2.0` or try `rvm use 3.2.2`
 
-- Install PostgreSQL
+* Install PostgreSQL
+  * `sudo apt-get update`
+  * `sudo apt-get install postgresql postgresql-contrib libpq-dev`
+  * PostgreSQL may require to create a role to allow rails to connect to the Postgre database. In AWS cloud9 ubuntu system, we executed `sudo -u postgres createuser --interactive ubuntu`
 
-        sudo apt-get update
-        sudo apt-get install postgresql postgresql-contrib libpq-dev
-        
-        PostgreSQL may require to create a role to allow rails to connect to the Postgre database. In AWS cloud9 ubuntu system, we executed 
-        sudo -u postgres createuser --interactive ubuntu
+* Clone the latest git repo
+  * `git clone https://github.com/CSCE-606-Event360/Spring2024EventNXT.git`
 
-- Clone the latest git repo
+* Change directory to the new app
+  * `cd Spring2024EventNXT/EventNXT_new_app` 
 
-        git clone https://github.com/CSCE-606-Event360/Spring2024EventNXT.git
-
-- Change directory to the new app
-
-        cd Spring2024EventNXT/EventNXT_new_app
-
-- Bundle install
-
-        bundle install
-
-- Set ENVIRONMENT VARIABLES
-
-        NXT_APP_URL -> events360 website link
-        NXT_APP_ID -> client ID (registered with events360)
-        NXT_APP_SECRET -> client secret (registered with events360)
-        EVENT_NXT_APP_URL -> eventNXT WEBSITE LINK.
-        ALLOWED_HOST -> eventnxt url in heroku or local url
-
-- To set environment variables, please follow below procedure: command:
-
-        export NXT_APP_URL="http://events360.herokuapp.com/"
-        export NXT_APP_ID="aCgXCUDxHSvkp12ZaLweRSVq0pmznGpFasldrE3EZpQ"
-        export NXT_APP_SECRET="iN9O2qGyA9n3nauMXOl6x5SDh08i27Nb1gs-fIjI6g0"
-        export EVENT_NXT_APP_URL="https://eventnxtprodfall2023-a37dec4f8dd9.herokuapp.com/" #your eventnxt app url in development heroku
-        export ALLOWED_HOST="your eventnxt app url in development heroku"
-
-NOTE: NXT_APP_URL, NXT_APP_ID, NXT_APP_SECRET are env variables used for oauth client registration with CRM event360 server. http://events360.herokuapp.com/ is customer production CRM server. You should not use this for development. For development you need to clone Event360 repo and run the app. This admin login details are present in db/seeds.rb file of Event360 repo. Then you can go to application management and create a new test client. once the new client is registered you can get NXT_APP_ID and NXT_APP_SECRET from the UI and set it in your development env as shown above. you need to save client callback in this new test client in event360 app. To get an Idea:
-
-        go to http://events360.herokuapp.com/, login as admin user, use same login details as mentioned above from seeds.rb file in Event360 repo.
-        go to EventNXT and look for the fields to get idea.
-        
-        Migrate Database
-                rails db:migrate
-        
-        Start server in local development environment
-                rails s
-
-**Problems**
-If Bundler complains that the wrong Ruby version is installed,
+* Bundle install
+  * `bundle install`
     
-        rvm: verify that rvm is installed (for example, rvm --version) and run rvm         
-        list to see which Ruby versions are available and rvm use to make a particular     
-        version active. If no versions satisfying the Gemfile dependency are               
-        installed, you can run rvm install to install a new version, then rvm use to       
-        use it.
-        
-        rbenv: verify that rbenv is installed (for example, rbenv --version) and run       
-        rbenv versions to see which Ruby versions are available and rbenv local to         
-        make a particular version active. If no versions satisfying the Gemfile            
-        dependency are installed, you can run rbenv install to install a new version,      
-        then rbenv local to use it.
-        
-        Then you can try bundle install again.
+* Set ENVIRONMENT VARIABLES
+    * NXT_APP_URL -> events360 website link
+    * NXT_APP_ID -> client ID (registered with events360)
+    * NXT_APP_SECRET -> client secret (registered with events360)
+    * EVENT_NXT_APP_URL -> eventNXT WEBSITE LINK.
+    * ALLOWED_HOST -> eventnxt url in heroku or local url
+      
+* To set environment variables, please follow below procedure:
+command: 
+   - export NXT_APP_URL="http://events360.herokuapp.com/"
+   - export NXT_APP_ID="aCgXCUDxHSvkp12ZaLweRSVq0pmznGpFasldrE3EZpQ"
+   - export NXT_APP_SECRET="iN9O2qGyA9n3nauMXOl6x5SDh08i27Nb1gs-fIjI6g0"
+   - export EVENT_NXT_APP_URL="https://eventnxt-0fcb166cb5ae.herokuapp.com/" #your eventnxt app url in development heroku
+   - export ALLOWED_HOST="your eventnxt app url in development heroku"
 
-**How to run Test cases**
+NOTE: NXT_APP_URL, NXT_APP_ID, NXT_APP_SECRET are env variables used for oauth client registration with CRM event360 server.
+http://events360.herokuapp.com/ is customer production CRM server.
 
-- cucumber test cases:
+You should not use this for development. For development you need to clone Event360 repo and run the app.
+This admin login details are present in db/seeds.rb file of Event360 repo.
+Then you can go to application management and create a new test client. once the new client is registered
+you can get NXT_APP_ID and NXT_APP_SECRET from the UI and set it in your development env as shown above.
+you need to save client callback in this new test client in event360 app.
+To get an Idea:
+ - go to http://events360.herokuapp.com/, login as admin user, use same login details as mentioned above from seeds.rb file in Event360 repo.
+ - go to EventNXT and look for the fields to get idea.
 
-        RAILS_ENV=test rake cucumber
-        rails cucumber
+* Migrate Database
+  * `rails db:migrate`
 
-- rspec test cases:
-        
-        bundle exec rspec
+* Start server in local development environment
+  * `rails s`
+ 
+### Problems
+1. If Bundler complains that the wrong Ruby version is installed,
 
-**Heroku Deployment:**
+    * rvm: verify that rvm is installed (for example, rvm --version) and run rvm list to see which Ruby versions are available and rvm use <version> to make a particular version active. If no versions satisfying the Gemfile dependency are installed, you can run rvm install <version> to install a new version, then rvm use <version> to use it.
+    
+    * rbenv: verify that rbenv is installed (for example, rbenv --version) and run rbenv versions to see which Ruby versions are available and rbenv local <version> to make a particular version active. If no versions satisfying the Gemfile dependency are installed, you can run rbenv install <version> to install a new version, then rbenv local <version> to use it.
+    
+    Then you can try bundle install again.
 
-It is highly recommended to push the app to heroku using the "Container Registry" method:
+### How to run Test cases
 
-1. Download and install the Heroku CLI.
+*cucumber test cases:
 
-2. Log in to your Heroku account and follow the prompts to create a new SSH public key.
+```console
+RAILS_ENV=test rake cucumber
+```
 
-        heroku login
+*rspec test cases:
 
-4. Log in to Container Registry. You must have Docker set up locally to continue. You should see output when you run this command.
-
-        docker ps
-
-5. Push your Docker-based app. Build the Dockerfile in the current directory and push the Docker image
-
-        heroku container:push web -a <your_image>
-
-6. Deploy the changes. Release the newly pushed images to deploy your app.
-
-        heroku container:release web -a <your_image> 
-   
-7. Use your app link to visit your app.
-
-**Note:** If you notice that your app run into an Application Error.
-
-1. Check your Gemfile.
-
-        Check if your Gemfile has gem "pg"
-
-2. Run"
-
-        bundle install
-
-4. Now, navigate to your app from the heroku dashboard
-
-5. Click on "More" (Top-Right corner, next to 'Open App')
-
-6. Click on "Run console"
-
-7. On the command prompt, run the command:
-
-        rails db:migrate
-
-8. Now, try opening the app.
-
-**Contacts:**
-
-          Anirith Pampati: anirith@tamu.edu
-          Amalesh Arivanan: amalesh.arivanan-22@tamu.edu
-          Louis Turrubiartes: louis.turrubiartes@tamu.edu
-          Alex Wise: alex2by4@tamu.edu
-          Tianchen Huang: th20@tamu.edu
-          Tong Wu: syca.red@tamu.edu
-          Xin Tong: xintong@tamu.edu
-  
+```console
+bundle exec rspec
+```

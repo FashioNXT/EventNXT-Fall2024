@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+docker_run = 'docker-compose -f docker-compose.test.yml run --rm'
+
+if ARGV.length.positive?
+  args = []
+  ARGV.each do |arg|
+    args << if arg.include?(' ')
+              "\"#{arg}\""
+            else
+              arg
+            end
+  end
+  args = args.join(' ')
+end
+
+cmd = "#{docker_run} --env CMD_ARGS=#{args} test_cucumber"
+
+puts("Running Cmd: #{cmd}")
+system(cmd)

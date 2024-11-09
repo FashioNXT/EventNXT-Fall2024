@@ -1,0 +1,51 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-eventnxt}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: eventnxt_db_test
+    ports:
+      - "5432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data # Store database data in memory instead of a volume
+       
+  test_rspec:
+    build: .
+    environment:
+      RAILS_ENV: test
+      BUNDLE_WITHOUT: development
+    entrypoint: ["/bin/bash", "-cx"]
+    command:
+      - |
+        bundle install
+        bundle exec rake db:drop && bundle exec rake db:prepare
+        bundle exec rspec --color --format documentation $${CMD_ARGS}
+    volumes:
+      - .:/eventnxt
+      - bundle_data_rspec:/usr/local/bundle
+    depends_on:
+      - postgres
+
+  test_cucumber:
+    build: .
+    environment:
+      RAILS_ENV: test
+      BUNDLE_WITHOUT: development
+    entrypoint: ["/bin/bash", "-cx"]
+    command:
+      - |
+        bundle install
+        bundle exec rake db:drop && bundle exec rake db:prepare
+        bundle exec cucumber --color $${CMD_ARGS}
+    volumes:
+      - .:/eventnxt
+      - bundle_data_cucumber:/usr/local/bundle
+    depends_on:
+      - postgres
+
+volumes:
+  bundle_data_rspec:
+  bundle_data_cucumber: 
+  
