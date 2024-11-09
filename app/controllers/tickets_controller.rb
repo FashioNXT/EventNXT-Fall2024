@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# class method for ticket controller
 class TicketsController < ApplicationController
   def new; end
 
