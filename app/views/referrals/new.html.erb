@@ -1,12 +1,15 @@
-<h1>Refer a Friend</h1>
+<!-- app/views/referrals/send_invitation.html.erb -->
+<p>Hi <%= @guest.first_name %> <%= @guest.last_name %>,</p>
 
-<%= form_with url: referral_creation_path, local: true do |form| %>
+<p>You have a chance to earn <%= @reward_offer %> by inviting your friends to purchase tickets for our event.</p>
+
+<%= form_with url: referral_creation_path, method: :post, local: true do |f| %>
   <div>
-    <%= form.label :friend_email, "Friend's Email Address" %>
-    <%= form.email_field :friend_email, required: true %>
+    <p>Enter your friends' email addresses (separated by commas):</p>
+    <%= f.text_area :friend_emails, placeholder: "Enter emails, separated by commas", required: true %>
   </div>
 
   <div>
-    <%= form.submit "Submit" %>
+    <%= f.submit "Send Referral Invitations", class: "btn btn-primary" %>
   </div>
 <% end %>

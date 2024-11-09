@@ -2,12 +2,12 @@
 
 # app/mailers/user_mailer.rb
 class UserMailer < ApplicationMailer
-  default from: 'notifications@example.com'
+  default from: 'suryacherukuri999@gmail.com'
 
   def referral_confirmation(friend_email)
     @friend_email = friend_email
     # local example
-    @url = 'http://localhost:3000/tickets/new'
+    @url = "#{ENV['APP_URL']}/tickets/new"
     # Heroku example
     # @url = 'http://yourapp.herokuapp.com/tickets/new'
 

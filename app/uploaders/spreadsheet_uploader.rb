@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# It is used to upload the spreadhseet
+# It's used in box office and  manage invited guests
 class SpreadsheetUploader < CarrierWave::Uploader::Base
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick

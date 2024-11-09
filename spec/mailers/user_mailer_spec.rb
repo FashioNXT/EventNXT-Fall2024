@@ -10,11 +10,11 @@ RSpec.describe UserMailer, type: :mailer do
     it 'renders the headers' do
       expect(mail.subject).to eq('Confirm Your Ticket Purchase')
       expect(mail.to).to eq(['friend@example.com'])
-      expect(mail.from).to eq(['notifications@example.com'])
+      expect(mail.from).to eq(['suryacherukuri999@gmail.com'])
     end
 
     it 'renders the body' do
-      expect(mail.body.encoded).to match('http://localhost:3000/tickets/new')
+      expect(mail.body.encoded).to include("http://localhost:3000/tickets/new")
     end
   end
 end

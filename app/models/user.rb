@@ -15,7 +15,7 @@ class User < ApplicationRecord
   has_many :events, dependent: :destroy
 
   class << self
-    def from_omniauth(auth, current_user = nil)
+    def from_omniauth(auth, _current_user = nil)
       case auth.provider.to_s
       when 'events360'
         return self.from_omniauth_events360(auth)

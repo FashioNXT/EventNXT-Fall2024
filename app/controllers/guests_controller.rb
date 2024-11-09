@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# controlelr for guests to hanle the guests update, edit, and delete
 class GuestsController < ApplicationController
   # <!--===================-->
   # <!--corresponding filter of the defined method for nested scaffold-->
@@ -31,26 +32,25 @@ class GuestsController < ApplicationController
 
   # GET /guests/1/edit
   def edit; end
+
   # New code
   def create
     @guest = @event.guests.build(guest_params)
-  
+
     respond_to do |format|
       if Guest.exists?(email: @guest.email, event_id: @event.id)
         @guest.errors.add(:email, 'already exists')
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @guest.errors, status: :unprocessable_entity }
-      else
-        if @guest.save
-          format.html do
-            redirect_to event_url(@event),
-                        notice: 'Guest was successfully created.'
-          end
-          format.json { render :show, status: :created, location: @guest }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @guest.errors, status: :unprocessable_entity }
+      elsif @guest.save
+        format.html do
+          redirect_to event_url(@event),
+            notice: 'Guest was successfully created.'
         end
+        format.json { render :show, status: :created, location: @guest }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @guest.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -109,7 +109,7 @@ class GuestsController < ApplicationController
       total_seats = @guest.commited_seats + new_commited_seats
 
       if total_seats <= @guest.alloted_seats
-        @guest.commited_seats = total_seats
+        @guest.commited_seats = new_commited_seats
 
         if @guest.save
           flash[:notice] = 'Committed seats updated successfully.'
@@ -132,18 +132,18 @@ class GuestsController < ApplicationController
       redirect_to event_path(params[:event_id]), alert: 'No file uploaded.'
     else
       result = Guest.import_spreadsheet(params[:file], params[:event_id])
-      if result[:status] == false
-        return redirect_to event_path(params[:event_id]), alert: "Invalid file format: #{result[:message]}"
-      end
-      if result[:message].match?(/Category and Section not found in Seating summary,/)
+      return redirect_to event_path(params[:event_id]), alert: "Invalid file format: #{result[:message]}" if result[:status] == false
+
+      case result[:message]
+      when /Category and Section not found in Seating summary,/
         flash[:warning] = result[:message]
-      elsif result[:message].match?(/Duplicate emails found/)
+      when /Duplicate emails found/
         flash[:warning] = result[:message]
-      elsif result[:message].match?(/Empty emails found/)
+      when /Empty emails found/
         flash[:warning] = result[:message]
-      elsif result[:message].match?(/Empty categories found/)
+      when /Empty categories found/
         flash[:warning] = result[:message]
-      elsif result[:message].match?(/Empty sections found/)
+      when /Empty sections found/
         flash[:warning] = result[:message]
       else
         flash[:success] = result[:message]
