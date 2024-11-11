@@ -10,7 +10,8 @@
   <p>Committed Seats: <%= @guest.commited_seats %></p>
 
 
-  <%= form_for @guest, url: { action: :update_commited_seats } do |f| %>
+  <%= form_for @guest, url: update_commited_seats_path(@guest.rsvp_link), method: :patch do |f| %>
+
     <div class="field">
       <%= f.label :commited_seats %>
       <%= f.number_field :commited_seats %>

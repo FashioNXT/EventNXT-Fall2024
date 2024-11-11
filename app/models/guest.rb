@@ -1,5 +1,5 @@
 require('roo')
-
+# Guest
 class Guest < ApplicationRecord
   belongs_to :event
   has_many :referrals, dependent: :destroy
@@ -29,6 +29,7 @@ class Guest < ApplicationRecord
     end
 
     spreadsheet = Roo::Spreadsheet.open(spreadsheet_file.path)
+
 
     result = validate_import(spreadsheet)
     return result if result[:status] == false
@@ -64,7 +65,6 @@ class Guest < ApplicationRecord
         section = row['Section']
         alloted_seats = row['Allotted Seats'].to_i
         commited_seats = row['Committed Seats'].to_i
-
         # Store the row number of the empty email
         if email.blank?
           empty_emails << i

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+# class method for application mailer
 class ApplicationMailer < ActionMailer::Base
   # <!--===================-->
   # <!--to set the default mailer address-->
-  default from: 'eventnxtapp@gmail.com' # same email can be found at "/config/environments/development.rb"
+  default from: 'suryacherukuri999@gmail.com' # same email can be found at "/config/environments/development.rb"
   # <!--===================-->
 
   layout 'mailer'

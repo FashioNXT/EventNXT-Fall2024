@@ -53,7 +53,7 @@ RSpec.describe ApplicationMailer, type: :mailer do
       # Test the content of the sent email
       expect(email.subject).to eq(subject)
       expect(email.to).to eq([to])
-      expect(email.from).to eq(['eventnxtapp@gmail.com']) # Check the default from address
+      expect(email.from).to eq(['suryacherukuri999@gmail.com']) # Check the default from address
       expect(email.body).to include(body)
       # expect(email.body).to include(rsvp_url)
     end

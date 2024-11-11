@@ -20,26 +20,28 @@
 
   .form-label {
     display: block;
+    margin-bottom: 5px;
   }
 
   .form-control {
-    width: 200px;
+    width: 100%;
     height: 40px;
+    margin-bottom: 10px;
   }
 
   .form-group {
-    margin-bottom: 0px; /* Adjust the margin between form groups */
+    margin-bottom: 15px;
   }
 </style>
 
 <div class="form-box">
-  <%= form_with(model: email_service) do |form| %>
+  <%= form_with(model: email_service, local: true) do |form| %>
     <% if email_service.errors.any? %>
       <div style="color: red">
         <h2><%= pluralize(email_service.errors.count, "error") %> prohibited this email_service from being saved:</h2>
         <ul>
-          <% email_service.errors.each do |error| %>
-            <li><%= error.full_message %></li>
+          <% email_service.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
           <% end %>
         </ul>
       </div>
@@ -47,50 +49,62 @@
 
     <div class="form-group">
       <%= form.label :event_id, class: "form-label" %>
-      <%= form.select :event_id, options_for_select([[" ", nil]] + Event.all.map { |e| [e.title, e.id] }) %>
+      <%= form.select :event_id, options_for_select([[" ", nil]] + Event.all.map { |e| [e.title, e.id] }), class: "form-control" %>
     </div>
 
     <div class="form-group">
       <%= form.label :guest_id, class: "form-label" %>
-      <%= form.select :guest_id, options_for_select([[" ", nil]] + Guest.all.map { |g| ["#{g.first_name} #{g.last_name}", g.id] }) %>
+      <%= form.select :guest_id, options_for_select([[" ", nil]] + Guest.all.map { |g| ["#{g.first_name} #{g.last_name}", g.id] }), id: "email_service_guest_id", class: "form-control" %>
     </div>
 
     <div class="form-group">
       <%= form.label :email_template_id, "Select Email Template", class: "form-label" %>
-      <%= select_tag :email_template_id, options_for_select(EmailTemplate.pluck(:name, :id)), prompt: "Select an Email Template", class: "form-control", style: "width: 200px; height: 40px;", id: "email_template_select" %>
+      <%= select_tag :email_template_id, options_for_select(EmailTemplate.pluck(:name, :id)), prompt: "Select an Email Template", class: "form-control", id: "email_template_select" %>
     </div>
 
     <div class="form-group">
       <%= form.label :to, class: "form-label" %>
-      <%= form.text_field :to %>
+      <%= form.text_field :to, id: "email_to", class: "form-control", readonly: true %>
     </div>
 
     <div class="form-group">
       <%= form.label :subject, class: "form-label" %>
-      <%= form.text_field :subject, id: "email_subject" %>
+      <%= form.text_field :subject, id: "email_subject", class: "form-control" %>
     </div>
 
     <div class="form-group">
       <%= form.label :body, class: "form-label" %>
-      <%= form.text_area :body, id: "email_body", style: "width: 200px; height: 100px;" %>
+      <%= form.text_area :body, id: "email_body", class: "form-control", style: "height: 100px;" %>
     </div>
 
     <div class="form-group">
-      <%= form.submit %>
+      <%= form.submit "Submit", class: "form-control btn btn-primary" %>
     </div>
   <% end %>
 
   <script>
     $(document).ready(function () {
-      console.log("Document is ready.");
+      // Ensure the guestEmails object is populated correctly
+      var guestEmails = <%= Guest.all.map { |g| [g.id, g.email] }.to_h.to_json.html_safe %>;
 
+      // Listen for changes in the guest dropdown
+      $('#email_service_guest_id').on('change', function () {
+        var selectedGuestId = $(this).val(); // Get selected guest ID
+        var guestEmail = guestEmails[selectedGuestId]; // Get corresponding email
+
+        // Update the "To" field with the guest's email
+        if (guestEmail) {
+          $('#email_to').val(guestEmail).attr('readonly', true);
+        } else {
+          $('#email_to').val('');
+        }
+      });
+
+      // Populate subject and body based on selected email template
       $('#email_template_select').change(function () {
-        console.log("Dropdown change event triggered.");
-
         var selectedTemplateId = $(this).val();
 
         $.get('/email_services/render_email_template', { id: selectedTemplateId }, function (data) {
-          console.log("AJAX request successful.");
           $('#email_subject').val(data.subject);
           $('#email_body').val(data.body);
         });

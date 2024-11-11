@@ -37,12 +37,16 @@ jobs:
       - name: Run RuboCop with Autocorrect on Changed Files
         if: success()
         run: |
-          if [[ -s changed_files.txt ]]; then
-            rubocop -A --force-exclusion $(cat changed_files.txt)
+          # Read changed files and filter out deleted ones
+          existing_files=$(cat changed_files.txt | while read file; do
+            if [[ -e "$file" ]]; then echo "$file"; fi
+          done)
+          
+          if [[ -n "$existing_files" ]]; then
+            rubocop -A --force-exclusion $existing_files
           else
-            echo "No Ruby file changes detected"
+            echo "No existing Ruby files to check"
           fi
-      
       - name: Remove changed_files.txt
         if: always()  # Runs this step regardless of previous step's success or failure
         run: rm -f changed_files.txt

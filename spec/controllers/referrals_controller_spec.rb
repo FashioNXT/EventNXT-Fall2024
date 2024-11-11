@@ -13,12 +13,12 @@ RSpec.describe ReferralsController, type: :controller do
     let(:event) { create(:event, user:) }
     let(:seat) { create(:seat, event:) }
     let(:guest) { create(:guest, event:) }
-    let(:friend_email) { 'aaaaaaa@aaaaaaa.???' }
+    let(:friend_emails) { 'aaaaaaa@aaaaaaa.???' }
     let(:ref_code) { guest.id }
     it 'then we will have a new referral created' do
       post :referral_creation,
         params: { random_code: guest.rsvp_link,
-                  friend_email: 'aaaaaaa@aaaaaaa.???' }
+        friend_emails: 'aaaaaaa@aaaaaaa.???' }
 
       expect(Referral.last.referred).to eq('aaaaaaa@aaaaaaa.???')
     end
