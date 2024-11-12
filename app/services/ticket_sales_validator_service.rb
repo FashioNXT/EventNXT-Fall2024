@@ -13,7 +13,7 @@ class TicketSalesValidatorService
     self.validate_category_section(ticket_sales)
   end
 
-  def validate_category_section(ticket_sales)
+  def validate_category_section(ticket_sales = @ticket_sales)
     seats = @event.seats
 
     ticket_sales.each do |sale|

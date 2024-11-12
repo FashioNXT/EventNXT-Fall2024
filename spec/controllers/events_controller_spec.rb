@@ -31,6 +31,7 @@ RSpec.describe EventsController, type: :controller do
 
     context 'without connection to external ticket vendor' do
       before do
+        allow_any_instance_of(EventsController).to receive(:fetch_and_show_ticket_sales).and_return([[],[]])
         get :show, params: { id: event.id }
       end
       
@@ -72,6 +73,7 @@ RSpec.describe EventsController, type: :controller do
       let(:param_ext_id) { 'new_external_event_id' }
       let(:external_events) { ['id1', 'id2'] }
       let(:ticket_sales) { ['sale1', 'sale2'] } 
+      let(:ticket_sales_validator) { instance_double(TicketSalesValidatorService) }
 
       before do
         allow(TicketVendor::Config).to receive(:new) do |args|
@@ -88,6 +90,9 @@ RSpec.describe EventsController, type: :controller do
             compose_ticket_sales: ticket_sales
           )
         end
+
+        allow(TicketSalesValidatorService).to receive(:new).and_return(ticket_sales_validator)
+        allow(ticket_sales_validator).to receive(:validate)
       end
       
       context 'no external_id params provided' do
