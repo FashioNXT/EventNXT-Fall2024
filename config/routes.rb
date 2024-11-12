@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
+Rails.application.routes.draw do
   get '/book_seats/:rsvp_link', to: 'guests#book_seats', as: 'book_seats'
   get '/email_services/new_email_template',
     to: 'email_services#new_email_template', as: 'new_email_template'
@@ -60,6 +60,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     end
   end
 
+  # Event
   resources :events do
     resources :seats
     resources :guests do
@@ -68,4 +69,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       end
     end
   end
+
+  # For referred friends to buy tickets
+  resources :tickets, only: %i[new create]
+  get '/buy_tickets', to: 'tickets#new', as: 'new_ticket_purchase'
 end

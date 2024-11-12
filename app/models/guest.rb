@@ -24,9 +24,7 @@ class Guest < ApplicationRecord
 
   def self.import_spreadsheet(spreadsheet_file, event_id)
     # Validate file type
-    unless ['.xlsx', '.xls', '.csv'].include?(File.extname(spreadsheet_file.original_filename))
-      return { status: false, message: 'Invalid file type. Please upload a .xlsx, .xls, or .csv file.' }
-    end
+    return { status: false, message: 'Invalid file type. Please upload a .xlsx, .xls, or .csv file.' } unless ['.xlsx', '.xls', '.csv'].include?(File.extname(spreadsheet_file.original_filename))
 
     spreadsheet = Roo::Spreadsheet.open(spreadsheet_file.path)
 

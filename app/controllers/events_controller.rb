@@ -86,9 +86,7 @@ class EventsController < ApplicationController
     external_events = []
     ticket_sales = []
 
-    if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
-      @event.update(external_event_id: params[:external_event_id])
-    end
+    @event.update(external_event_id: params[:external_event_id]) if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
 
     config = TicketVendor::Config.new(event_id: @event.external_event_id)
     @eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)

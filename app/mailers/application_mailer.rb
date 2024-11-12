@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# class method for application mailer
 class ApplicationMailer < ActionMailer::Base
   # <!--===================-->
   # <!--to set the default mailer address-->

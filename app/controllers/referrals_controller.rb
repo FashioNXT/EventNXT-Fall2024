@@ -14,10 +14,10 @@ class ReferralsController < ApplicationController
   end
 
   def referral_creation
-    friend_emails = params[:friend_emails]&.split(',').map(&:strip) # Split emails and remove extra spaces
+    friend_emails = params[:friend_emails]&.split(',')&.map(&:strip) # Split emails and remove extra spaces
     random_code = params[:random_code]
     @guest = Guest.find_by(rsvp_link: random_code)
-  
+
     if @guest && friend_emails.present?
       friend_emails.each do |emails|
         # Create or find a referral for each friend's email
@@ -29,11 +29,11 @@ class ReferralsController < ApplicationController
           referred: emails,
           ref_code: @guest.id
         )
-  
+
         # Send referral email to each friend
         UserMailer.referral_confirmation(emails).deliver_now if referral.persisted?
       end
-  
+
       respond_to do |format|
         format.html { head :no_content }
         format.js
@@ -43,7 +43,6 @@ class ReferralsController < ApplicationController
       redirect_to root_path
     end
   end
-    
 
   # GET /referrals/1/edit
   def edit; end
