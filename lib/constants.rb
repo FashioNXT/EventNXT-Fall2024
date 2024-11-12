@@ -29,6 +29,11 @@ module Constants
       SECTION = :section
       TICKETS = :tickets
       COST = :cost
+      FLAGS = :flags
+    end
+
+    module Flags
+      INVALID_CATEGORY_SECTION
     end
   end
 end
