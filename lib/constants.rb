@@ -25,7 +25,7 @@ module Constants
   module TicketSales
     module Field
       EMAIL = :email
-      CATEGORY = :cateogory
+      CATEGORY = :category
       SECTION = :section
       TICKETS = :tickets
       COST = :cost
