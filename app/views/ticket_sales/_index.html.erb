@@ -2,6 +2,10 @@
 
 <div>
   <% unless current_user.eventbrite_token.present? %>
+    <p>
+      Note that if you login through Google account after clicking this button, <br />
+      then you will need to go back manually to this page and click the buttion again to link your Eventbrite account.
+    </p>
     <%=
       button_to 'Connect to Eventbrite', user_eventbrite_omniauth_authorize_path, 
       method: :post, data: { turbo: false }, class: 'btn btn-primary' 
@@ -28,10 +32,13 @@
   </div>
 
   <div class="container">
+    <% if ticket_sales.present? %>
     <%= 
       render partial: "ticket_sales/table", locals: { 
         ticket_sales: ticket_sales
       }
     %>
+
   </div>
+  <% end %>
 </div>

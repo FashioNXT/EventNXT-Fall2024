@@ -1,40 +1,46 @@
 <%# Ticket Sales Table %>
-<% if ticket_sales.present? %>
-  <h3>Ticket Sales</h3>
-  <table class="table table-striped table-hover">
-    <thead class="highlight-heading">
+<h3>Ticket Sales</h3>
+
+<p>
+  If you see warnings <span class="ticket-sale-warning-flag">!</span>
+  <ul>
+    <li>Category, Section: missing their configuration in Manage Seating Levels</li>
+  </ul> 
+</p>
+
+<table class="table table-striped table-hover">
+  <thead class="highlight-heading">
+    <tr>
+      <th>Email</th>
+      <th>Category</th>
+      <th>Section</th>
+      <th>Tickets</th>
+      <th>Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @ticket_sales.each do |ticket_sale| %>
+      <%
+        flags = ticket_sale[Constants::TicketSales::Field::FLAGS]
+        invalid_cateory_section = flags&.include?(Constants::TicketSales::Flags::INVALID_CATEGORY_SECTION) 
+      %>
       <tr>
-        <th>Email</th>
-        <th>Category</th>
-        <th>Section</th>
-        <th>Tickets</th>
-        <th>Cost</th>
+        <td><%= ticket_sale[Constants::TicketSales::Field::EMAIL] %></td>
+        <td> 
+          <%= ticket_sale[Constants::TicketSales::Field::CATEGORY] %>
+          <% if invalid_cateory_section %>
+            <span class="ticket-sale-warning-flag">!</span>
+          <% end %>
+        </td>
+        <td>
+          <%= ticket_sale[Constants::TicketSales::Field::SECTION] %>
+          <% if invalid_cateory_section %>
+            <span class="ticket-sale-warning-flag">!</span>
+          <% end %>
+        </td>
+        <td><%= ticket_sale[Constants::TicketSales::Field::TICKETS] %></td>
+        <td><%= ticket_sale[Constants::TicketSales::Field::COST] %></td>
       </tr>
-    </thead>
-    <tbody>
-      <% @ticket_sales.each do |ticket_sale| %>
-        <%
-          flags = ticket_sale[Constants::TicketSales::Field::FLAGS]
-          invalid_cateory_section = flags&.include?(Constants::TicketSales::Flags::INVALID_CATEGORY_SECTION) 
-        %>
-        <tr>
-          <td><%= ticket_sale[Constants::TicketSales::Field::EMAIL] %></td>
-          <td> 
-            <%= ticket_sale[Constants::TicketSales::Field::CATEGORY] %>
-            <% if invalid_cateory_section %>
-              <span class="ticket-sale-warning-flag">!</span>
-            <% end %>
-          </td>
-          <td>
-            <%= ticket_sale[Constants::TicketSales::Field::SECTION] %>
-            <% if invalid_cateory_section %>
-              <span class="ticket-sale-warning-flag">!</span>
-            <% end %>
-          </td>
-          <td><%= ticket_sale[Constants::TicketSales::Field::TICKETS] %></td>
-          <td><%= ticket_sale[Constants::TicketSales::Field::COST] %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% end %>
+    <% end %>
+  </tbody>
+</table>
