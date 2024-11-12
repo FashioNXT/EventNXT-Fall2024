@@ -36,11 +36,16 @@ module TicketVendor
 
       @attendees.each do |attendee|
         ticket_sale = {}
-        ticket_sale[:email] = self.get_nested_value(attendee, email_source_key)
-        ticket_sale[:category] = self.get_nested_value(attendee, @config.category_source_key)
-        ticket_sale[:section] = self.get_nested_value(attendee, @config.section_source_key)
-        ticket_sale[:tickets] = self.get_nested_value(attendee, @config.tickets_source_key)
-        ticket_sale[:cost] = self.get_nested_value(attendee, @config.cost_source_key)
+        ticket_sale[Constants::TicketSales::Field::EMAIL] =
+          self.get_nested_value(attendee, email_source_key)
+        ticket_sale[Constants::TicketSales::Field::CATEGORY] =
+          self.get_nested_value(attendee, @config.category_source_key)
+        ticket_sale[Constants::TicketSales::Field::SECTION] =
+          self.get_nested_value(attendee, @config.section_source_key)
+        ticket_sale[Constants::TicketSales::Field::TICKETS] =
+          self.get_nested_value(attendee, @config.tickets_source_key)
+        ticket_sale[Constants::TicketSales::Field::COST] =
+          self.get_nested_value(attendee, @config.cost_source_key)
         @ticket_sales << ticket_sale
       end
       @ticket_sales

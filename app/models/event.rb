@@ -21,8 +21,8 @@ class Event < ApplicationRecord
 
     # Process ticket sales to accumulate data
     ticket_sales.each do |sale|
-      category = sale[:category]
-      section = sale[:section]
+      category = sale[Constants::TicketSales::Field::CATEGORY]
+      section = sale[Constants::TicketSales::Field::SECTION]
 
       ticket_summary[[category, section]][:tickets_sold] += sale[:tickets].to_i
     end

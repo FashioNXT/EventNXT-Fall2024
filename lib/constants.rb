@@ -21,4 +21,14 @@ module Constants
     CLIENT_ID = ENV['EVENTBRITE_CLIENT_ID']
     CLIENT_SECRET = ENV['EVENTBRITE_CLIENT_SECRET']
   end
+
+  module TicketSales
+    module Field
+      EMAIL = :email
+      CATEGORY = :cateogory
+      SECTION = :section
+      TICKETS = :tickets
+      COST = :cost
+    end
+  end
 end
