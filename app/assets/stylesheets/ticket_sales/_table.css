@@ -1,0 +1,11 @@
+.ticket-sale-warning-flag {
+  display: inline-block;
+  color: red;
+  background-color: #ffe6e6; /* Light red background */
+  border: 1px solid red;
+  border-radius: 3px;
+  padding: 0 5px;
+  margin-left: 5px;
+  font-weight: bold;
+  font-size: 0.9em;
+}

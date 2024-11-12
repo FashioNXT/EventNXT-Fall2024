@@ -95,7 +95,7 @@ class EventsController < ApplicationController
 
     external_events, ticket_sales = self.fetch_and_show_eventbrite if @eventbrite_service.authorized?
 
-    ticket_sales_validator = TicketSalesValidator(@event)
+    ticket_sales_validator = TicketSalesValidatorService.new(@event)
     ticket_sales_validator.validate(ticket_sales)
 
     [external_events, ticket_sales]

@@ -1,5 +1,5 @@
-# Validate the data in @ticket_salesa
-class TicketSalesValidator
+# Validate the data in @ticket_sales
+class TicketSalesValidatorService
   TICKET_SALES = Constants::TicketSales
   FIELDS = TICKET_SALES::Field
   FLAGS = TICKET_SALES::Flags
@@ -16,13 +16,14 @@ class TicketSalesValidator
   def validate_category_section(ticket_sales)
     seats = @event.seats
 
-    ticket_sales[FIELDS::FLAGS] ||= Set.new
-
     ticket_sales.each do |sale|
       category = sale[FIELDS::CATEGORY]
       section = sale[FIELDS::SECTION]
 
-      sale[FIELDS::FLAGS].add(FLAGS::INVALID_CATEGORY_SECTION) if seats.find_by(category:, section:).nil?
+      if seats.find_by(category:, section:).nil?
+        sale[FIELDS::FLAGS] ||= Set.new
+        sale[FIELDS::FLAGS].add(FLAGS::INVALID_CATEGORY_SECTION)
+      end
     end
   end
 end

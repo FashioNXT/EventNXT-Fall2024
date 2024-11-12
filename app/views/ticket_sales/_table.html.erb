@@ -13,12 +13,26 @@
     </thead>
     <tbody>
       <% @ticket_sales.each do |ticket_sale| %>
+        <%
+          flags = ticket_sale[Constants::TicketSales::Field::FLAGS]
+          invalid_cateory_section = flags&.include?(Constants::TicketSales::Flags::INVALID_CATEGORY_SECTION) 
+        %>
         <tr>
-          <td><%= ticket_sale[:email] %></td>
-          <td><%= ticket_sale[:category]%></td>
-          <td><%= ticket_sale[:section]%></td>
-          <td><%= ticket_sale[:tickets]%></td>
-          <td><%= ticket_sale[:cost] %></td>
+          <td><%= ticket_sale[Constants::TicketSales::Field::EMAIL] %></td>
+          <td> 
+            <%= ticket_sale[Constants::TicketSales::Field::CATEGORY] %>
+            <% if invalid_cateory_section %>
+              <span class="ticket-sale-warning-flag">!</span>
+            <% end %>
+          </td>
+          <td>
+            <%= ticket_sale[Constants::TicketSales::Field::SECTION] %>
+            <% if invalid_cateory_section %>
+              <span class="ticket-sale-warning-flag">!</span>
+            <% end %>
+          </td>
+          <td><%= ticket_sale[Constants::TicketSales::Field::TICKETS] %></td>
+          <td><%= ticket_sale[Constants::TicketSales::Field::COST] %></td>
         </tr>
       <% end %>
     </tbody>

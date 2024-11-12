@@ -33,7 +33,7 @@ module Constants
     end
 
     module Flags
-      INVALID_CATEGORY_SECTION
+      INVALID_CATEGORY_SECTION = :invalid_category_section
     end
   end
 end
