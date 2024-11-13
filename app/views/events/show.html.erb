@@ -156,56 +156,15 @@
   
   
 <!-- Ticket Sales -->
-<% if @event.ticket_source == "eventbrite" %>
-  <!-- Render Eventbrite ticket sales -->
-  <div>
-    <%= render partial: "ticket_sales/index", locals: { 
-      event: @event, 
-      external_events: @external_events, 
-      ticket_sales: @combined_ticket_sales
-    } %>
-  </div>
-<% elsif @event.ticket_source == "spreadsheet" %>
-  <!-- Spreadsheet Upload Form -->
-  <h2 id="ticket-sales-title">Box Office Sales</h2>
-  <div>
-    <%= form_with(model: @event, local: true, multipart: true) do |form| %>
-      <%= form.file_field :event_box_office %>
-      <%= form.submit "Upload Spreadsheet" %>
-    <% end %>
-  </div>
+<div>
+  <%= render partial: "ticket_sales/index", locals: { 
+    event: @event, 
+    external_events: @external_events, 
+    ticket_sales: @ticket_sales
+  } %>
+</div>
 
-  <!-- Display Spreadsheet Data -->
-  <% if @spreadsheet_ticket_sales.present? %>
-    <table>
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th>Tickets</th>
-          <th>Amount</th>
-          <th>Category</th>
-          <th>Section</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @spreadsheet_ticket_sales.each do |sale| %>
-          <tr>
-            <td><%= sale[:email] %></td>
-            <td><%= sale[:tickets] %></td>
-            <td><%= sale[:cost] %></td>
-            <td><%= sale[:category] %></td>
-            <td><%= sale[:section] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% end %>
-
-<% else %>
-  <!-- Handle case where no valid ticket source is selected -->
-  <p>No valid ticket source selected for this event.</p>
-
-<% end %>
+ 
 
 <!--to be added-->
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Referrals</h2>
