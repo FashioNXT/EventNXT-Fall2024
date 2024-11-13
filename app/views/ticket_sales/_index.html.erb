@@ -12,7 +12,7 @@
 <% elsif event.ticket_source == "eventbrite" %>
   <!-- Render Eventbrite ticket sales -->
   <%=
-    render partial: "ticket_sales/form_select", locals: { 
+    render partial: "ticket_sales/eventbrite", locals: { 
       event: event, 
       external_events: external_events, 
     } 
