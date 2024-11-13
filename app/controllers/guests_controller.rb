@@ -132,9 +132,7 @@ class GuestsController < ApplicationController
       redirect_to event_path(params[:event_id]), alert: 'No file uploaded.'
     else
       result = Guest.import_spreadsheet(params[:file], params[:event_id])
-      if result[:status] == false
-        return redirect_to event_path(params[:event_id]), alert: "Invalid file format: #{result[:message]}"
-      end
+      return redirect_to event_path(params[:event_id]), alert: "Invalid file format: #{result[:message]}" if result[:status] == false
 
       case result[:message]
       when /Category and Section not found in Seating summary,/
