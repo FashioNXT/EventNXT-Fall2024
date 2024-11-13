@@ -10,7 +10,10 @@ class Event < ApplicationRecord
   has_many :guests, dependent: :destroy
   has_many :email_services, dependent: :destroy
   has_many :referrals, dependent: :destroy
-  
+
+  validates :ticket_source, inclusion: { in: %w[eventbrite spreadsheet], message: "%{value} is not a valid ticket source" }
+
+
   def calculate_seating_summary(ticket_sales)
     seating_summary = []
 

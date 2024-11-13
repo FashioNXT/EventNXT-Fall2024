@@ -166,7 +166,6 @@
 
 <!-- Spreadsheet Upload Form -->
 <div>
-  <h4>Upload Box Office Spreadsheet</h4>
   <%= form_with(model: @event, local: true, multipart: true) do |form| %>
     <%= form.file_field :event_box_office %>
     <%= form.submit "Upload Spreadsheet" %>
@@ -175,7 +174,6 @@
 
 <!-- Display Spreadsheet Data -->
 <% if @spreadsheet_ticket_sales.present? %>
-  <h3>Spreadsheet Ticket Sales</h3>
   <table>
     <thead>
       <tr>

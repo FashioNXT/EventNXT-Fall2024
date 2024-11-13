@@ -9,19 +9,48 @@ class EventsController < ApplicationController
     @events = current_user.events
   end
 
+  # def show
+  #   @guests = @event.guests
+  #   @seats = Seat.where(event_id: @event.id)
+
+  #   @external_events, @ticket_sales = fetch_and_show_ticket_sales
+  #   @spreadsheet_ticket_sales = fetch_spreadsheet_ticket_sales
+
+  #   # Combine ticket sales from both sources
+  #   @combined_ticket_sales = @ticket_sales + @spreadsheet_ticket_sales
+
+  #   @seating_summary = @event.calculate_seating_summary(@combined_ticket_sales)
+  #   @referral_data = @event.update_referral_data(@combined_ticket_sales)
+  # end
+
   def show
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
-
-    @external_events, @ticket_sales = fetch_and_show_ticket_sales
-    @spreadsheet_ticket_sales = fetch_spreadsheet_ticket_sales
-
-    # Combine ticket sales from both sources
-    @combined_ticket_sales = @ticket_sales + @spreadsheet_ticket_sales
-
-    @seating_summary = @event.calculate_seating_summary(@combined_ticket_sales)
-    @referral_data = @event.update_referral_data(@combined_ticket_sales)
+  
+    if @event.ticket_source == "eventbrite"
+      # Fetch and show Eventbrite ticket sales
+      @external_events, @ticket_sales = fetch_and_show_ticket_sales
+  
+      # Use Eventbrite data for seating summary and referral data updates
+      @seating_summary = @event.calculate_seating_summary(@ticket_sales)
+      @referral_data = @event.update_referral_data(@ticket_sales)
+    
+    elsif @event.ticket_source == "spreadsheet"
+      # Fetch and show Spreadsheet ticket sales
+      @spreadsheet_ticket_sales = fetch_spreadsheet_ticket_sales
+  
+      # Use Spreadsheet data for seating summary and referral data updates
+      @seating_summary = @event.calculate_seating_summary(@spreadsheet_ticket_sales)
+      @referral_data = @event.update_referral_data(@spreadsheet_ticket_sales)
+    
+    else
+      flash[:alert] = "Invalid ticket source selected."
+      redirect_to events_path and return
+    end
   end
+  
+  # No changes needed for fetch_and_show_ticket_sales and fetch_spreadsheet_ticket_sales methods.
+  
 
   def new
     @event = current_user.events.new
@@ -82,7 +111,7 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar, :event_box_office)
+    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar, :event_box_office, :ticket_source)
   end
 
   def fetch_and_show_ticket_sales
