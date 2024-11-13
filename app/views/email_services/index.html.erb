@@ -27,7 +27,6 @@
       <tr class="highlight-heading">
         <th>To</th>
         <th>Subject</th>
-        <th>Body</th>
         <th>Send Email</th>
         <th>Edit Email</th>
         <th>Destroy Email</th>
@@ -39,11 +38,7 @@
           <tr>
             <td><%= email[:to] %></td>
             <td><%= email[:subject] %></td>
-            <td>
-              <div class="small-body-container">
-              <%= render_template_with_generic_placeholders(email).html_safe %>
-              </div>
-            </td>
+    
             <td>
               <%= link_to 'Send', send_email_email_service_path(email), style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
             </td>
@@ -70,7 +65,6 @@
       <tr class="highlight-heading">
         <th>To</th>
         <th>Subject</th>
-        <th>Body</th>
         <th>Re-Send Email</th>
         <th>Edit Email</th>
         <th>Destroy Email</th>
@@ -82,11 +76,6 @@
           <tr>
             <td><%= email[:to] %></td>
             <td><%= email[:subject] %></td>
-            <td>
-              <div class="small-body-container">
-                <%= email[:body].html_safe %>
-              </div>
-            </td>
             <td>
               <%= link_to 'Send', send_email_email_service_path(email), style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
             </td>
