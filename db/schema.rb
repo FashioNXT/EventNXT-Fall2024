@@ -107,8 +107,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_28_153442) do
     t.string "name"
     t.string "eventbrite_uid"
     t.string "eventbrite_token"
-    t.string "eventbrite_refresh_token"
-    t.datetime "eventbrite_token_expires_at"
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 

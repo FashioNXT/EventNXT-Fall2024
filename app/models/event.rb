@@ -3,12 +3,14 @@
 # Model of events created by the user
 class Event < ApplicationRecord
   mount_uploader :event_avatar, AvatarUploader
+  mount_uploader :event_box_office, SpreadsheetUploader
   belongs_to :user
 
   has_many :seats, dependent: :destroy
   has_many :guests, dependent: :destroy
   has_many :email_services, dependent: :destroy
   has_many :referrals, dependent: :destroy
+  
   def calculate_seating_summary(ticket_sales)
     seating_summary = []
 

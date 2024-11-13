@@ -13,11 +13,14 @@ class EventsController < ApplicationController
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
 
-    @external_events, @ticket_sales = self.fetch_and_show_ticket_sales
+    @external_events, @ticket_sales = fetch_and_show_ticket_sales
+    @spreadsheet_ticket_sales = fetch_spreadsheet_ticket_sales
 
-    @seating_summary = @event.calculate_seating_summary(@ticket_sales)
+    # Combine ticket sales from both sources
+    @combined_ticket_sales = @ticket_sales + @spreadsheet_ticket_sales
 
-    @referral_data = @event.update_referral_data(@ticket_sales)
+    @seating_summary = @event.calculate_seating_summary(@combined_ticket_sales)
+    @referral_data = @event.update_referral_data(@combined_ticket_sales)
   end
 
   def new
@@ -79,7 +82,7 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar)
+    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar, :event_box_office)
   end
 
   def fetch_and_show_ticket_sales
@@ -113,4 +116,33 @@ class EventsController < ApplicationController
 
     [external_events, ticket_sales]
   end
+
+  def fetch_spreadsheet_ticket_sales
+    spreadsheet_ticket_sales = []
+
+    if @event.event_box_office.present?
+      event_box_office_file = @event.event_box_office.current_path
+      event_box_office_xlsx = Roo::Spreadsheet.open(event_box_office_file)
+
+      headers = event_box_office_xlsx.row(1)
+      email_index = headers.index('Email')
+      tickets_index = headers.index('Tickets')
+      amount_index = headers.index('Amount')
+      category_index = headers.index('Category')
+      section_index = headers.index('Section')
+
+      event_box_office_xlsx.each_row_streaming(offset: 1) do |row|
+        spreadsheet_ticket_sales << {
+          email: row[email_index]&.value,
+          tickets: row[tickets_index]&.value.to_i,
+          cost: row[amount_index]&.value.to_f,
+          category: row[category_index]&.value,
+          section: row[section_index]&.value
+        }
+      end
+    end
+
+    spreadsheet_ticket_sales
+  end
+    
 end
