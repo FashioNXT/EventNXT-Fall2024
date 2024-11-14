@@ -15,6 +15,15 @@ RSpec.describe TicketSalesValidatorService, type: :service do
     create(:event, seats: seats)
   end
 
+  describe '#validate' do
+    let(:validator) { intance_double(TicketSalesValidatorService.new(event)) }
+    before do
+      allow(validator).to receive(:validate_category_section)
+      validator.validate(valid_ticket_sales)
+      expect(validator).to have_received(:validate_category_section)
+    end
+  end
+
   describe '#validate_category_section' do
     let(:valid_ticket_sales) do
       [
