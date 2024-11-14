@@ -48,7 +48,7 @@ module TicketVendor
           self.get_nested_value(attendee, @config.tickets_source_key)
 
         cost = self.get_nested_value(attendee, @config.cost_source_key)
-        cost = Monetize.parse(cost).amount.to_f / 100.0
+        cost = Monetize.parse(cost).amount
         ticket_sale[Constants::TicketSales::Field::COST] = cost
 
         @ticket_sales << ticket_sale

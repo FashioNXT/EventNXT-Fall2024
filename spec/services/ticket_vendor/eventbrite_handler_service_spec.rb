@@ -43,13 +43,13 @@ RSpec.describe TicketVendor::EventbriteHandlerService do
           'profile' => { 'email' => 'user1@example.com' },
           'ticket_class_name' => 'fake_ticket_1',
           'quantity'=> 1,
-          'costs' => { 'base_price' => 10 } 
+          'costs' => { 'base_price' => {'display' => '$10.0'} } 
         },
         { 
           'profile' => { 'email' => 'user2@example.com' },
           'ticket_class_name' => 'fake_ticket_2',
           'quantity' => 1,
-          'costs' => { 'base_price' => 20 } 
+          'costs' => { 'base_price' => {'display' => '$20'} } 
         }
       ]
     end
@@ -103,13 +103,13 @@ RSpec.describe TicketVendor::EventbriteHandlerService do
           'profile' => { 'email' => 'user1@example.com' },
           'ticket_class_name' => 'fake_ticket',
           'quantity': 1,
-          'costs' => { 'base_price' => 10 } 
+          'costs' => { 'base_price' => {'display' => '$10.0'} } 
         },
         { 
           'profile' => { 'email' => 'user2@example.com' },
           'ticket_class_name' => 'fake_ticket',
           'quantity': 1,
-          'costs' => { 'base_price' => 20 } 
+          'costs' => { 'base_price' => {'display' => '$20'} } 
         }
       ]) }
 
