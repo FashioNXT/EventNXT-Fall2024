@@ -99,8 +99,7 @@ docker-compose -f docker-compose.yml run eventnxt "<cmd>"
 docker-compose -f docker-compose.yml run eventnxt "rails db:migrate"
 ```
 
-
-Deploying to Heroku
+# Deploying to Heroku
 
 ## Create the App on Heroku
 
