@@ -32,20 +32,28 @@ class Guest < ApplicationRecord
     return result if result[:status] == false
 
     new_guests = []
-    duplicate_emails = []
+    duplicate_emails = Set.new
     empty_emails = []
     empty_categories = []
     empty_sections = []
-    missing_seating_summary = []
+    missing_seats = []
     existing_guests = Guest.where(event_id:).pluck(:email, :id).to_h
+
+    # Fetch seats for the event
+    event = Event.find(event_id)
+    seats = event.seats
+    seats_categories_sections = seats.map { |s| [s[:category], s[:section]] }
 
     # Iterate over each worksheet
     spreadsheet.sheets.each do |worksheet_name|
       worksheet = spreadsheet.sheet(worksheet_name)
+
       # Assuming the first row is headers, get the header row
       header = worksheet.row(1)
+
       (2..worksheet.last_row).each do |i|
         row = Hash[[header, worksheet.row(i)].transpose]
+
         first_name = row['First Name']
         last_name = row['Last Name']
         email = row['Email']
@@ -60,17 +68,20 @@ class Guest < ApplicationRecord
           next
         end
         # Store the row number of the empty category
-        empty_categories << i if category.blank?
+        if category.blank?
+          empty_categories << i
+          next
+        end
         # Store the row number of the empty section
         if section.blank?
           empty_sections << i
           next
         end
 
-        if existing_guests[email]
-          duplicate_emails << email
-          next
-        end
+        # Check if category and section are present in seats
+        missing_seats << ({ row: i, category:, section: }) unless seats_categories_sections.include?([category, section])
+
+        duplicate_emails << email if existing_guests[email]
         guest = Guest.find_or_initialize_by(email:, event_id:)
         if guest.new_record?
           guest.assign_attributes(
@@ -107,13 +118,9 @@ class Guest < ApplicationRecord
         end
       end
     end
+
     result[:status] = true
-    if missing_seating_summary.any?
-      missing_seating_summary_messages = missing_seating_summary.map do |entry|
-        "Category and Section not found in Seating summary, '#{entry[:category]}', '#{entry[:section]}'"
-      end
-      result[:message] = missing_seating_summary_messages.join('. ')
-    elsif empty_emails.any?
+    if empty_emails.any?
       result[:message] = "Empty emails found at rows: #{empty_emails.join(', ')}"
     elsif duplicate_emails.any?
       result[:message] = "Duplicate emails found: #{duplicate_emails.join(', ')}"
@@ -121,10 +128,14 @@ class Guest < ApplicationRecord
       result[:message] = "Empty categories found at rows: #{empty_categories.join(', ')}"
     elsif empty_sections.any?
       result[:message] = "Empty sections found at rows: #{empty_sections.join(', ')}"
+    elsif missing_seats.any?
+      missing_seats_messages = missing_seats.map do |entry|
+        "Category and Section not found in Seating Levels, '#{entry[:category]}', '#{entry[:section]}'"
+      end
+      result[:message] = missing_seats_messages.join('. ')
     else
       result[:message] = 'Guests imported successfully'
     end
-
     result[:guests] = new_guests
     result
   end

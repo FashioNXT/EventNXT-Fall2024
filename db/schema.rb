@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_28_153442) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_13_052611) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -48,6 +48,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_28_153442) do
     t.string "event_avatar"
     t.bigint "user_id", default: 1
     t.string "external_event_id"
+    t.string "event_box_office"
+    t.string "ticket_source"
     t.index ["user_id"], name: "index_events_on_user_id"
   end
 
