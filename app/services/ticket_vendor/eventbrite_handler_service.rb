@@ -1,3 +1,5 @@
+require 'monetize'
+
 module TicketVendor
   # Handle data from Eventbrite
   class EventbriteHandlerService
@@ -44,8 +46,11 @@ module TicketVendor
           self.get_nested_value(attendee, @config.section_source_key)
         ticket_sale[Constants::TicketSales::Field::TICKETS] =
           self.get_nested_value(attendee, @config.tickets_source_key)
-        ticket_sale[Constants::TicketSales::Field::COST] =
-          self.get_nested_value(attendee, @config.cost_source_key)
+
+        cost = self.get_nested_value(attendee, @config.cost_source_key)
+        cost = Monetize.parse(cost).amount.to_f / 100.0
+        ticket_sale[Constants::TicketSales::Field::COST] = cost
+
         @ticket_sales << ticket_sale
       end
       @ticket_sales
