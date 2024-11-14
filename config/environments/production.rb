@@ -81,8 +81,13 @@ Rails.application.configure do
   # Assign SemanticLogger as Rails logger
   Rails.logger = SemanticLogger['Rails']
 
+  # Ref: https://github.com/reidmorrison/rails_semantic_logger/issues/29
+  formatter = ActiveSupport::Logger::SimpleFormatter.new
+  formatter.extend ActiveSupport::TaggedLogging::Formatter
+  Rails.logger.formatter = formatter
+
   # Prepend all log lines with the following tags.
-  config.log_tags = [:request_id]
+  # config.log_tags = [:request_id]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
