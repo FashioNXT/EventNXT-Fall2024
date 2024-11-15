@@ -23,6 +23,11 @@ module Constants
   end
 
   module TicketSales
+    module Source
+      SPREADSHEET = :spreadsheet
+      EVENTBRITE = :eventbrite
+    end
+
     module Field
       EMAIL = :email
       CATEGORY = :category

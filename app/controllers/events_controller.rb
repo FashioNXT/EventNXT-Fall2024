@@ -5,6 +5,8 @@ class EventsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_event, only: %i[show edit update destroy]
 
+  TICKET_SALES = Constants::TicketSales
+
   def index
     @events = current_user.events
   end
@@ -102,10 +104,10 @@ class EventsController < ApplicationController
     external_events = []
     ticket_sales = []
 
-    if @event.ticket_source == 'spreadsheet'
+    if @event.ticket_source == TICKET_SALES::Source::SPREADSHEET
       # Fetch and show Spreadsheet ticket sales
       ticket_sales = fetch_spreadsheet_ticket_sales
-    elsif @event.ticket_source == 'eventbrite'
+    elsif @event.ticket_source == TICKET_SALES::Source::EVENTBRITE
       # Fetch and show Eventbrite ticket sales
       @event.update(external_event_id: params[:external_event_id]) if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
 

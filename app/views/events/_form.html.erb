@@ -45,7 +45,14 @@
   
   <div class="form-group">
     <%= form.label :ticket_source, "Select Ticket Source" %>
-    <%= form.select :ticket_source, options_for_select([["Eventbrite", "eventbrite"], ["Spreadsheet", "spreadsheet"]], @event.ticket_source) %>
+    <%= form.select :ticket_source, options_for_select(
+        [
+          ["Eventbrite", Constants::TicketSales::Source::EVENTBRITE], 
+          ["Spreadsheet", Constants::TicketSales::Source::SPREADSHEET]
+        ], 
+        @event.ticket_source
+      ) 
+    %>
   </div>
 
   <!-- File upload field for spreadsheet (conditionally shown) -->
