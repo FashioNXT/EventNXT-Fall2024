@@ -23,18 +23,25 @@ RSpec.describe EventsController, type: :controller do
     let(:seat2) { create(:seat, event: event) }
     let(:referral1) { create(:referral, event: event, referred: true, email: 'refer1@example.com') }
     let(:referral2) { create(:referral, event: event, referred: true, email: 'refer2@example.com') } 
+    
+    let(:ticket_sales_validator) { instance_double(TicketSalesValidatorService) }
 
     before do 
       allow_any_instance_of(Event).to receive(:calculate_seating_summary).and_return("summary data")
       allow_any_instance_of(Event).to receive(:update_referral_data).and_return("referral data")
+
+      allow(TicketSalesValidatorService).to receive(:new).and_return(ticket_sales_validator)
+      allow(ticket_sales_validator).to receive(:validate)
     end
 
-    context 'without connection to external ticket vendor' do
+    context 'assign values' do
       before do
-        allow_any_instance_of(EventsController).to receive(:fetch_and_show_ticket_sales).and_return([[],[]])
+        allow_any_instance_of(EventsController).to receive(:fetch_and_show_ticket_sales)
+          .and_return(["external events", "ticket sales"])
+
         get :show, params: { id: event.id }
       end
-      
+
       it 'assigns the correct event' do
         expect(assigns(:event)).to eq(event)
       end
@@ -47,20 +54,46 @@ RSpec.describe EventsController, type: :controller do
         expect(assigns(:guests)).to match_array([guest1, guest2])
       end
       
-      it 'asiigns the empty external events' do
-        expect(assigns(:external_events)).to match_array([]) 
+      it 'asiigns the external events' do
+        expect(assigns(:external_events)).to eq("external events") 
       end
       
-      it 'assigns the empty ticket_sales' do
-        expect(assigns(:ticket_sales)).to match_array([])
+      it 'assigns the ticket_sales' do
+        expect(assigns(:ticket_sales)).to eq("ticket sales")
       end
-
+      
       it 'assigns the seating summary' do
         expect(assigns(:seating_summary)).to eq("summary data")
       end
 
       it 'assigns the referral_data' do
         expect(assigns(:referral_data)).to eq("referral data")
+      end 
+
+      it 'returns a success response' do
+        expect(response).to be_successful
+      end
+    end
+
+    context 'when the tickets source is spreadhsheet,' do
+      let(:event) { create(:event, user: user, ticket_source: Constants::TicketSales::Source::SPREADSHEET) }
+      let(:ticket_sales) { ['sale1', 'sale2'] }
+      let(:spreadsheet_service) { instance_double(TicketSalesSpreadsheetService) }
+
+      before do
+        allow(TicketSalesSpreadsheetService).to receive(:new).and_return(spreadsheet_service)
+        allow(spreadsheet_service).to receive(:import_data).and_return(ticket_sales)
+        
+        get :show, params: { id: event.id }
+      end
+
+      it 'import tikcet_sales data' do
+        expect(spreadsheet_service).to have_received(:import_data)
+        expect(assigns(:ticket_sales)).to match_array(ticket_sales)
+      end
+      
+      it 'validates ticket_sales data' do
+        expect(ticket_sales_validator).to have_received(:validate)
       end
 
       it 'returns a success response' do
@@ -68,12 +101,12 @@ RSpec.describe EventsController, type: :controller do
       end
     end
 
-    context 'with connection to eventbrite' do
+    context 'when the ticket source is eventbrite,' do
+      let(:event) { create(:event, user: user, ticket_source: Constants::TicketSales::Source::EVENTBRITE) }
       let(:event_with_ext_id) { create(:event, :with_external_event_id, user: user) }
       let(:param_ext_id) { 'new_external_event_id' }
       let(:external_events) { ['id1', 'id2'] }
       let(:ticket_sales) { ['sale1', 'sale2'] } 
-      let(:ticket_sales_validator) { instance_double(TicketSalesValidatorService) }
 
       before do
         allow(TicketVendor::Config).to receive(:new) do |args|
@@ -90,9 +123,6 @@ RSpec.describe EventsController, type: :controller do
             compose_ticket_sales: ticket_sales
           )
         end
-
-        allow(TicketSalesValidatorService).to receive(:new).and_return(ticket_sales_validator)
-        allow(ticket_sales_validator).to receive(:validate)
       end
       
       context 'no external_id params provided' do
@@ -115,6 +145,10 @@ RSpec.describe EventsController, type: :controller do
           expect(assigns[:ticket_sales]).to eq(ticket_sales)
           expect(response).to be_successful 
         end
+        
+        it 'validates ticket_sales data' do
+          expect(ticket_sales_validator).to have_received(:validate)
+        end
       end
 
       context 'with external_event_id set in the params but not set in the db' do
@@ -131,6 +165,10 @@ RSpec.describe EventsController, type: :controller do
           expect(assigns[:ticket_sales]).to eq(ticket_sales)
           expect(response).to be_successful  
         end 
+        
+        it 'validates ticket_sales data' do
+          expect(ticket_sales_validator).to have_received(:validate)
+        end
       end
 
       context 'with external_event_id in the params different from the one in the db' do
@@ -147,6 +185,10 @@ RSpec.describe EventsController, type: :controller do
           expect(assigns[:ticket_sales]).to eq(ticket_sales)
           expect(response).to be_successful  
         end 
+        
+        it 'validates ticket_sales data' do
+          expect(ticket_sales_validator).to have_received(:validate)
+        end
       end
 
       context 'when there is an error message from eventbrite_service' do
@@ -168,6 +210,10 @@ RSpec.describe EventsController, type: :controller do
         it 'sets an alert flash message with the error' do
           expect(flash[:alert]).to eq(error_message)
           expect(response).to be_successful
+        end
+
+        it 'assigns the empty ticket_sales' do
+          expect(assigns(:ticket_sales)).to match_array([])
         end
       end
     end

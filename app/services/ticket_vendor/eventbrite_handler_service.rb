@@ -5,6 +5,8 @@ module TicketVendor
   class EventbriteHandlerService
     attr_reader :config, :events, :ticket_sales, :error_message
 
+    TICKET_SALES = Constants::TicketSales
+
     def initialize(user, config)
       @user = user
       @config = Config.new(
@@ -38,18 +40,14 @@ module TicketVendor
 
       @attendees.each do |attendee|
         ticket_sale = {}
-        ticket_sale[Constants::TicketSales::Field::EMAIL] =
-          self.get_nested_value(attendee, email_source_key)
-        ticket_sale[Constants::TicketSales::Field::CATEGORY] =
-          self.get_nested_value(attendee, @config.category_source_key)
-        ticket_sale[Constants::TicketSales::Field::SECTION] =
-          self.get_nested_value(attendee, @config.section_source_key)
-        ticket_sale[Constants::TicketSales::Field::TICKETS] =
-          self.get_nested_value(attendee, @config.tickets_source_key)
+        ticket_sale[TICKET_SALES::Field::EMAIL] = self.get_nested_value(attendee, email_source_key)
+        ticket_sale[TICKET_SALES::Field::CATEGORY] = self.get_nested_value(attendee, @config.category_source_key)
+        ticket_sale[TICKET_SALES::Field::SECTION] = self.get_nested_value(attendee, @config.section_source_key)
+        ticket_sale[TICKET_SALES::Field::TICKETS] = self.get_nested_value(attendee, @config.tickets_source_key)
 
         cost = self.get_nested_value(attendee, @config.cost_source_key)
         cost = Monetize.parse(cost).amount
-        ticket_sale[Constants::TicketSales::Field::COST] = cost
+        ticket_sale[TICKET_SALES::Field::COST] = cost
 
         @ticket_sales << ticket_sale
       end

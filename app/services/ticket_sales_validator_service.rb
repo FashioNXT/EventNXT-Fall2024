@@ -10,6 +10,8 @@ class TicketSalesValidatorService
   end
 
   def validate(ticket_sales = @ticket_sales)
+    return if ticket_sales.nil? || ticket_sales.empty?
+
     self.validate_category_section(ticket_sales)
   end
 

@@ -11,20 +11,6 @@ class EventsController < ApplicationController
     @events = current_user.events
   end
 
-  # def show
-  #   @guests = @event.guests
-  #   @seats = Seat.where(event_id: @event.id)
-
-  #   @external_events, @ticket_sales = fetch_and_show_ticket_sales
-  #   @spreadsheet_ticket_sales = fetch_spreadsheet_ticket_sales
-
-  #   # Combine ticket sales from both sources
-  #   @combined_ticket_sales = @ticket_sales + @spreadsheet_ticket_sales
-
-  #   @seating_summary = @event.calculate_seating_summary(@combined_ticket_sales)
-  #   @referral_data = @event.update_referral_data(@combined_ticket_sales)
-  # end
-
   def show
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
@@ -35,8 +21,6 @@ class EventsController < ApplicationController
 
     @referral_data = @event.update_referral_data(@ticket_sales)
   end
-
-  # No changes needed for fetch_and_show_ticket_sales and fetch_spreadsheet_ticket_sales methods.
 
   def new
     @event = current_user.events.new
@@ -97,7 +81,8 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar, :event_box_office, :ticket_source)
+    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar,
+      :event_box_office, :ticket_source)
   end
 
   def fetch_and_show_ticket_sales
@@ -106,18 +91,18 @@ class EventsController < ApplicationController
 
     if @event.ticket_source == TICKET_SALES::Source::SPREADSHEET
       # Fetch and show Spreadsheet ticket sales
-      ticket_sales = fetch_spreadsheet_ticket_sales
+      spreadsheet_service = TicketSalesSpreadsheetService.new(@event)
+      ticket_sales = spreadsheet_service.import_data(@event.event_box_office)
     elsif @event.ticket_source == TICKET_SALES::Source::EVENTBRITE
       # Fetch and show Eventbrite ticket sales
-      @event.update(external_event_id: params[:external_event_id]) if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
+      if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
+        @event.update(external_event_id: params[:external_event_id])
+      end
 
       config = TicketVendor::Config.new(event_id: @event.external_event_id)
       @eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
 
       external_events, ticket_sales = self.fetch_and_show_eventbrite if @eventbrite_service.authorized?
-    else
-      flash[:alert] = 'Invalid ticket source selected.'
-      redirect_to events_path and return
     end
 
     ticket_sales_validator = TicketSalesValidatorService.new(@event)
@@ -134,38 +119,9 @@ class EventsController < ApplicationController
 
     if @eventbrite_service.error_message.present?
       flash[:alert] = @eventbrite_service.error_message
-    else
-      flash[:notice] = 'Succuessfully call Eventbrite API!'
+      ticket_sales = []
     end
 
     [external_events, ticket_sales]
-  end
-
-  def fetch_spreadsheet_ticket_sales
-    spreadsheet_ticket_sales = []
-
-    if @event.event_box_office.present?
-      event_box_office_file = @event.event_box_office.current_path
-      event_box_office_xlsx = Roo::Spreadsheet.open(event_box_office_file)
-
-      headers = event_box_office_xlsx.row(1)
-      email_index = headers.index('Email')
-      tickets_index = headers.index('Tickets')
-      amount_index = headers.index('Amount')
-      category_index = headers.index('Category')
-      section_index = headers.index('Section')
-
-      event_box_office_xlsx.each_row_streaming(offset: 1) do |row|
-        spreadsheet_ticket_sales << {
-          email: row[email_index]&.value,
-          tickets: row[tickets_index]&.value.to_i,
-          cost: row[amount_index]&.value.to_f,
-          category: row[category_index]&.value,
-          section: row[section_index]&.value
-        }
-      end
-    end
-
-    spreadsheet_ticket_sales
   end
 end
