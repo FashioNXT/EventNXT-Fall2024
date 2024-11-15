@@ -26,31 +26,15 @@ class EventsController < ApplicationController
   def show
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
-  
-    if @event.ticket_source == "eventbrite"
-      # Fetch and show Eventbrite ticket sales
-      @external_events, @ticket_sales = fetch_and_show_ticket_sales
-  
-      # Use Eventbrite data for seating summary and referral data updates
-      @seating_summary = @event.calculate_seating_summary(@ticket_sales)
-      @referral_data = @event.update_referral_data(@ticket_sales)
-    
-    elsif @event.ticket_source == "spreadsheet"
-      # Fetch and show Spreadsheet ticket sales
-      @spreadsheet_ticket_sales = fetch_spreadsheet_ticket_sales
-  
-      # Use Spreadsheet data for seating summary and referral data updates
-      @seating_summary = @event.calculate_seating_summary(@spreadsheet_ticket_sales)
-      @referral_data = @event.update_referral_data(@spreadsheet_ticket_sales)
-    
-    else
-      flash[:alert] = "Invalid ticket source selected."
-      redirect_to events_path and return
-    end
+
+    @external_events, @ticket_sales = fetch_and_show_ticket_sales
+
+    @seating_summary = @event.calculate_seating_summary(@ticket_sales)
+
+    @referral_data = @event.update_referral_data(@ticket_sales)
   end
-  
+
   # No changes needed for fetch_and_show_ticket_sales and fetch_spreadsheet_ticket_sales methods.
-  
 
   def new
     @event = current_user.events.new
@@ -118,12 +102,21 @@ class EventsController < ApplicationController
     external_events = []
     ticket_sales = []
 
-    @event.update(external_event_id: params[:external_event_id]) if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
+    if @event.ticket_source == 'spreadsheet'
+      # Fetch and show Spreadsheet ticket sales
+      ticket_sales = fetch_spreadsheet_ticket_sales
+    elsif @event.ticket_source == 'eventbrite'
+      # Fetch and show Eventbrite ticket sales
+      @event.update(external_event_id: params[:external_event_id]) if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
 
-    config = TicketVendor::Config.new(event_id: @event.external_event_id)
-    @eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
+      config = TicketVendor::Config.new(event_id: @event.external_event_id)
+      @eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
 
-    external_events, ticket_sales = self.fetch_and_show_eventbrite if @eventbrite_service.authorized?
+      external_events, ticket_sales = self.fetch_and_show_eventbrite if @eventbrite_service.authorized?
+    else
+      flash[:alert] = 'Invalid ticket source selected.'
+      redirect_to events_path and return
+    end
 
     ticket_sales_validator = TicketSalesValidatorService.new(@event)
     ticket_sales_validator.validate(ticket_sales)
@@ -173,5 +166,4 @@ class EventsController < ApplicationController
 
     spreadsheet_ticket_sales
   end
-    
 end

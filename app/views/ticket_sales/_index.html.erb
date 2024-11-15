@@ -1,44 +1,36 @@
 <h2 id="ticket-sales-title">Box Office Sales</h2>
 
-<div>
-  <% unless current_user.eventbrite_token.present? %>
-    <p>
-      Note that if you login through Google account after clicking this button, <br />
-      then you will need to go back manually to this page and click the buttion again to link your Eventbrite account.
-    </p>
-    <%=
-      button_to 'Connect to Eventbrite', user_eventbrite_omniauth_authorize_path, 
-      method: :post, data: { turbo: false }, class: 'btn btn-primary' 
-    %>
-  <% else %>
-    <p>Connected: Eventbrite</p>
-    <%=
-      button_to 'Disconnect Eventbrite', disconnect_users_eventbrite_path,
-      method: :delete, data: { turbo: false }, class: 'btn btn-primary' 
-    %>
-  <% end %>
-
-  <div class="container">
-     <% if external_events.present? && external_events.any? %>
-      <%= 
-        render partial: "ticket_sales/form_select", locals: { 
-          event: event, 
-          external_events: external_events, 
-        } 
-      %>
-    <% else %>
-      <p>No events found.</p>
+<% if event.ticket_source == "spreadsheet" %>
+  <!-- Spreadsheet Upload Form -->
+  <div>
+    <%= form_with(model: event, local: true, multipart: true) do |form| %>
+      <%= form.file_field :event_box_office %>
+      <%= form.submit "Upload Spreadsheet" %>
     <% end %>
   </div>
 
-  <div class="container">
-    <% if ticket_sales.present? %>
-    <%= 
-      render partial: "ticket_sales/table", locals: { 
-        ticket_sales: ticket_sales
-      }
-    %>
+<% elsif event.ticket_source == "eventbrite" %>
+  <!-- Render Eventbrite ticket sales -->
+  <%=
+    render partial: "ticket_sales/eventbrite", locals: { 
+      event: event, 
+      external_events: external_events, 
+    } 
+  %>
+<% else %>
+  <!-- Handle case where no valid ticket source is selected -->
+  <p>No valid ticket source selected for this event.</p>
+<% end %>
 
-  </div>
+<div class="container">
+  <% if ticket_sales.present? %>
+  <%= 
+    render partial: "ticket_sales/table", locals: { 
+      ticket_sales: ticket_sales
+    }
+  %>
   <% end %>
 </div>
+
+
+ 
