@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# ReferralsController manages the referral process for guests.
 class ReferralsController < ApplicationController
   before_action :authenticate_user!, only: %i[edit update]
   before_action :set_event, only: %i[edit update]

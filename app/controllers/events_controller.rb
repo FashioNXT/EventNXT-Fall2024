@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Controller of the events
+# EventsController handles the CRUD operations for Event objects.
 class EventsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_event, only: %i[show edit update destroy]

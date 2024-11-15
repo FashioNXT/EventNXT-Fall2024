@@ -14,7 +14,7 @@ class EmailServicesController < ApplicationController
 
     # full_url = ENV['localhost:3000'].to_s + book_seats_path(guest.rsvp_link)
     # full_url = "http://0.0.0.0:3000/#{book_seats_path(guest.rsvp_link)}"
-    full_url = URI.join(Constant::APP_URL, book_seats_path(guest.rsvp_link))
+    full_url = URI.join(Constants::APP_URL, book_seats_path(guest.rsvp_link)).to_s
     # print full_url
 
     # the referral link takes the form of '/refer_a_friend?:ref_code'.

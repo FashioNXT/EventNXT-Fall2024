@@ -16,11 +16,13 @@ class TicketSalesValidatorService
   def validate_category_section(ticket_sales = @ticket_sales)
     seats = @event.seats
 
+    category_sections = seats.map { |s| [s[:category], s[:section]] }.to_set
+
     ticket_sales.each do |sale|
       category = sale[FIELDS::CATEGORY]
       section = sale[FIELDS::SECTION]
 
-      if seats.find_by(category:, section:).nil?
+      unless category_sections.include?([category, section])
         sale[FIELDS::FLAGS] ||= Set.new
         sale[FIELDS::FLAGS].add(FLAGS::INVALID_CATEGORY_SECTION)
       end

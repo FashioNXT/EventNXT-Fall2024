@@ -93,8 +93,42 @@
   </table>
 </div>
 
-<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Invited Guests</h2>
+
+<style>
+  .heading-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .heading-tooltip {
+    visibility: hidden;
+    width: 80%;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .heading-container:hover .heading-tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
+
+<div class="heading-container">
+<h2 style="margin-left:20%; margin-bottom:20px; margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); white-space: nowrap; text-overflow: ellipsis; max-width: 100%;">Manage Invited Guests</h2>
+<div class="heading-tooltip">
 <strong>NOTIFICATION(!): If you choose to upload a certain .xlsx file or a certain .csv file to enter the guest data, please note that some columns have to emerge with non-empty data such as Section.</strong>
+</div>
+</div>
 <!--to add link for the nested children-->
 <div class="container">
   <table class="table table-striped table-hover">
@@ -208,10 +242,14 @@
 <% end %>
 
 <!--to be added-->
-<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Referrals</h2>
+<div class="heading-container">
+<h2 style="margin-left:20%; margin-bottom:20px; margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); white-space: nowrap; text-overflow: ellipsis; max-width: 100%;">Manage Referrals</h2>
+<div class="heading-tooltip">
 <strong>NOTIFICATION (!): If you change the box office data by uploading a new .xlsx file, please make sure that all rows from the previous .xlsx files are kept and retain in this current newly updated .xlsx file. Otherwise 
 you will find tickets information in the referral table below from the previous .xlsx files but not from the current updated .xlsx file. Also when you change the box office data by uploading a new .xlsx file, you need to do 
   recalculation of the rewards to make sure the reward calculation is correct for each referral row in the following table. </strong>
+</div>
+</div>
 <div class="container">
   <table class="table table-striped table-hover">
     <thead>

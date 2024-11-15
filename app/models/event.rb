@@ -73,9 +73,9 @@ class Event < ApplicationRecord
       total_tickets = 0
       total_cost = 0
       ticket_sales.each do |sale|
-        if referral.referred == sale[:email]
-          total_tickets += sale[:tickets]
-          total_cost += sale[:cost]
+        if referral.referred == sale[Constants::TicketSales::Field::EMAIL]
+          total_tickets += sale[Constants::TicketSales::Field::TICKETS]
+          total_cost += sale[Constants::TicketSales::Field::COST]
         end
       end
 

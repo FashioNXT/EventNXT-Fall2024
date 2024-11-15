@@ -1,5 +1,5 @@
 module Constants
-  APP_URL = ENV['APP_URL']
+  APP_URL = ENV['APP_URL'] || 'http://localhost'
   module Events360
     SYM = :events360
     NAME = 'events360'.freeze
