@@ -1,3 +1,13 @@
+Given('I am on the event page {string} with ticket source from Eventbrite') do |event_title|
+  @event = Event.find_by(user_id: @user.id, title: title)
+  if @event.nil?
+    @event = FactoryBot.create(:event, 
+      title: event_title, user: @user, ticket_source: Constants::TicketSales::Source::EVENTBRITE
+    )
+  end
+  visit event_path(@event)
+end
+
 Given('I have the following Eventbrite Events') do |table|
   api_service = instance_double(TicketVendor::EventbriteApiService)
   allow(TicketVendor::EventbriteApiService).to receive(:new).and_return(api_service)
