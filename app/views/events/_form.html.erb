@@ -42,6 +42,28 @@
     <%= form.label :event_avatar, class: "event-form-label"  %>
     <%= form.file_field :event_avatar, class: 'event-form-file' %>
   </div> 
+  
+  <div class="form-group">
+    <%= form.label :ticket_source, "Select Ticket Source" %>
+    <%= form.select :ticket_source, options_for_select(
+        [
+          ["Eventbrite", Constants::TicketSales::Source::EVENTBRITE], 
+          ["Spreadsheet", Constants::TicketSales::Source::SPREADSHEET]
+        ], 
+        @event.ticket_source
+      ) 
+    %>
+  </div>
+
+  <!-- File upload field for spreadsheet (conditionally shown) -->
+  <% if @event.ticket_source == "spreadsheet" %>
+    <div class="form-group">
+      <%= form.label :event_box_office %>
+      <%= form.file_field :event_box_office %>
+    </div>
+  <% end %>
+  
+
   <!--===================-->
   
   

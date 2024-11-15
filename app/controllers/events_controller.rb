@@ -5,6 +5,8 @@ class EventsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_event, only: %i[show edit update destroy]
 
+  TICKET_SALES = Constants::TicketSales
+
   def index
     @events = current_user.events
   end
@@ -13,7 +15,7 @@ class EventsController < ApplicationController
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
 
-    @external_events, @ticket_sales = self.fetch_and_show_ticket_sales
+    @external_events, @ticket_sales = fetch_and_show_ticket_sales
 
     @seating_summary = @event.calculate_seating_summary(@ticket_sales)
 
@@ -79,19 +81,29 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar)
+    params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar,
+      :event_box_office, :ticket_source)
   end
 
   def fetch_and_show_ticket_sales
     external_events = []
     ticket_sales = []
 
-    @event.update(external_event_id: params[:external_event_id]) if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
+    if @event.ticket_source == TICKET_SALES::Source::SPREADSHEET
+      # Fetch and show Spreadsheet ticket sales
+      spreadsheet_service = TicketSalesSpreadsheetService.new(@event)
+      ticket_sales = spreadsheet_service.import_data(@event.event_box_office)
+    elsif @event.ticket_source == TICKET_SALES::Source::EVENTBRITE
+      # Fetch and show Eventbrite ticket sales
+      if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
+        @event.update(external_event_id: params[:external_event_id])
+      end
 
-    config = TicketVendor::Config.new(event_id: @event.external_event_id)
-    @eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
+      config = TicketVendor::Config.new(event_id: @event.external_event_id)
+      @eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
 
-    external_events, ticket_sales = self.fetch_and_show_eventbrite if @eventbrite_service.authorized?
+      external_events, ticket_sales = self.fetch_and_show_eventbrite if @eventbrite_service.authorized?
+    end
 
     ticket_sales_validator = TicketSalesValidatorService.new(@event)
     ticket_sales_validator.validate(ticket_sales)
@@ -107,8 +119,7 @@ class EventsController < ApplicationController
 
     if @eventbrite_service.error_message.present?
       flash[:alert] = @eventbrite_service.error_message
-    else
-      flash[:notice] = 'Succuessfully call Eventbrite API!'
+      ticket_sales = []
     end
 
     [external_events, ticket_sales]
