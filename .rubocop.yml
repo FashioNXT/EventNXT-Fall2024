@@ -3,8 +3,9 @@
 
 AllCops:
   Exclude:
+    - bin/**/*              # Ignore all files in the bin directory
     - db/schema.rb          # Ignore specific file
-    - db/migrate/**/*
+    - db/migrate/**/*       # Ignore all files in db/migrate directory
     - vendor/**/*           # Ignore all files in the vendor directory
     - node_modules/**/*     # Ignore all files in node_modules
     - spec/**/*             # Ignore all files in spec directory

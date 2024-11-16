@@ -24,7 +24,9 @@ class Guest < ApplicationRecord
 
   def self.import_spreadsheet(spreadsheet_file, event_id)
     # Validate file type
-    return { status: false, message: 'Invalid file type. Please upload a .xlsx, .xls, or .csv file.' } unless ['.xlsx', '.xls', '.csv'].include?(File.extname(spreadsheet_file.original_filename))
+    unless ['.xlsx', '.xls', '.csv'].include?(File.extname(spreadsheet_file.original_filename))
+      return { status: false, message: 'Invalid file type. Please upload a .xlsx, .xls, or .csv file.' }
+    end
 
     spreadsheet = Roo::Spreadsheet.open(spreadsheet_file.path)
 
@@ -79,7 +81,9 @@ class Guest < ApplicationRecord
         end
 
         # Check if category and section are present in seats
-        missing_seats << ({ row: i, category:, section: }) unless seats_categories_sections.include?([category, section])
+        unless seats_categories_sections.include?([category, section])
+          missing_seats << ({ row: i, category:, section: })
+        end
 
         duplicate_emails << email if existing_guests[email]
         guest = Guest.find_or_initialize_by(email:, event_id:)
