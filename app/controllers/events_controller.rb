@@ -133,11 +133,10 @@ class EventsController < ApplicationController
   
     guests.each do |guest|
       # Generate referral URL for each guest (this is from the original send_email method)
-      full_url = "https://eventnxt-0fcb166cb5ae.herokuapp.com/#{book_seats_path(guest.rsvp_link)}"
+      full_url = "https://eventnxt-fall2024-demo3-c90f7940fb8e.herokuapp.com/#{book_seats_path(guest.rsvp_link)}"
       referral_url = Rails.application.routes.url_helpers.new_referral_url(
-        host: 'https://eventnxt-0fcb166cb5ae.herokuapp.com/', random_code: guest.rsvp_link
+        host: ENV['APP_URL'], random_code: guest.rsvp_link
       )
-  
       # Update email body by replacing the placeholder with the generated referral URL
       updated_body = email_template.body.gsub('PLACEHOLDER_LINK', referral_url)
   
