@@ -97,41 +97,71 @@
 <strong>NOTIFICATION(!): If you choose to upload a certain .xlsx file or a certain .csv file to enter the guest data, please note that some columns have to emerge with non-empty data such as Section.</strong>
 <!--to add link for the nested children-->
 <div class="container">
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr class="highlight-heading">
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Email</th>
-        <th>Affiliation</th>
-        <th>Category</th>
-        <th>Section</th>
-        <th>Allocated seat</th>
-        <th>Committed seats</th>
-        <th>Status</th>
-        <th>Edit guest</th>
-        <th>Destroy guest</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @guest_details.each do |guest| %>
-        <tr>
-          <td><%= guest[:first_name] %></td>
-          <td><%= guest[:last_name] %></td>
-          <td><%= guest[:email] %></td>
-          <td><%= guest[:affiliation] %></td>
-          <td><%= guest[:category] %></td>
-          <td><%= guest[:section] %></td>
-          <td><%= guest[:alloted_seats] %></td>
-          <td><%= guest[:commited_seats] %></td>
-          <td><%= guest[:status] %></td>
-          <td><%= link_to 'Edit', edit_event_guest_path(@event, guest), style: 'display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %></td>
-          <td><%= button_to "Destroy", event_guest_path(@event, guest), method: :delete, data: { confirm: "Are you sure?" }, class: "btn", style: "display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer" %></td>
+  <%= form_with(url: bulk_action_event_path(@event), method: :post, local: true) do |f| %>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr class="highlight-heading">
+          <th><input type="checkbox" id="select_all_guests"></th> <!-- Select All Checkbox -->
+          <th>First name</th>
+          <th>Last name</th>
+          <th>Email</th>
+          <th>Affiliation</th>
+          <th>Category</th>
+          <th>Section</th>
+          <th>Allocated seat</th>
+          <th>Committed seats</th>
+          <th>Status</th>
+          <th>Edit guest</th>
+          <th>Destroy guest</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @guest_details.each do |guest| %>
+          <tr>
+            <td><%= check_box_tag 'guest_ids[]', guest.id %></td> <!-- Checkbox for each guest -->
+            <td><%= guest[:first_name] %></td>
+            <td><%= guest[:last_name] %></td>
+            <td><%= guest[:email] %></td>
+            <td><%= guest[:affiliation] %></td>
+            <td><%= guest[:category] %></td>
+            <td><%= guest[:section] %></td>
+            <td><%= guest[:alloted_seats] %></td>
+            <td><%= guest[:commited_seats] %></td>
+            <td><%= guest[:status] %></td>
+            <td><%= link_to 'Edit', edit_event_guest_path(@event, guest), style: 'display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %></td>
+            <td><%= button_to "Destroy", event_guest_path(@event, guest), method: :delete, data: { confirm: "Are you sure?" }, class: "btn", style: "display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div class="bulk-actions">
+      <!-- Dropdown to select email template -->
+      <%= f.label :email_template_id, "Select Email Template" %>
+      <%= f.select :email_template_id, @email_templates.collect { |template| [template.name, template.id] }, prompt: "Choose an Email Template", class: "form-control" %>
+
+      <!-- Action buttons with explicit button labels and values -->
+      <div class="btn-group" role="group" aria-label="Actions">
+        <%= button_tag(type: 'submit', name: 'action', value: 'send_email', class: "btn btn-outline-primary") do %>
+          Send Email
+        <% end %>
+
+        <%= button_tag(type: 'submit', name: 'action', value: 'delete_guests', class: "btn btn-outline-danger") do %>
+          Delete Guests
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>
+
+<script>
+  // JavaScript to select/deselect all checkboxes
+  document.getElementById('select_all_guests').addEventListener('click', function() {
+    let checkboxes = document.querySelectorAll('input[name="guest_ids[]"]');
+    checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+  });
+</script>
+
 <div style="margin-left: 0%;">
 <div style="margin-left: 25%; margin-bottom: 30px;">
   
