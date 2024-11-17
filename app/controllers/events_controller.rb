@@ -58,6 +58,7 @@ class EventsController < ApplicationController
     @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
       [referraldatum[:referred], referraldatum[:email]]
     end
+    @email_templates = EmailTemplate.all
   end
 
   def new
@@ -100,6 +101,137 @@ class EventsController < ApplicationController
         end
       end
     end
+  end
+
+  def bulk_action
+    # Get the selected guest IDs from the form
+    guest_ids = params[:guest_ids]
+    email_template_id = params[:email_template_id]
+
+    if guest_ids.nil? || guest_ids.empty?
+      flash[:alert] = "No guests selected."
+      redirect_to event_path(@event) and return
+    end
+
+    case params[:action]
+    when 'send_email'
+      send_bulk_email(guest_ids, email_template_id)
+    when 'delete_guests'
+      delete_bulk_guests(guest_ids)
+    else
+      flash[:alert] = "Invalid action."
+      redirect_to event_path(@event) and return
+    end
+
+    redirect_to event_path(@event)
+  end
+
+  def send_bulk_email(guest_ids, email_template_id)
+    guests = Guest.where(id: guest_ids)
+    email_template = EmailTemplate.find(email_template_id)
+    event = Event.find(email_template.event_id) # Assuming event is associated with the template
+  
+    guests.each do |guest|
+      # Generate referral URL for each guest (this is from the original send_email method)
+      full_url = "https://eventnxt-0fcb166cb5ae.herokuapp.com/#{book_seats_path(guest.rsvp_link)}"
+      referral_url = Rails.application.routes.url_helpers.new_referral_url(
+        host: 'https://eventnxt-0fcb166cb5ae.herokuapp.com/', random_code: guest.rsvp_link
+      )
+  
+      # Update email body by replacing the placeholder with the generated referral URL
+      updated_body = email_template.body.gsub('PLACEHOLDER_LINK', referral_url)
+  
+      # Send email using the ApplicationMailer with the updated body for each guest
+      ApplicationMailer.send_email(
+        guest.email, 
+        email_template.subject, 
+        updated_body, 
+        event, 
+        guest,
+        full_url
+      ).deliver_later
+    end
+  
+    # After emails are sent, show a success message
+    flash[:success] = "#{guests.count} emails sent successfully using the #{email_template.name} template."
+  end
+
+  def new_email_template
+    render '_form_email_template'
+  end
+
+  def add_email_template
+    email_template_params = params.permit(:name, :subject, :body)
+    @email_templates = EmailTemplate.new(email_template_params)
+
+    respond_to do |format|
+      if @email_templates.save
+        format.html do
+          redirect_to email_services_url,
+            notice: 'Email template was successfully created.'
+        end
+      else
+        flash[:notice] = 'Error: Email template could not be saved.'
+        format.html { render '_form_email_template' }
+      end
+    end
+  end
+
+  def edit_email_template
+    @email_template = EmailTemplate.find(params[:id])
+    render '_edit_email_template'
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Email template not found' }, status: :not_found
+  end
+
+  def update_email_template
+    @email_template = EmailTemplate.find(params[:id])
+    email_template_params = params.require(:email_template).permit(:name,
+      :subject, :body)
+
+    puts "I'm here"
+
+    if @email_template.update(email_template_params)
+      redirect_to email_services_url,
+        notice: 'Email template was successfully updated.'
+    else
+      render '_edit_email_template',
+        alert: 'Error: Email template could not be saved.'
+    end
+  end
+
+  def render_template
+    email_template = EmailTemplate.find(params[:id])
+
+    respond_to do |format|
+      format.json do
+        render json: { subject: email_template.subject,
+                       body: email_template.body }
+      end
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Email template not found' }, status: :not_found
+  end
+
+  def destroy_email_template
+    @email_template = EmailTemplate.find(params[:id])
+    @email_template.destroy
+
+    respond_to do |format|
+      format.html do
+        redirect_to email_services_url,
+          notice: 'Email template was successfully deleted.'
+      end
+      format.json { head :no_content }
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Email template not found' }, status: :not_found
+  end
+
+  def delete_bulk_guests(guest_ids)
+    guests = Guest.where(id: guest_ids)
+    guests.destroy_all
+    flash[:success] = "#{guests.count} guests deleted successfully."
   end
 
   def destroy
