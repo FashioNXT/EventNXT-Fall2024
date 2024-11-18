@@ -105,15 +105,16 @@ class EventsController < ApplicationController
 
   def bulk_action
     # Get the selected guest IDs from the form
-    guest_ids = params[:guest_ids]
+    guest_ids = params[:guest_id]
     email_template_id = params[:email_template_id]
+    action_type = params[:action]
 
     if guest_ids.nil? || guest_ids.empty?
       flash[:alert] = "No guests selected."
       redirect_to event_path(@event) and return
     end
 
-    case params[:action]
+    case action_type
     when 'send_email'
       send_bulk_email(guest_ids, email_template_id)
     when 'delete_guests'
@@ -129,7 +130,7 @@ class EventsController < ApplicationController
   def send_bulk_email(guest_ids, email_template_id)
     guests = Guest.where(id: guest_ids)
     email_template = EmailTemplate.find(email_template_id)
-    event = Event.find(email_template.event_id) # Assuming event is associated with the template
+    event = Event.find(@event.id)
   
     guests.each do |guest|
       # Generate referral URL for each guest (this is from the original send_email method)
@@ -166,7 +167,7 @@ class EventsController < ApplicationController
     respond_to do |format|
       if @email_templates.save
         format.html do
-          redirect_to email_services_url,
+          redirect_to event_path(@event),
             notice: 'Email template was successfully created.'
         end
       else
@@ -191,7 +192,7 @@ class EventsController < ApplicationController
     puts "I'm here"
 
     if @email_template.update(email_template_params)
-      redirect_to email_services_url,
+      redirect_to event_path(@event),
         notice: 'Email template was successfully updated.'
     else
       render '_edit_email_template',
@@ -223,12 +224,12 @@ class EventsController < ApplicationController
       end
       format.json { head :no_content }
     end
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Email template not found' }, status: :not_found
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: 'Email template not found' }, status: :not_found
   end
 
   def delete_bulk_guests(guest_ids)
-    guests = Guest.where(id: guest_ids)
+    guests = Guest.where(id: guest_id)
     guests.destroy_all
     flash[:success] = "#{guests.count} guests deleted successfully."
   end
