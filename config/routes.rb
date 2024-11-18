@@ -28,9 +28,12 @@ Rails.application.routes.draw do
   end
 
   resources :events do
-    member do
-      post :bulk_action
-    end
+    post 'bulk_action', on: :member
+
+    resources :email_templates, only: [:new, :create, :edit, :update, :destroy] do
+
+      post 'send_email', on: :member
+    end 
   end
 
   resources :events do
