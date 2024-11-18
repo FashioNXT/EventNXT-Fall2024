@@ -177,13 +177,13 @@ After deploying, register your app with Events360 and set the environment variab
    - Go to the application management page. 
    ![Screenshot](documentation/Fall2024/images/CRM-application-management.png)
 4. **Complete the Form:**
-   - **Homepage URL**: `${your_app_url}`
-   - **API URL**: `${your_app_url}`
-   - **Redirect URI**: `${your_app_url}/users/auth/events360/callback`
-   - **Scopes**: `public`
-   ![Screenshot](documentation/Fall2024/images/CRM-edit-application.png)
+    - **Homepage URL**: `${your_app_url}`
+    - **API URL**: `${your_app_url}`
+    - **Redirect URI**: `${your_app_url}/users/auth/events360/callback`
+    - **Scopes**: `public`
+    ![Screenshot](documentation/Fall2024/images/CRM-edit-application.png)
 5. **Obtain Credentials:** After saving, you'll receive client_id and client_secret. .
-   ![Screenshot](https://github.com/user-attachments/assets/37e318f5-c410-432a-bafb-b75eac33cc25)
+  ![Screenshot](documentation/Fall2024/images/CRM-uid-secret.png)
 
 6. **Set CRM Environment Variables in Heroku:**
     - `EVENT360_URL = ${CRM_URL}` (depends on which one you use)
@@ -191,11 +191,28 @@ After deploying, register your app with Events360 and set the environment variab
     - `EVENT360_CLIENT_SECRET = ${client_secret}`
 
 
-  ## Eventbrite
+## Eventbrite
 
-  TODO
+After deploying, register your app with Eventbrite and set the environment variables for OAuth2.
 
-  ## Email Service
+1. **Create a New Application Entry:** Have an account on Eventbrite, go to the development settings, and click "Create API key".
+    - `https://www.eventbrite.com/account-settings/apps`
+    - ![Screenshot](documentation/Fall2024/images/eventbrite-dev-settings.png) 
+2. **Complete the Form:** Click "Create API key" and fill
+    - **Application URL**: `${your_app_url}`
+    - **OAuth Redirect URI**: `${your_app_url}/users/auth/eventbrite/callback`
+     ![Screenshot](documentation/Fall2024/images/eventbrite-edit-application.png)
+3. **Obtain Credentials:** After saving, you'll receive API key and client_secret.
+  ![Screenshot](documentation/Fall2024/images/eventbrite-api-key-secret.png)
+
+4. **Set the Environment Variables in Heroku:**
+    - `EVENTBRITE_URL = ${eventbrite_url}`, should be `https://www.eventbrite.com` if not changed.
+    - `EVENTBRITE_API_URL = ${eventbrite_api_url}`, should be `https://www.eventbriteapi.com/v3` if not changed.
+    - `EVENTBRITE_CLIENT_ID = ${api_key}`
+    - `EVENTBRITE_CLIENT_SECRET = ${client_secret}`
+
+
+## Email Service
 
   TODO
 
