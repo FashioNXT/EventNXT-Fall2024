@@ -1,7 +1,7 @@
 <h1>Edit Template</h1>
 
 <div class="form-box" style="width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
-<%= form_with(model: @email_template, url: { controller: "email_services", action: "update_email_template", id: @email_template }, method: :patch, local: true) do |f| %>
+<%= form_with(model: @email_template, url: { controller: "events", action: "update_email_template", id: @email_template }, method: :patch, local: true) do |f| %>
     <div class="field" style="margin-top: 10px;">
       <%= f.label :name, class: "form-label" %><br />
       <%= f.text_field :name, autofocus: true, style: "color: black; font-family: 'Times New Roman', Times, serif;", value: @email_template.name %>
