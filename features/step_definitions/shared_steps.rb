@@ -18,6 +18,10 @@ When('I select {string} from the dropdown {string}') do |value, dropdown|
   select value, from: dropdown
 end
 
+When("I select {string} from the dropdown labeled {string}") do |option, label|
+  find('label', text: label).sibling('select').find('option', text: option).select_option
+end
+
 When('I check the box {string}') do |text|
   check text
 end
