@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+app_name = ARGV[0]
+system("heroku stack:set container -a #{app_name}")
+system("heroku container:push web -a #{app_name}")
+system("heroku container:release web -a #{app_name}")

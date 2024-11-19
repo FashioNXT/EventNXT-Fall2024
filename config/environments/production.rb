@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/integer/time'
+require 'semantic_logger'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -14,8 +15,7 @@ Rails.application.configure do
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
   # only allow certain domain to access this app.
-  config.hosts << URI.parse(ENV['APP_URL']).host
-  config.hosts << URI.parse(ENV['EVENT360_URL']).host
+  config.hosts << URI.parse(ENV['APP_URL'] || 'http://localhost').host
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
@@ -54,10 +54,40 @@ Rails.application.configure do
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).
-  config.log_level = :info
+  # config.log_level = ENV['RAILS_LOG_LEVEL'] || :info
+
+  # # Use default logging formatter so that PID and timestamp are not suppressed.
+  # config.log_formatter = ::Logger::Formatter.new
+
+  # # Use a different logger for distributed setups.
+  # # require "syslog/logger"
+  # # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new "app-name")
+
+  # if ENV['RAILS_LOG_TO_STDOUT'].present?
+  #   logger           = ActiveSupport::Logger.new($stdout)
+  #   logger.formatter = config.log_formatter
+  #   config.logger    = ActiveSupport::TaggedLogging.new(logger)
+  # end
+
+  # Don't log any deprecations.
+  config.active_support.report_deprecations = false
+
+  # Set the log level and formatter for production
+  SemanticLogger.default_level = ENV['RAILS_LOG_LEVEL'] || :info # Set to :warn or :error for quieter logging
+  SemanticLogger.add_appender(io: $stdout, formatter: :color) # Heroku-compatible, structured JSON logs
+  # Optional: Add an additional appender for file-based logging (if not on Heroku)
+  # SemanticLogger.add_appender(file_name: "log/production.log", formatter: :color)
+
+  # Assign SemanticLogger as Rails logger
+  Rails.logger = SemanticLogger['Rails']
+
+  # Ref: https://github.com/reidmorrison/rails_semantic_logger/issues/29
+  formatter = ActiveSupport::Logger::SimpleFormatter.new
+  formatter.extend ActiveSupport::TaggedLogging::Formatter
+  Rails.logger.formatter = formatter
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [:request_id]
+  # config.log_tags = [:request_id]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -93,22 +123,6 @@ Rails.application.configure do
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
-
-  # Don't log any deprecations.
-  config.active_support.report_deprecations = false
-
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
-
-  # Use a different logger for distributed setups.
-  # require "syslog/logger"
-  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new "app-name")
-
-  if ENV['RAILS_LOG_TO_STDOUT'].present?
-    logger           = ActiveSupport::Logger.new($stdout)
-    logger.formatter = config.log_formatter
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
-  end
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false

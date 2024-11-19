@@ -110,3 +110,9 @@ gem 'oauth2', '~> 2.0'
 gem 'omniauth', '>= 1.9', '< 3'
 gem 'omniauth-oauth2', '~> 1.7', '>= 1.7.1'
 gem 'omniauth-rails_csrf_protection'
+
+# for money string parsing
+gem 'monetize'
+
+# Offers enhanced formatting options and structured logging capabilities.
+gem 'semantic_logger'

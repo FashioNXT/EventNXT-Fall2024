@@ -1,0 +1,29 @@
+ <% unless current_user.eventbrite_token.present? %>
+  <p>
+    Note that if you login through Google account after clicking this button, <br />
+    then you will need to go back manually to this page and click the buttion again to link your Eventbrite account.
+  </p>
+  <%=
+    button_to 'Connect to Eventbrite', user_eventbrite_omniauth_authorize_path, 
+    method: :post, data: { turbo: false }, class: 'btn btn-primary' 
+  %>
+<% else %>
+  <p>Connected: Eventbrite</p>
+  <%=
+    button_to 'Disconnect Eventbrite', disconnect_users_eventbrite_path,
+    method: :delete, data: { turbo: false }, class: 'btn btn-primary' 
+  %>
+
+  <div class="container">
+    <% if external_events.present? && external_events.any? %>
+    <%= 
+        render partial: "ticket_sales/form_select", locals: { 
+        event: event, 
+        external_events: external_events, 
+        } 
+    %>
+    <% else %>
+    <p>No events found.</p>
+    <% end %>
+  </div>
+<% end %>
