@@ -48,12 +48,12 @@ class Event < ApplicationRecord
   end
 
   def event_avatar_validation
-    if event_avatar.present?
-      if event_avatar.size > 20.megabytes
-        errors.add(:event_avatar, 'is too big, should be less than 20 MB')
-      elsif !%w(image/jpeg image/png).include?(event_avatar.content_type)
-        errors.add(:event_avatar, 'must be a JPEG or PNG')
-      end
+    return unless event_avatar.present?
+
+    if event_avatar.size > 20.megabytes
+      errors.add(:event_avatar, 'is too big, should be less than 20 MB')
+    elsif !%w[image/jpeg image/png].include?(event_avatar.content_type)
+      errors.add(:event_avatar, 'must be a JPEG or PNG')
     end
   end
 end
