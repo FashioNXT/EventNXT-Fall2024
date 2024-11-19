@@ -15,7 +15,9 @@ class ReferralsController < ApplicationController
   end
 
   def referral_creation
-    friend_emails = params[:friend_emails]&.split(',')&.map(&:strip) # Split emails and remove extra spaces
+    # Split emails, remove extra spaces, and filter duplicates
+    friend_emails = params[:friend_emails]&.split(',')&.map(&:strip)&.uniq 
+    
     random_code = params[:random_code]
     @guest = Guest.find_by(rsvp_link: random_code)
 
