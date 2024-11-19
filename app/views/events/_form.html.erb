@@ -40,7 +40,8 @@
   <!--to add upload field-->
   <div class="form-group" style="margin-bottom: 20px;">
     <%= form.label :event_avatar, style: "display: block" %>
-    <%= form.file_field :event_avatar, class: 'form-control-file', style: 'width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px;' %>
+    <%= form.file_field :event_avatar, class: 'form-control-file',id:'event_avatar', accept: 'image/jpeg,image/png', style: 'width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px;' %>
+    <img id="avatar_preview" src="#" alt="Image Preview" style="display:none; margin-top: 10px; max-width: 100%; height: auto;"/>
   </div>
   
   <div class="form-group" style="margin-bottom: 20px;">
@@ -55,3 +56,72 @@
   </div>
 <% end %>
 </div>
+
+<!--script to handle restrictions on file size and image dimensions-->
+<script>
+  document.getElementById('event_avatar').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const fileSizeMB = file.size / 1024 / 1024;
+      if (fileSizeMB > 20) {
+        alert('File size exceeds 20 MB');
+        event.target.value = ''; // Clear the input
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const maxWidth = 800; // Set the maximum width
+          const maxHeight = 800; // Set the maximum height
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate the new dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert the canvas to a Blob
+          canvas.toBlob(function(blob) {
+            const compressedFile = new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            });
+
+            // Display the compressed image
+            const previewReader = new FileReader();
+            previewReader.onload = function(e) {
+              const imgPreview = document.getElementById('avatar_preview');
+              imgPreview.src = e.target.result;
+              imgPreview.style.display = 'block';
+            };
+            previewReader.readAsDataURL(compressedFile);
+
+            // Replace the original file with the compressed file
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(compressedFile);
+            event.target.files = dataTransfer.files;
+          }, 'image/jpeg', 0.7); // Adjust the quality as needed (0.7 is 70% quality)
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+</script>

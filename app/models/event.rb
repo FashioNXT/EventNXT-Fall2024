@@ -5,6 +5,7 @@ class Event < ApplicationRecord
   mount_uploader :event_avatar, AvatarUploader
   mount_uploader :event_box_office, SpreadsheetUploader
   belongs_to :user
+  validate :event_avatar_validation
   # <!--===================-->
   # <!--to add nested scaffold-->
   has_many :seats, dependent: :destroy
@@ -43,6 +44,16 @@ class Event < ApplicationRecord
         alloted_seats: entry[:alloted_seats],
         remaining_seats: entry[:remaining_seats]
       )
+    end
+  end
+
+  def event_avatar_validation
+    return unless event_avatar.present?
+
+    if event_avatar.size > 20.megabytes
+      errors.add(:event_avatar, 'is too big, should be less than 20 MB')
+    elsif !%w[image/jpeg image/png].include?(event_avatar.content_type)
+      errors.add(:event_avatar, 'must be a JPEG or PNG')
     end
   end
 end
