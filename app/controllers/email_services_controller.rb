@@ -178,16 +178,34 @@ class EmailServicesController < ApplicationController
 
   def render_template
     email_template = EmailTemplate.find(params[:id])
-
+  
+    # Remove HTML tags and format the text properly
+    plain_text_body = email_template.body
+      .gsub('<%= @event.title %>', '[event_title]')
+      .gsub('<%= @guest.first_name %>', '[guest_first_name]')
+      .gsub('<%= @guest.last_name %>', '[guest_last_name]')
+      .gsub('<%= @event.datetime %>', '[event_datetime]')
+      .gsub('<%= @event.description %>', '[event_description]')
+      .gsub('<%= @event.address %>', '[event_address]')
+      .gsub('<%= @rsvp_url %>', '[rsvp_url]')
+      .gsub(/<\/?[^>]*>/, '') # Remove all HTML tags
+      .gsub(/<br\s*\/?>/, "\n") # Convert <br> tags to newlines
+      .gsub(/&nbsp;/, ' ') # Replace non-breaking spaces
+      .strip # Remove leading/trailing whitespace
+  
     respond_to do |format|
       format.json do
-        render json: { subject: email_template.subject,
-                       body: email_template.body }
+        render json: { subject: email_template.subject, body: plain_text_body }
       end
     end
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Email template not found' }, status: :not_found
   end
+  
+  
+  
+  
+  
 
   def destroy_email_template
     @email_template = EmailTemplate.find(params[:id])
