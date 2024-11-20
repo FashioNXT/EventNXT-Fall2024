@@ -27,7 +27,6 @@
       <tr class="highlight-heading">
         <th>Template Name</th>
         <th>Subject</th>
-        <th>Body</th>
         <th>Update Template</th>
         <th>Delete Template</th>
       </tr>
@@ -38,11 +37,6 @@
           <tr>
             <td><%= email_template[:name] %></td>
             <td><%= email_template[:subject] %></td>
-            <td>
-              <div class="small-body-container">
-              <%= render_template_with_generic_placeholders(email_template).html_safe %>
-              </div>
-            </td>
             <td>
               <%= link_to 'Edit', edit_email_template_path(email_template.id), style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
             </td>
