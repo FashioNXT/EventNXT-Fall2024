@@ -1,14 +1,47 @@
 # frozen_string_literal: true
+require 'csv'
 
 # EventsController handles the CRUD operations for Event objects.
 class EventsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_event, only: %i[show edit update destroy]
+  before_action :set_event, only: %i[show edit update destroy download_guests]
 
   TICKET_SALES = Constants::TicketSales
 
   def index
     @events = current_user.events
+  end
+
+
+
+  def download_guests
+    @guests = @event.guests
+    
+    respond_to do |format|
+      format.csv do
+        csv_data = CSV.generate do |csv|
+          csv << ["First Name", "Last Name", "Email", "Affiliation", "Category", 
+                 "Section", "Allocated Seats", "Committed Seats", "Status"]
+          
+          @guests.each do |guest|
+            csv << [
+              guest.first_name,
+              guest.last_name,
+              guest.email,
+              guest.affiliation,
+              guest.category,
+              guest.section,
+              guest.alloted_seats,
+              guest.commited_seats,
+              guest.status
+            ]
+          end
+        end
+        
+        send_data csv_data, 
+          filename: "guests_list_#{@event.title}_#{Date.today}.csv"
+      end
+    end
   end
 
   def show
