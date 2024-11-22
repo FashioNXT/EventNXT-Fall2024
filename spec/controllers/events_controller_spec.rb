@@ -3,6 +3,9 @@
 require 'rails_helper'
 RSpec.describe EventsController, type: :controller do
   let(:user) { create(:user) }
+  let(:event) { create(:event) }
+  let(:seats) { create_list(:seat, 5, event: event) }
+  let(:guests) { create_list(:guest, 5, event: event) }
   
   before do
     sign_in user
@@ -219,6 +222,33 @@ RSpec.describe EventsController, type: :controller do
     end
   end
 
+  describe 'validations' do
+    it 'is valid with valid attributes' do
+      expect(event).to be_valid
+    end
+
+    it 'is not valid with an invalid ticket source' do
+      event.ticket_source = 'invalid_source'
+      expect(event).not_to be_valid
+      expect(event.errors[:ticket_source]).to include('invalid_source is not a valid ticket source')
+    end
+  end
+  
+  describe '#calculate_seating_summary' do
+    let(:ticket_sales) do
+      [
+        { Constants::TicketSales::Field::CATEGORY => 'VIP', Constants::TicketSales::Field::SECTION => 'A', tickets: 10 },
+        { Constants::TicketSales::Field::CATEGORY => 'General', Constants::TicketSales::Field::SECTION => 'B', tickets: 20 },
+        { Constants::TicketSales::Field::CATEGORY => 'VIP', Constants::TicketSales::Field::SECTION => 'A', tickets: 5 }
+      ]
+    end
+
+    it 'returns an empty summary when there are no ticket sales' do
+      summary = event.calculate_seating_summary([])
+
+      expect(summary).to eq([])
+    end
+  end
 
   describe 'GET #new' do
     it 'returns a success response' do

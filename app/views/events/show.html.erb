@@ -29,10 +29,6 @@
     </div>
   </div>
 </div>
-
-
-
-
 <!--===================-->
 <!--to display nested children-->
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Seating Levels</h2>
@@ -59,6 +55,7 @@
   </table>
 </div>
 <%= link_to 'Add New Seat', new_event_seat_path(@event), style: 'display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;margin-left:25%;margin-bottom:30px', class: 'button' %>
+
 
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Seating Summary</h2>
 <!--to add link for the nested children-->
@@ -123,6 +120,8 @@
   }
 </style>
 
+
+
 <div class="heading-container">
 <h2 style="margin-left:20%; margin-bottom:20px; margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); white-space: nowrap; text-overflow: ellipsis; max-width: 100%;">Manage Invited Guests</h2>
 <div class="heading-tooltip">
@@ -186,6 +185,11 @@
       </div>
     <% end %>
   </div>
+
+  <div style="margin-left: 25%; margin-bottom: 10px;">
+  <%= link_to 'Download Guest List', download_guests_event_path(@event, format: :csv), 
+      class: 'download-btn' %>
+  </div>
 </div>
   
   
@@ -201,6 +205,7 @@
  
 
 <!--to be added-->
+
 <div class="heading-container">
 <h2 style="margin-left:20%; margin-bottom:20px; margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); white-space: nowrap; text-overflow: ellipsis; max-width: 100%;">Manage Referrals</h2>
 <div class="heading-tooltip">
