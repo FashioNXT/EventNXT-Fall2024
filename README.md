@@ -2,6 +2,10 @@
 
 TEAM Fall 2024
 
+# EventNXT2.0
+
+For this branch please refer to the file EventNXT2.0
+
 # Sprint 1 MVP
 
 Heroku deployment: https://eventnxt-0fcb166cb5ae.herokuapp.com/ <br>
