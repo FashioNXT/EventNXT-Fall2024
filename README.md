@@ -212,9 +212,10 @@ After deploying, register your app with Eventbrite and set the environment varia
     - `EVENTBRITE_CLIENT_SECRET = ${client_secret}`
 
 
-## Email Service
-
-  TODO
-
-
-
+## Contact Information
+1. Venkata Surya Krishna Cherukuri - saisurya@tamu.edu
+2. Ming-Sheng Xu - rogerxu@tamu.edu
+3. Neil Gautam - neilgautam.24@tamu.edu
+4. Kiara Sims - kiarasims@tamu.edu
+5. Parth Tusham - parthtusham@tamu.edu
+6. Rishabh Pagaria - rishabh.pagaria@tamu.edu
