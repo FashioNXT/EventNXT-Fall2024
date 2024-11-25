@@ -46,33 +46,33 @@ We recommand this approach because there is no need to install any other package
 ### Run Server
 
 ```bash
-$ ./script/run_app
+./script/run_app
 ```
 It builds the images for the app and database,  create a named volume to store the data, and start running containers from the images.
 
 If errors occur, you can view the log by
 ```bash
-$ docker-compose logs
+docker-compose logs
 ```
 - To view the log of the app:
     ```bash
-    $ docker-compose logs eventnxt
+    docker-compose logs eventnxt
     ```
 - To view the log of the database:
     ```bash
-    $ docker-compose logs postgres
+    docker-compose logs postgres
     ``` 
 
 ### Run Tests
 
 #### Rspec
 ```
-$ ./script/run_test_rspec [rspec_args]
+./script/run_test_rspec [rspec_args]
 ```
 
 #### Cucumber
 ```
-$ ./script/run_test_cucumber [cucumber_args]
+./script/run_test_cucumber [cucumber_args]
 ```
 
 ### Tear Down
@@ -83,93 +83,138 @@ docker-compose down [-v] [--rmi all]
 - `-v`: remove the nameed volumes for db data.
 - `--rmi`: remove the images built by docker-compose.
 
-## Legacy: Running directly on Your Host Machine
 
-By Team Spring-2024.
+### Other Commands
 
-Please check whether you have the ruby and rails installed. 
+If you want to run other commands in the docker containter, you can use 
+
+
 ```
-ruby -v
-```
-Ruby version is 3.2.2 as mentioned in Gemfile
-```
-rails -v
-```
-The rails version is 7.0.4
-
-If you don't have the ruby or rails. Please follow the below processes.
-
-* Install ruby-3.2.0 using Ruby version manager
-  * `rvm get stable`
-  * `rvm install "ruby-3.2.0"` or try `rvm install "ruby-3.2.2"`
-  * `rvm use 3.2.0` or try `rvm use 3.2.2`
-
-* Install PostgreSQL
-  * `sudo apt-get update`
-  * `sudo apt-get install postgresql postgresql-contrib libpq-dev`
-  * PostgreSQL may require to create a role to allow rails to connect to the Postgre database. In AWS cloud9 ubuntu system, we executed `sudo -u postgres createuser --interactive ubuntu`
-
-* Clone the latest git repo
-  * `git clone https://github.com/CSCE-606-Event360/Spring2024EventNXT.git`
-
-* Change directory to the new app
-  * `cd Spring2024EventNXT/EventNXT_new_app` 
-
-* Bundle install
-  * `bundle install`
-    
-* Set ENVIRONMENT VARIABLES
-    * NXT_APP_URL -> events360 website link
-    * NXT_APP_ID -> client ID (registered with events360)
-    * NXT_APP_SECRET -> client secret (registered with events360)
-    * EVENT_NXT_APP_URL -> eventNXT WEBSITE LINK.
-    * ALLOWED_HOST -> eventnxt url in heroku or local url
-      
-* To set environment variables, please follow below procedure:
-command: 
-   - export NXT_APP_URL="http://events360.herokuapp.com/"
-   - export NXT_APP_ID="aCgXCUDxHSvkp12ZaLweRSVq0pmznGpFasldrE3EZpQ"
-   - export NXT_APP_SECRET="iN9O2qGyA9n3nauMXOl6x5SDh08i27Nb1gs-fIjI6g0"
-   - export EVENT_NXT_APP_URL="https://eventnxt-0fcb166cb5ae.herokuapp.com/" #your eventnxt app url in development heroku
-   - export ALLOWED_HOST="your eventnxt app url in development heroku"
-
-NOTE: NXT_APP_URL, NXT_APP_ID, NXT_APP_SECRET are env variables used for oauth client registration with CRM event360 server.
-http://events360.herokuapp.com/ is customer production CRM server.
-
-You should not use this for development. For development you need to clone Event360 repo and run the app.
-This admin login details are present in db/seeds.rb file of Event360 repo.
-Then you can go to application management and create a new test client. once the new client is registered
-you can get NXT_APP_ID and NXT_APP_SECRET from the UI and set it in your development env as shown above.
-you need to save client callback in this new test client in event360 app.
-To get an Idea:
- - go to http://events360.herokuapp.com/, login as admin user, use same login details as mentioned above from seeds.rb file in Event360 repo.
- - go to EventNXT and look for the fields to get idea.
-
-* Migrate Database
-  * `rails db:migrate`
-
-* Start server in local development environment
-  * `rails s`
- 
-### Problems
-1. If Bundler complains that the wrong Ruby version is installed,
-
-    * rvm: verify that rvm is installed (for example, rvm --version) and run rvm list to see which Ruby versions are available and rvm use <version> to make a particular version active. If no versions satisfying the Gemfile dependency are installed, you can run rvm install <version> to install a new version, then rvm use <version> to use it.
-    
-    * rbenv: verify that rbenv is installed (for example, rbenv --version) and run rbenv versions to see which Ruby versions are available and rbenv local <version> to make a particular version active. If no versions satisfying the Gemfile dependency are installed, you can run rbenv install <version> to install a new version, then rbenv local <version> to use it.
-    
-    Then you can try bundle install again.
-
-### How to run Test cases
-
-*cucumber test cases:
-
-```console
-RAILS_ENV=test rake cucumber
+docker-compose -f docker-compose.yml run eventnxt "<cmd>"
 ```
 
-*rspec test cases:
+**Example**: for migrating database
 
-```console
-bundle exec rspec
+```bash
+docker-compose -f docker-compose.yml run eventnxt "rails db:migrate"
 ```
+
+# Deploying to Heroku
+
+## Create the App on Heroku
+
+1. **Set Up the App Pipeline**: Create the Heroku app pipeline for your team.
+
+  ![screenshot](documentation/Fall2024/images/create-heroku-app.png)
+
+  The pipeline consists of three sections:
+
+  ![screenshot](documentation/Fall2024/images/heroku-pipeline.png)
+
+  - **Review App**: Each review app corresponds to a pull request (PR) in your GitHub repository.
+    - The subtitles display the titles of the PRs.
+    - Click "Create App" to initiate a review app.
+    - After creation, Heroku performs an automatic build using native support.
+    - Our app, however, deploys with Docker and Heroku's Container Registry. Regardless of the native build's outcome, follow the steps below for deployment.
+
+  - **Staging**: Used for testing new features while evaluating stability.
+
+  - **Production**: The live environment where clients interact with your app.
+
+## Log in to Heroku CLI and Deploy
+
+1. **Log in to the CLL:** Authenticate with the Heroku CLI and Heroku's Container Registry.
+
+```bash
+   heroku login
+   heroku container:login
+```
+
+2. **Deploy Using the Deployment Script:** Deploy your code to the Heroku app with the following script.
+
+```bash
+./script/deploy_to_heroku <app_name>
+```
+
+- The script includes these essential commands:
+  - `heroku stack:set container -a <app_name>`
+  - `heroku container:push web -a <app_name>`
+  - `heroku container:release web -a <app_name}>`
+- These are essential steps to deploy code to heroku using container:registry.
+
+
+## Configure Environment Variables
+
+For flexibility with configurations post-deployment, set the following variables during the initial setup in your app's settings:
+
+
+![screenshot](documentation/Fall2024/images/heroku-config-vars.png)
+
+## Rails-Specific Configuration
+
+When running in a production environment, your Rails app requires these variables:
+
+- `APP_URL = ${your_app_url}`:
+  - This is required for allowed host list and many other dependency in our code.
+  - Example: `https://eventnxt-fall2024-dev-67890e38df3f.herokuapp.com`
+- `SECRET_KEY_BASE`
+  - Used to encrypt credentials. Rails requires it even if unused.  
+  - You can generate it by running `rails secret`, and copy/paste the value.
+- `RAILS_SERVE_STATIC_FILES = 'enabled'`
+  - Enables loading of static assets like JavaScript files before the app starts.
+
+
+## CRM Integration
+
+After deploying, register your app with Events360 and set the environment variables for CRM integration.
+
+1. **Visit Events360 CRM**
+    - For development: https://event360-dev-eventnxt-152500be953e.herokuapp.com
+      - This is the copy of the app below. Use this one if you don't want to pollute the database of the actual CRM with testing users.
+    - For production: https://events360.herokuapp.com/
+2. **Sign in as Admin** (`test@example.com:password`).
+3. **Create a New Application Entry:**
+   - Go to the application management page. 
+   ![Screenshot](documentation/Fall2024/images/CRM-application-management.png)
+4. **Complete the Form:**
+    - **Homepage URL**: `${your_app_url}`
+    - **API URL**: `${your_app_url}`
+    - **Redirect URI**: `${your_app_url}/users/auth/events360/callback`
+    - **Scopes**: `public`
+    ![Screenshot](documentation/Fall2024/images/CRM-edit-application.png)
+5. **Obtain Credentials:** After saving, you'll receive client_id and client_secret. .
+  ![Screenshot](documentation/Fall2024/images/CRM-uid-secret.png)
+
+6. **Set CRM Environment Variables in Heroku:**
+    - `EVENT360_URL = ${CRM_URL}` (depends on which one you use)
+    - `EVENT360_CLIENT_ID = ${client_id}`
+    - `EVENT360_CLIENT_SECRET = ${client_secret}`
+
+
+## Eventbrite
+
+After deploying, register your app with Eventbrite and set the environment variables for OAuth2.
+
+1. **Create a New Application Entry:** Have an account on Eventbrite, go to the development settings, and click "Create API key".
+    - https://www.eventbrite.com/account-settings/apps
+    - ![Screenshot](documentation/Fall2024/images/eventbrite-dev-settings.png) 
+2. **Complete the Form:** 
+    - **Application URL**: `${your_app_url}`
+    - **OAuth Redirect URI**: `${your_app_url}/users/auth/eventbrite/callback`
+     ![Screenshot](documentation/Fall2024/images/eventbrite-edit-application.png)
+3. **Obtain Credentials:** After saving, you'll receive API key and client_secret.
+  ![Screenshot](documentation/Fall2024/images/eventbrite-api-key-secret.png)
+
+4. **Set the Environment Variables in Heroku:**
+    - `EVENTBRITE_URL = ${eventbrite_url}`. By default, it should be https://www.eventbrite.com unless unless Eventbrite changes the URL.
+    - `EVENTBRITE_API_URL = ${eventbrite_api_url}`. By default, it should be https://www.eventbriteapi.com/v3 unless Eventbrite updates their API URL.
+    - `EVENTBRITE_CLIENT_ID = ${api_key}`
+    - `EVENTBRITE_CLIENT_SECRET = ${client_secret}`
+
+
+## Email Service
+
+  TODO
+
+
+
