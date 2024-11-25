@@ -29,10 +29,6 @@
     </div>
   </div>
 </div>
-
-
-
-
 <!--===================-->
 <!--to display nested children-->
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Seating Levels</h2>
@@ -60,6 +56,7 @@
 </div>
 <%= link_to 'Add New Seat', new_event_seat_path(@event), style: 'display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;margin-left:25%;margin-bottom:30px', class: 'button' %>
 
+
 <h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Seating Summary</h2>
 <!--to add link for the nested children-->
 <div class="container">
@@ -84,17 +81,53 @@
           <td><%= category[:guests_count] %></td>
           <td><%= category[:total_seats] %></td>
           <td><%= category[:allocated_seats] %></td>
-          <td><%= category[:committed_seats]+category[:tickets_sold] %></td>
+          <td><%= category[:commited_seats]%></td>
           <td><%= category[:tickets_sold] %></td>
-          <td><%= category[:total_seats] - (category[:committed_seats]) - category[:tickets_sold] %></td> 
+          <td><%= category[:remaining_seats]%></td> 
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
 
-<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Invited Guests</h2>
+
+<style>
+  .heading-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .heading-tooltip {
+    visibility: hidden;
+    width: 80%;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .heading-container:hover .heading-tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
+
+
+
+<div class="heading-container">
+<h2 style="margin-left:20%; margin-bottom:20px; margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); white-space: nowrap; text-overflow: ellipsis; max-width: 100%;">Manage Invited Guests</h2>
+<div class="heading-tooltip">
 <strong>NOTIFICATION(!): If you choose to upload a certain .xlsx file or a certain .csv file to enter the guest data, please note that some columns have to emerge with non-empty data such as Section.</strong>
+</div>
+</div>
 <!--to add link for the nested children-->
 <div class="container">
   <table class="table table-striped table-hover">
@@ -114,7 +147,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @guest_details.each do |guest| %>
+      <% @guests.each do |guest| %>
         <tr>
           <td><%= guest[:first_name] %></td>
           <td><%= guest[:last_name] %></td>
@@ -143,7 +176,7 @@
     <%= form_with(url: import_spreadsheet_event_guests_path(@event), multipart: true) do |form|%>
       <div class="form-field">
         <%= form.label "Choose Spreadsheet File" %>
-        <%= form.file_field :file, id: "guest-list-attach" %>%>
+        <%= form.file_field :file, id: "guest-list-attach" %>
         <%= form.hidden_field :event_id, value:@event.id %>
       </div>
 
@@ -152,44 +185,35 @@
       </div>
     <% end %>
   </div>
+
+  <div style="margin-left: 25%; margin-bottom: 10px;">
+  <%= link_to 'Download Guest List', download_guests_event_path(@event, format: :csv), 
+      class: 'download-btn' %>
+  </div>
+</div>
   
-
-</div>
-<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Box Office Sales</h2>
-<strong>NOTIFICATION (!): Please upload .xlsx file having column names exactly 'Email', 'Tickets' and 'Amount', among other chosen columns, otherwise the corresponding data cannot be 
-reflected correctly in the following referral table, causing eventually mistakes on the reward calculation and other considerations. We clarify further that the corresponding 'Tickets' means the quantity
-of the tickets bought, and 'Amount' means on the other hand the total payment made for the tickets from the person for this event.</strong>
-<% if @event_box_office_data.present? %>
-<div class="container">
-<table class="table table-striped table-hover">
-  <thead>
-    <tr class="highlight-heading">
-      <% @event_box_office_data.first.each do |cell| %>
-        <th><%= cell %></th>
-      <% end %>
-    </tr>
-  </thead>
-  <tbody>
-    <% @event_box_office_data.drop(1).each do |row| %>
-      <tr>
-        <% row.each do |cell| %>
-          <td><%= cell %></td>
-        <% end %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  
+<!-- Ticket Sales -->
+<div>
+  <%= render partial: "ticket_sales/index", locals: { 
+    event: @event, 
+    external_events: @external_events, 
+    ticket_sales: @ticket_sales
+  } %>
 </div>
 
-<% else %>
-  <p>No box office spreadsheet uploaded for this event.</p>
-<% end %>
+ 
 
 <!--to be added-->
-<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Manage Referrals</h2>
+
+<div class="heading-container">
+<h2 style="margin-left:20%; margin-bottom:20px; margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); white-space: nowrap; text-overflow: ellipsis; max-width: 100%;">Manage Referrals</h2>
+<div class="heading-tooltip">
 <strong>NOTIFICATION (!): If you change the box office data by uploading a new .xlsx file, please make sure that all rows from the previous .xlsx files are kept and retain in this current newly updated .xlsx file. Otherwise 
 you will find tickets information in the referral table below from the previous .xlsx files but not from the current updated .xlsx file. Also when you change the box office data by uploading a new .xlsx file, you need to do 
   recalculation of the rewards to make sure the reward calculation is correct for each referral row in the following table. </strong>
+</div>
+</div>
 <div class="container">
   <table class="table table-striped table-hover">
     <thead>

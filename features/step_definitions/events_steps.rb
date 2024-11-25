@@ -5,7 +5,10 @@ Given('I am on the events dashboard') do
 end
 
 Given('I am on the event page {string}') do |event_title|
-  @event = FactoryBot.create(:event, title: event_title, user: @user)
+  @event = Event.find_by(user_id: @user.id, title: title)
+  if @event.nil?
+    @event = FactoryBot.create(:event, title: event_title, user: @user)
+  end
   visit event_path(@event)
 end
 
@@ -14,15 +17,16 @@ When('we visit the new page for the referral') do
   visit new_referral_path(random_code: @guest.rsvp_link)
 end
 
-When("we enter {string} into 'Friend's Email Address'") do |string|
-  fill_in "Friend's Email Address", with: string
+When("we enter {string} into the 'friend_emails' field") do |input|
+  fill_in 'friend_emails', with: input
 end
 
-When('we click the {string}') do |string|
-  click_button(string)
+When('we click the {string}') do |button_text|
+  click_button(button_text)
 end
 
 Then('there will be one additional referral tuple generated with expected attibute on the referee email with {string}') do |string|
+  puts(Referral.all.length)
   expect(Referral.last.referred).to match(string)
 end
 

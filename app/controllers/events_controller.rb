@@ -1,64 +1,57 @@
 # frozen_string_literal: true
 
+require 'csv'
+
+# EventsController handles the CRUD operations for Event objects.
 class EventsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_event, only: %i[show edit update destroy]
+  before_action :set_event, only: %i[show edit update destroy download_guests]
+
+  TICKET_SALES = Constants::TicketSales
 
   def index
     @events = current_user.events
   end
 
-  def show
-    @event = current_user.events.find(params[:id])
+  def download_guests
+    @guests = @event.guests
 
-    @event_box_office_data = []
+    respond_to do |format|
+      format.csv do
+        csv_data = CSV.generate do |csv|
+          csv << ['First Name', 'Last Name', 'Email', 'Affiliation', 'Category',
+                  'Section', 'Allocated Seats', 'Committed Seats', 'Status']
 
-    if @event.event_box_office.present?
-      event_box_office_file = @event.event_box_office.current_path
-      event_box_office_xlsx = Roo::Spreadsheet.open(event_box_office_file)
-      event_box_office_xlsx.each_row_streaming do |row|
-        row_data = []
-        row.each { |cell| row_data << cell.value }
-        @event_box_office_data << row_data
-      end
-
-      @referral_data = Referral.where(event_id: @event.id)
-
-      email_index = 0
-      tickets_index = 0
-      amount_index = 0
-      l = @event_box_office_data.first.length
-      (0...l).each do |k|
-        case @event_box_office_data.first[k]
-        when 'Email'
-          email_index = k
-        when 'Tickets'
-          tickets_index = k
-        when 'Amount'
-          amount_index = k
-        end
-      end
-
-      @event_box_office_data.drop(1).each do |datum|
-        @referral_data.each do |referraldatum|
-          if referraldatum.referred == datum[email_index]
-            referraldatum.update(status: true, tickets: datum[tickets_index], amount: datum[amount_index])
+          @guests.each do |guest|
+            csv << [
+              guest.first_name,
+              guest.last_name,
+              guest.email,
+              guest.affiliation,
+              guest.category,
+              guest.section,
+              guest.alloted_seats,
+              guest.commited_seats,
+              guest.status
+            ]
           end
         end
+
+        send_data csv_data,
+          filename: "guests_list_#{@event.title}_#{Date.today}.csv"
       end
-
-    else
-      flash[:notice] = 'No box office spreadsheet uploaded for this event'
     end
+  end
 
+  def show
     @guests = @event.guests
     @seats = Seat.where(event_id: @event.id)
-    @seating_summary = calculate_seating_summary(@event.id, @event_box_office_data.any? ? @event_box_office_data : [])
 
-    @guest_details = Guest.where(event_id: @event.id)
-    @referral_data = Referral.where(event_id: @event.id).sort_by do |referraldatum|
-      [referraldatum[:referred], referraldatum[:email]]
-    end
+    @external_events, @ticket_sales = fetch_and_show_ticket_sales
+
+    @seating_summary = @event.calculate_seating_summary(@ticket_sales)
+
+    @referral_data = @event.update_referral_data(@ticket_sales)
   end
 
   def new
@@ -115,56 +108,52 @@ class EventsController < ApplicationController
 
   private
 
-  def calculate_seating_summary(event_id, event_box_office_data)
-    seating_summary = []
-    Seat.where(event_id:).each do |seat|
-      guests_in_category = Guest.where(event_id:, category: seat.category)
-      guests_in_section = Guest.where(event_id:, section: seat.section)
-      total_guests = guests_in_category.and(guests_in_section).distinct.count
-      committed_seats = guests_in_category.and(guests_in_section).sum(:commited_seats)
-      allocated_seats = guests_in_category.and(guests_in_section).sum(:alloted_seats)
-      total_seats = seat.total_count
-
-      tickets_sold = 0
-
-      unless event_box_office_data.empty?
-        header_row = event_box_office_data.first
-
-        category_index = header_row.index('Category')
-        section_index = header_row.index('Section')
-        tickets_index = header_row.index('Tickets') # Column name for tickets
-
-        if category_index && section_index && tickets_index
-          event_box_office_data.drop(1).each do |row|
-            if row[category_index] == seat.category && row[section_index] == seat.section
-              tickets_sold += row[tickets_index].to_i # Convert ticket value to integer
-            end
-          end
-        else
-          Rails.logger.error 'Error: Unable to find necessary columns in event box office data.'
-        end
-      end
-
-      seating_summary << {
-        category: seat.category,
-        section: seat.section,
-        guests_count: total_guests,
-        committed_seats:,
-        allocated_seats:,
-        total_seats:,
-        tickets_sold:
-      }
-    end
-
-    seating_summary
-  end
-
   def set_event
     @event = current_user.events.find(params[:id])
   end
 
   def event_params
     params.require(:event).permit(:title, :address, :description, :datetime, :last_modified, :event_avatar,
-      :event_box_office)
+      :event_box_office, :ticket_source)
+  end
+
+  def fetch_and_show_ticket_sales
+    external_events = []
+    ticket_sales = []
+
+    if @event.ticket_source == TICKET_SALES::Source::SPREADSHEET
+      # Fetch and show Spreadsheet ticket sales
+      spreadsheet_service = TicketSalesSpreadsheetService.new(@event)
+      ticket_sales = spreadsheet_service.import_data(@event.event_box_office)
+    elsif @event.ticket_source == TICKET_SALES::Source::EVENTBRITE
+      # Fetch and show Eventbrite ticket sales
+      if params[:external_event_id].present? && params[:external_event_id] != @event.external_event_id
+        @event.update(external_event_id: params[:external_event_id])
+      end
+
+      config = TicketVendor::Config.new(event_id: @event.external_event_id)
+      @eventbrite_service = TicketVendor::EventbriteHandlerService.new(current_user, config)
+
+      external_events, ticket_sales = self.fetch_and_show_eventbrite if @eventbrite_service.authorized?
+    end
+
+    ticket_sales_validator = TicketSalesValidatorService.new(@event)
+    ticket_sales_validator.validate(ticket_sales)
+
+    [external_events, ticket_sales]
+  end
+
+  def fetch_and_show_eventbrite
+    ticket_sales = []
+
+    external_events = @eventbrite_service.fetch_events
+    ticket_sales =  @eventbrite_service.compose_ticket_sales if @eventbrite_service.config.event_id.present?
+
+    if @eventbrite_service.error_message.present?
+      flash[:alert] = @eventbrite_service.error_message
+      ticket_sales = []
+    end
+
+    [external_events, ticket_sales]
   end
 end

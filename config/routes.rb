@@ -10,28 +10,20 @@ Rails.application.routes.draw do
     to: 'email_services#render_template', as: 'render_email_template'
   get 'destroy_email_template/:id',
     to: 'email_services#destroy_email_template', as: 'destroy_email_template'
-
   # get '/referral/:ref_code', to: 'referrals#refer', as: 'referral'
-
   get '/refer_a_friend/:random_code', to: 'referrals#new', as: 'new_referral'
   post '/refer_a_friend/:random_code', to: 'referrals#referral_creation',
     as: 'referral_creation'
 
-  get '/buy_tickets', to: 'tickets#new', as: 'new_ticket_purchase'
-
   resources :email_services do
     member do
       get 'send_email'
-      # get 'show'
-      # get 'index'
     end
   end
 
   resources :events do
     resources :referrals, only: %i[new referral_creation edit update]
   end
-
-  resources :tickets, only: %i[new create]
 
   root 'home#index'
 
@@ -45,7 +37,7 @@ Rails.application.routes.draw do
   ## == Devise OAuth ==
   devise_for :users,
     controllers: { omniauth_callbacks: 'users/omniauth_callbacks' },
-    omniauth_providers: %i[events360]
+    omniauth_providers: %i[events360 eventbrite]
 
   # Define custom sessions routes
   devise_scope :user do
@@ -55,7 +47,20 @@ Rails.application.routes.draw do
   # Define custom devise routes for OmniAuth-based authentication failures
   get '/users/auth/failure', to: 'users/omniauth_callbacks#failure'
 
+  # Custom routes to disconnect external accounts
+  namespace :users do
+    resource :eventbrite, only: [] do
+      collection do
+        delete 'disconnect', to: 'eventbrite#disconnect', as: :disconnect
+      end
+    end
+  end
+
+  # Event
   resources :events do
+    member do
+      get 'download_guests'
+    end
     resources :seats
     resources :guests do
       collection do
@@ -64,6 +69,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # resources :seats
-  # resources :guests
+  # For referred friends to buy tickets
+  resources :tickets, only: %i[new create]
+  get '/buy_tickets', to: 'tickets#new', as: 'new_ticket_purchase'
 end

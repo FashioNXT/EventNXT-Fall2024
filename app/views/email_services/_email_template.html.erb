@@ -20,15 +20,13 @@
   </div>
 <% end %>
 
-
-<h2 style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Email Templates Summary</h2>
-<div class="container">
+<h2 id="template-summary-heading" style="margin-left:20%;margin-bottom:20px;margin-top:40px; font-size: 56px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Email Templates Summary</h2>
+<div id="template-summary-container" class="container" style="display:none;">
   <table class="table table-striped table-hover">
     <thead>
       <tr class="highlight-heading">
         <th>Template Name</th>
         <th>Subject</th>
-        <th>Body</th>
         <th>Update Template</th>
         <th>Delete Template</th>
       </tr>
@@ -39,11 +37,6 @@
           <tr>
             <td><%= email_template[:name] %></td>
             <td><%= email_template[:subject] %></td>
-            <td>
-              <div class="small-body-container">
-                <%= email_template[:body].html_safe %>
-              </div>
-            </td>
             <td>
               <%= link_to 'Edit', edit_email_template_path(email_template.id), style: 'display: inline-block; padding: 10px 10px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer', class: 'button' %>
             </td>
@@ -57,4 +50,22 @@
   </table>
 </div>
 
-<%= link_to 'Add New Template', new_email_template_path, style: 'display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;margin-left:25%;margin-bottom:30px', class: 'button' %>
+<%= link_to 'Add New Template', new_email_template_path, id: 'add-new-template-link',style: 'display: none; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;margin-left:25%;margin-bottom:30px;width:180px;', class: 'button' %>
+<button id="modify-template-btn" onclick="toggleTemplateSummary()" style="padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;margin-left:25%;margin-bottom:30px">MODIFY Template</button>
+<script>
+  function toggleTemplateSummary() {
+    var container = document.getElementById('template-summary-container');
+    var button = document.getElementById('modify-template-btn');
+    var addNewTemplateLink = document.getElementById('add-new-template-link');
+    
+    if (container.style.display === 'none') {
+      container.style.display = 'block';
+      button.style.display = 'block';
+      addNewTemplateLink.style.display = 'block';
+    } else {
+      container.style.display = 'none';
+      button.style.display = 'block';
+      addNewTemplateLink.style.display = 'none';
+    }
+  }
+</script>

@@ -1,0 +1,36 @@
+<h2 id="ticket-sales-title">Box Office Sales</h2>
+
+<% if event.ticket_source == "spreadsheet" %>
+  <!-- Spreadsheet Upload Form -->
+  <div>
+    <%= form_with(model: event, local: true, multipart: true) do |form| %>
+      <%= form.file_field :event_box_office %>
+      <%= form.submit "Upload Spreadsheet" %>
+    <% end %>
+  </div>
+
+<% elsif event.ticket_source == "eventbrite" %>
+  <!-- Render Eventbrite ticket sales -->
+  <%=
+    render partial: "ticket_sales/eventbrite", locals: { 
+      event: event, 
+      external_events: external_events, 
+    } 
+  %>
+<% else %>
+  <!-- Handle case where no valid ticket source is selected -->
+  <p>No valid ticket source selected for this event.</p>
+<% end %>
+
+<div class="container">
+  <% if ticket_sales.present? %>
+  <%= 
+    render partial: "ticket_sales/table", locals: { 
+      ticket_sales: ticket_sales
+    }
+  %>
+  <% end %>
+</div>
+
+
+ 

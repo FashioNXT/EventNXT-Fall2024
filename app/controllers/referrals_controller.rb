@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# ReferralsController manages the referral process for guests.
 class ReferralsController < ApplicationController
   before_action :authenticate_user!, only: %i[edit update]
   before_action :set_event, only: %i[edit update]
@@ -14,21 +15,32 @@ class ReferralsController < ApplicationController
   end
 
   def referral_creation
-    friend_email = params[:friend_email]
-    # ref_code = params[:ref_code]
+    friend_emails = params[:friend_emails]&.split(',')&.map(&:strip) # Split emails and remove extra spaces
     random_code = params[:random_code]
     @guest = Guest.find_by(rsvp_link: random_code)
-    if @guest
-      @referral = Referral.find_or_create_by(event_id: @guest.event_id, guest_id: @guest.id, email: @guest.email,
-        name: "#{@guest.first_name} #{@guest.last_name}", referred: friend_email, ref_code: @guest.id)
-      @referral.save
-      UserMailer.referral_confirmation(friend_email).deliver_now
+
+    if @guest && friend_emails.present?
+      friend_emails.each do |emails|
+        # Create or find a referral for each friend's email
+        referral = Referral.find_or_create_by(
+          event_id: @guest.event_id,
+          guest_id: @guest.id,
+          email: @guest.email,
+          name: "#{@guest.first_name} #{@guest.last_name}",
+          referred: emails,
+          ref_code: @guest.id
+        )
+
+        # Send referral email to each friend
+        UserMailer.referral_confirmation(emails).deliver_now if referral.persisted?
+      end
 
       respond_to do |format|
         format.html { head :no_content }
         format.js
       end
     else
+      flash[:alert] = "At least one friend's email is required to create referrals."
       redirect_to root_path
     end
   end

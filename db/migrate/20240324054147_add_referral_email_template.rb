@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# AddReferralEmailTemplate
 class AddReferralEmailTemplate < ActiveRecord::Migration[7.0]
   def change
     EmailTemplate.create!(

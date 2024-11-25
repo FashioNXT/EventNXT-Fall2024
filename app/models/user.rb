@@ -4,7 +4,7 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :omniauthable, omniauth_providers: %i[events360 eventbrite]
+  devise :omniauthable, omniauth_providers: [Constants::Events360::SYM, Constants::Eventbrite::SYM]
 
   # Custom Validations
   validates :uid, presence: true
@@ -13,12 +13,19 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   has_many :events, dependent: :destroy
-
   class << self
     def from_omniauth(auth, current_user = nil)
-      case auth.provider.to_s
-      when 'events360'
+      provider = auth.provider.to_s
+
+      if current_user.nil?
+        return nil unless provider == Constants::Events360::NAME
+
         return self.from_omniauth_events360(auth)
+      end
+
+      case auth.provider.to_s
+      when Constants::Eventbrite::NAME
+        return current_user.from_omniauth_eventbrite(auth)
       end
       nil
     end
@@ -33,14 +40,23 @@ class User < ApplicationRecord
         name: auth.info.name
       }
 
-      user = User.find_by(uid: user_info[:uid], provider: user_info[:provider])
+      user = self.find_by(uid: user_info[:uid], provider: user_info[:provider])
 
-      if user.present?
+      if user.nil?
+        user = self.create(user_info)
+        user.persisted? ? user : nil
+      else
         user.update(user_info)
         user
-      else
-        User.create(user_info)
       end
     end
+  end
+
+  def from_omniauth_eventbrite(auth)
+    self.update(
+      eventbrite_uid: auth.uid,
+      eventbrite_token: auth.credentials.token
+    )
+    self
   end
 end

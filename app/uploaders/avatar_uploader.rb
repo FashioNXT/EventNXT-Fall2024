@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Avatar Uploader
 class AvatarUploader < CarrierWave::Uploader::Base
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick

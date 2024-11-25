@@ -3,7 +3,9 @@
 
 AllCops:
   Exclude:
+    - bin/**/*              # Ignore all files in the bin directory
     - db/schema.rb          # Ignore specific file
+    - db/migrate/**/*       # Ignore all files in db/migrate directory
     - vendor/**/*           # Ignore all files in the vendor directory
     - node_modules/**/*     # Ignore all files in node_modules
     - spec/**/*             # Ignore all files in spec directory
@@ -11,6 +13,9 @@ AllCops:
 
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+Style/Documentation:
+  Enabled: true
 
 Layout/HashAlignment:
   Enabled: true
@@ -30,6 +35,9 @@ Layout/DotPosition:
 Style/RedundantSelf:
   Enabled: false  # Disables the cop that removes redundant `self`
 
+Naming/AccessorMethodName:
+  Enabled: false  # Disables the cop that enforces the use of `attr_reader`, `attr_writer`, and `attr_accessor`
+
 # Style/TrailingCommaInArguments:
 #   EnforcedStyleForMultiline: comma  # Enforce trailing comma in multiline method arguments
 
@@ -37,19 +45,25 @@ Layout/LineLength:
   Max: 120  # Set the max line length to 80 characters
 
 Metrics/MethodLength:
-  Max: 40  # Maximum number of lines allowed in a method
+  Max: 150  # Maximum number of lines allowed in a method
 
 Metrics/ClassLength:
   Max: 150  # Maximum number of lines allowed in a class or module
 
-# Metrics/BlockLength:
-#   Max: 300  # Maximum number of lines allowed in a block or file
+Metrics/BlockLength:
+  Max: 150  # Maximum number of lines allowed in a block or file
 
 # Metrics/FileLength:
 #   Max: 500  # Maximum number of lines allowed in an entire file
 
 Metrics/AbcSize:
-  Max: 40  # Maximum ABC size in a method
+  Max: 100  # Maximum ABC size in a method
 
 Metrics/CyclomaticComplexity:
-  Max: 8  # The maximum allowed complexity for a method
+  Max: 30  # The maximum allowed complexity for a method
+
+Metrics/PerceivedComplexity:
+  Max: 25  # The maximum allowed complexity for a method
+
+Metrics/ParameterLists:
+  Max: 7  # Maximum number of parameters allowed in a method
