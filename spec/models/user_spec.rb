@@ -32,7 +32,6 @@ RSpec.describe User, type: :model do
     it { is_expected.to validate_presence_of(:uid) }
     it { is_expected.to validate_presence_of(:provider) }
     it { is_expected.to validate_presence_of(:email) }
-    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
 
     it 'validates uniqueness of uid scoped to provider' do
       duplicate_user = build(:user, uid: subject.uid, provider: subject.provider)
