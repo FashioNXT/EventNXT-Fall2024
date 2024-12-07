@@ -10,7 +10,7 @@ RSpec.describe UserMailer, type: :mailer do
     it 'renders the headers' do
       expect(mail.subject).to eq('Confirm Your Ticket Purchase')
       expect(mail.to).to eq(['friend@example.com'])
-      expect(mail.from).to eq(['suryacherukuri999@gmail.com'])
+      expect(mail.from).to eq(['fashionxtllc@gmail.com'])
     end
 
     it 'renders the body' do

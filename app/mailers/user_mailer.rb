@@ -2,7 +2,7 @@
 
 # app/mailers/user_mailer.rb
 class UserMailer < ApplicationMailer
-  default from: 'suryacherukuri999@gmail.com'
+  default from: 'fashionxtllc@gmail.com'
 
   def referral_confirmation(friend_email)
     @friend_email = friend_email

@@ -4,7 +4,7 @@
 class ApplicationMailer < ActionMailer::Base
   # <!--===================-->
   # <!--to set the default mailer address-->
-  default from: 'suryacherukuri999@gmail.com' # same email can be found at "/config/environments/development.rb"
+  default from: 'fashionxtllc@gmail.com' # same email can be found at "/config/environments/development.rb"
   # <!--===================-->
 
   layout 'mailer'
