@@ -2,16 +2,17 @@
 
 module Constants
   APP_URL = ENV['APP_URL'] || 'http://localhost'
-  module Events360
-    SYM = :events360
-    NAME = 'events360'
-    URL = ENV['EVENT360_URL']
-    CLIENT_ID = ENV['EVENT360_CLIENT_ID']
-    CLIENT_SECRET = ENV['EVENT360_CLIENT_SECRET']
+
+  module EventNXT
+    SYM = :eventnxt
+    NAME = 'eventnxt'
+    URL = ENV['EVENTNXT_URL']
+    CLIENT_ID = ENV['EVENTNXT_CLIENT_ID']
+    CLIENT_SECRET = ENV['EVENTNXT_CLIENT_SECRET']
     module Mock
-      USER1 = :events360_user1
-      USER2 = :events360_user2
-      USER3 = :events360_user3
+      USER1 = :eventnxt_user1
+      USER2 = :eventnxt_user2
+      USER3 = :eventnxt_user3
     end
   end
 
@@ -22,6 +23,22 @@ module Constants
     API_URL = ENV['EVENTBRITE_API_URL'] || 'https://www.eventbriteapi.com/v3'
     CLIENT_ID = ENV['EVENTBRITE_CLIENT_ID']
     CLIENT_SECRET = ENV['EVENTBRITE_CLIENT_SECRET']
+  end
+
+  module CastNXT
+    SYM = :castnxt
+    NAME = 'castnxt'
+    BASE_URL = ENV['CASTNXT_BASE_URL'] || 'https://castnxt.com'
+    CLIENT_ID = ENV['CASTNXT_CLIENT_ID']
+    CLIENT_SECRET = ENV['CASTNXT_CLIENT_SECRET']
+  end
+
+  module PlaNXT
+    SYM = :planxt
+    NAME = 'planxt'
+    BASE_URL = ENV['PLANXT_BASE_URL'] || 'https://planxt.com'
+    CLIENT_ID = ENV['PLANXT_CLIENT_ID']
+    CLIENT_SECRET = ENV['PLANXT_CLIENT_SECRET']
   end
 
   module TicketSales
