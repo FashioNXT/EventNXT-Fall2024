@@ -1,6 +1,6 @@
-require Rails.root.join('lib/omniauth/strategies/castnxt.rb')
-require Rails.root.join('lib/omniauth/strategies/planxt.rb')
-require Rails.root.join('lib/omniauth/strategies/eventnxt.rb')
+require Rails.root.join('lib/omniauth/strategies/cast_nxt.rb')
+require Rails.root.join('lib/omniauth/strategies/pla_nxt.rb')
+require Rails.root.join('lib/omniauth/strategies/event_nxt.rb')
 # frozen_string_literal: true
 
 require Rails.root.join('lib', 'omniauth', 'strategies', 'eventbrite.rb')
@@ -281,19 +281,19 @@ Devise.setup do |config|
   config.omniauth :eventnxt,
     Constants::EventNXT::CLIENT_ID,
     Constants::EventNXT::CLIENT_SECRET,
-    strategy_class: OmniAuth::Strategies::EventNXT
+    strategy_class: OmniAuth::Strategies::EventNxt
 
   # OmniAuth configuration for CastNXT with explicit strategy_class
   config.omniauth :castnxt,
     Constants::CastNXT::CLIENT_ID,
     Constants::CastNXT::CLIENT_SECRET,
-    strategy_class: OmniAuth::Strategies::CastNXT
+    strategy_class: OmniAuth::Strategies::CastNxt
 
   # OmniAuth configuration for PlaNXT with explicit strategy_class
   config.omniauth :planxt,
     Constants::PlaNXT::CLIENT_ID,
     Constants::PlaNXT::CLIENT_SECRET,
-    strategy_class: OmniAuth::Strategies::PlaNXT
+    strategy_class: OmniAuth::Strategies::PlaNxt
 
   # OmniAuth configuration for Eventbrite with explicit strategy_class
   config.omniauth :eventbrite,

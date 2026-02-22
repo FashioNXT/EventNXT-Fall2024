@@ -1,6 +1,6 @@
-require Rails.root.join('lib/omniauth/strategies/castnxt.rb')
-require Rails.root.join('lib/omniauth/strategies/planxt.rb')
-require Rails.root.join('lib/omniauth/strategies/eventnxt.rb')
+require Rails.root.join('lib/omniauth/strategies/cast_nxt.rb')
+require Rails.root.join('lib/omniauth/strategies/pla_nxt.rb')
+require Rails.root.join('lib/omniauth/strategies/event_nxt.rb')
 
 if Rails.env.development?
   OmniAuth.config.test_mode = true
@@ -36,13 +36,8 @@ if Rails.env.development?
   # Add more users as needed...
 
   Rails.application.config.middleware.use OmniAuth::Builder do
-    provider :castnxt, OmniAuth::Strategies::CastNXT
-    provider :planxt, OmniAuth::Strategies::PlaNXT
-    provider :eventnxt, OmniAuth::Strategies::EventNXT, setup: lambda { |env|
-      request = Rack::Request.new(env)
-
-      # Store the 'user' parameter in the session during the request phase
-      env['rack.session'][:user] = request.params['user'] if request.params['user'].present?
-    }
+    provider :castnxt, OmniAuth::Strategies::CastNxt
+    provider :planxt, OmniAuth::Strategies::PlaNxt
+    provider :eventnxt, OmniAuth::Strategies::EventNxt
   end
 end
