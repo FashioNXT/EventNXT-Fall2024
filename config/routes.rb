@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   ## == Devise OAuth ==
   devise_for :users,
     controllers: { omniauth_callbacks: 'users/omniauth_callbacks' },
-    omniauth_providers: %i[events360 eventbrite]
+    omniauth_providers: %i[eventnxt eventbrite castnxt planxt]
 
   # Define custom sessions routes
   devise_scope :user do
