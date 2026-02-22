@@ -8,12 +8,12 @@ module OmniAuth
     # Custom OAuth Strategy for EventNXT
     class EventNXT < OmniAuth::Strategies::OAuth2
       Rails.logger.info 'Loading OmniAuth::Strategies::EventNXT'
-      option :name, Constants::Events360::NAME
+      option :name, Constants::EventNXT::NAME
 
       option :client_options, {
-        site: Constants::Events360::URL,
-        authorize_url: "#{Constants::Events360::URL}/oauth/authorize",
-        token_url: "#{Constants::Events360::URL}/oauth/token",
+        site: Constants::EventNXT::URL,
+        authorize_url: "#{Constants::EventNXT::URL}/oauth/authorize",
+        token_url: "#{Constants::EventNXT::URL}/oauth/token",
         scope: 'public'
       }
 

@@ -45,11 +45,11 @@ module Users
       mock_user = session[:user] || 'user1'
       auth = case mock_user
              when 'user1'
-               OmniAuth.config.mock_auth[Constants::Events360::Mock::USER1]
+               OmniAuth.config.mock_auth[Constants::EventNXT::Mock::USER1]
              when 'user2'
-               OmniAuth.config.mock_auth[Constants::Events360::Mock::USER2]
+               OmniAuth.config.mock_auth[Constants::EventNXT::Mock::USER2]
              when 'user3'
-               OmniAuth.config.mock_auth[Constants::Events360::Mock::USER3]
+               OmniAuth.config.mock_auth[Constants::EventNXT::Mock::USER3]
              end
       @user = User.find_or_create_by(uid: auth.uid, provider: auth.provider) do |user|
         user.email = auth.info.email
