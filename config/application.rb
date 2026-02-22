@@ -25,6 +25,9 @@ module Fashionxt002
     #
     # config.time_zone = "Central Time (US & Canada)
 
+    # Autoloads the lib directory.
+    config.autoload_paths << Rails.root.join('lib')
+
     # Autoloads the lib/constants directory in development mode.
     config.autoload_paths << Rails.root.join('lib', 'constants')
 
