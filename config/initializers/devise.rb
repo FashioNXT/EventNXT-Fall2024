@@ -1,6 +1,8 @@
+require Rails.root.join('lib/omniauth/strategies/castnxt.rb')
+require Rails.root.join('lib/omniauth/strategies/planxt.rb')
+require Rails.root.join('lib/omniauth/strategies/eventnxt.rb')
 # frozen_string_literal: true
 
-require Rails.root.join('lib', 'omniauth', 'strategies', 'eventnxt.rb')
 require Rails.root.join('lib', 'omniauth', 'strategies', 'eventbrite.rb')
 
 # Assuming you have not yet modified this file, each configuration option below
