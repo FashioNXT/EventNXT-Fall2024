@@ -2,22 +2,15 @@ module Users
   # Callbacks for the OAuth provider to send code and tokens.
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     def eventnxt
-      @user = nil
-      if Rails.env.development?
-        # Mock behavior for development
-        @user = self.mock_user
-      else
-        # Omniauth middleware exchange access code with token underhood
-        auth = request.env['omniauth.auth']
-        @user = User.from_omniauth(auth)
-      end
+      handle_omniauth('EventNXT')
+    end
 
-      if @user.present? && @user.persisted?
-        sign_in_and_redirect @user, event: :authentication
-      else
-        flash[:alert] = 'Failed to login EventNXT'
-        redirect_to root_path
-      end
+    def castnxt
+      handle_omniauth('CastNXT')
+    end
+
+    def planxt
+      handle_omniauth('PlaNXT')
     end
 
     def eventbrite
@@ -40,6 +33,25 @@ module Users
     end
 
     private
+
+    def handle_omniauth(provider_name)
+      @user = nil
+      if Rails.env.development?
+        # Mock behavior for development
+        @user = self.mock_user
+      else
+        # Omniauth middleware exchange access code with token underhood
+        auth = request.env['omniauth.auth']
+        @user = User.from_omniauth(auth)
+      end
+
+      if @user.present? && @user.persisted?
+        sign_in_and_redirect @user, event: :authentication
+      else
+        flash[:alert] = "Failed to login #{provider_name}"
+        redirect_to root_path
+      end
+    end
 
     def mock_user
       mock_user = session[:user] || 'user1'
