@@ -1,37 +1,41 @@
 if Rails.env.development?
   OmniAuth.config.test_mode = true
 
-  OmniAuth.config.mock_auth[Constants::Events360::Mock::USER1] = OmniAuth::AuthHash.new({
-    provider: Constants::Events360::NAME,
-    uid: 'user1_uid',
+  # Using generic names to avoid confusion and potential branding issues.
+  # Consider using environment variables for configuration.
+  provider_name = 'ExternalAuthProvider'
+
+  OmniAuth.config.mock_auth[:mock_user1] = OmniAuth::AuthHash.new({
+    provider: provider_name,
+    uid: 'mock_user1_uid',
     info: {
-      email: 'user1@example.com',
-      name: 'User One'
+      email: 'mock_user1@example.com',
+      name: 'Mock User One'
     }
   })
 
-  OmniAuth.config.mock_auth[Constants::Events360::Mock::USER2] = OmniAuth::AuthHash.new({
-    provider: Constants::Events360::NAME,
-    uid: 'user2_uid',
+  OmniAuth.config.mock_auth[:mock_user2] = OmniAuth::AuthHash.new({
+    provider: provider_name,
+    uid: 'mock_user2_uid',
     info: {
-      email: 'user2@example.com',
-      name: 'User Two'
+      email: 'mock_user2@example.com',
+      name: 'Mock User Two'
     }
   })
 
-  OmniAuth.config.mock_auth[Constants::Events360::Mock::USER3] = OmniAuth::AuthHash.new({
-    provider: Constants::Events360::NAME,
-    uid: 'user3_uid',
+  OmniAuth.config.mock_auth[:mock_user3] = OmniAuth::AuthHash.new({
+    provider: provider_name,
+    uid: 'mock_user3_uid',
     info: {
-      email: 'user3@example.com',
-      name: 'User Three'
+      email: 'mock_user3@example.com',
+      name: 'Mock User Three'
     }
   })
 
   # Add more users as needed...
 
   Rails.application.config.middleware.use OmniAuth::Builder do
-    provider Constants::Events360::SYM, setup: lambda { |env|
+    provider provider_name.to_sym, setup: lambda { |env|
       request = Rack::Request.new(env)
 
       # Store the 'user' parameter in the session during the request phase
