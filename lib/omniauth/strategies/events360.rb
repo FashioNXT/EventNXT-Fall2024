@@ -5,9 +5,9 @@ require Rails.root.join('lib', 'constants')
 
 module OmniAuth
   module Strategies
-    # Custom OAuth Strategy for Event360
-    class Events360 < OmniAuth::Strategies::OAuth2
-      Rails.logger.info 'Loading OmniAuth::Strategies::Events360'
+    # Custom OAuth Strategy for EventNXT
+    class EventNXT < OmniAuth::Strategies::OAuth2
+      Rails.logger.info 'Loading OmniAuth::Strategies::EventNXT'
       option :name, Constants::Events360::NAME
 
       option :client_options, {

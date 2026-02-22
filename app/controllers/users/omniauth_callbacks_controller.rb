@@ -1,7 +1,7 @@
 module Users
   # Callbacks for the OAuth provider to send code and tokens.
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
-    def events360
+    def eventnxt
       @user = nil
       if Rails.env.development?
         # Mock behavior for development
@@ -15,7 +15,7 @@ module Users
       if @user.present? && @user.persisted?
         sign_in_and_redirect @user, event: :authentication
       else
-        flash[:alert] = 'Failed to login Event360'
+        flash[:alert] = 'Failed to login EventNXT'
         redirect_to root_path
       end
     end
