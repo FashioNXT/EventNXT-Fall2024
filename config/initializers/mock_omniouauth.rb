@@ -32,21 +32,21 @@ if Rails.env.development?
   # Add more users as needed...
 
   Rails.application.config.middleware.use OmniAuth::Builder do
-    provider :castnxt, setup: lambda { |env|
+    provider :castnxt, OmniAuth::Strategies::CastNXT, setup: lambda { |env|
       request = Rack::Request.new(env)
 
       # Store the 'user' parameter in the session during the request phase
       env['rack.session'][:user] = request.params['user'] if request.params['user'].present?
     }
 
-    provider :planxt, setup: lambda { |env|
+    provider :planxt, OmniAuth::Strategies::PlaNXT, setup: lambda { |env|
       request = Rack::Request.new(env)
 
       # Store the 'user' parameter in the session during the request phase
       env['rack.session'][:user] = request.params['user'] if request.params['user'].present?
     }
 
-    provider :eventnxt, setup: lambda { |env|
+    provider :eventnxt, OmniAuth::Strategies::EventNXT, setup: lambda { |env|
       request = Rack::Request.new(env)
 
       # Store the 'user' parameter in the session during the request phase
