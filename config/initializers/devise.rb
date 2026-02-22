@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require Rails.root.join('lib', 'omniauth', 'strategies', 'events360.rb')
+require Rails.root.join('lib', 'omniauth', 'strategies', 'eventnxt.rb')
 require Rails.root.join('lib', 'omniauth', 'strategies', 'eventbrite.rb')
 
 # Assuming you have not yet modified this file, each configuration option below
@@ -275,11 +275,11 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  # OmniAuth configuration for Events360 with explicit strategy_class
-  config.omniauth Constants::Events360::SYM,
-    Constants::Events360::CLIENT_ID,
-    Constants::Events360::CLIENT_SECRET,
-    strategy_class: OmniAuth::Strategies::Events360
+  # OmniAuth configuration for EventNXT with explicit strategy_class
+  config.omniauth :eventnxt,
+    Constants::EventNXT::CLIENT_ID,
+    Constants::EventNXT::CLIENT_SECRET,
+    strategy_class: OmniAuth::Strategies::EventNXT
   # OmniAuth configuration for Eventbrite with explicit strategy_class
   config.omniauth :eventbrite,
     Constants::Eventbrite::CLIENT_ID,
