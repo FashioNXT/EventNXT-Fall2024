@@ -280,6 +280,19 @@ Devise.setup do |config|
     Constants::EventNXT::CLIENT_ID,
     Constants::EventNXT::CLIENT_SECRET,
     strategy_class: OmniAuth::Strategies::EventNXT
+
+  # OmniAuth configuration for CastNXT with explicit strategy_class
+  config.omniauth :castnxt,
+    Constants::CastNXT::CLIENT_ID,
+    Constants::CastNXT::CLIENT_SECRET,
+    strategy_class: OmniAuth::Strategies::CastNXT
+
+  # OmniAuth configuration for PlaNXT with explicit strategy_class
+  config.omniauth :planxt,
+    Constants::PlaNXT::CLIENT_ID,
+    Constants::PlaNXT::CLIENT_SECRET,
+    strategy_class: OmniAuth::Strategies::PlaNXT
+
   # OmniAuth configuration for Eventbrite with explicit strategy_class
   config.omniauth :eventbrite,
     Constants::Eventbrite::CLIENT_ID,
