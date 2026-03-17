@@ -2,18 +2,19 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: <%= ENV.fetch("POSTGRES_USER") { 'eventnxt' } %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD") { 'password' } %>
-  host: postgres # refers to the postgres service from docker-compose.yml (which is the PostgreSQL container).
+  # Using your Mac username to ensure the connection is authorized
+  username: <%= ENV.fetch("POSTGRES_USER") { 'titochowdhury' } %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") { nil } %>
+  host: localhost
   port: 5432
 
 development:
   <<: *default
-  database: <%= ENV.fetch("POSTGRES_DB") { 'eventnxt_db_dev' } %>
+  database: eventnxt_development
 
 test:
   <<: *default
-  database: <%= ENV.fetch("POSTGRES_DB") { 'eventnxt_db_test' } %>
+  database: eventnxt_test
 
 production:
   url: <%= ENV['DATABASE_URL'] %>

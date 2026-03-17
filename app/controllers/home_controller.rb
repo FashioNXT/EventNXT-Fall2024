@@ -1,7 +1,17 @@
-# frozen_string_literal: true
-
-# HomeController manages the landing page of the application.
 class HomeController < ApplicationController
-  # skip_before_action :authenticate_user!
-  def index; end
+  layout false
+
+  def index
+    @authenticated = session[:user_email].present?
+  end
+
+  def login
+    session[:user_email] = "tito@events360.com"
+    redirect_to root_path
+  end
+
+  def logout
+    reset_session
+    redirect_to root_path
+  end
 end

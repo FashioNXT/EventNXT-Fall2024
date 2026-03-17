@@ -4,7 +4,7 @@ require 'omniauth'
 require 'omniauth-oauth2'
 require Rails.root.join('lib', 'omniauth', 'strategies', 'events360')
 
-RSpec.describe OmniAuth::Strategies::Events360 do
+RSpec.describe OmniAuth::Strategies::EVENTS360 do
   let(:strategy) { described_class.new(nil, client_id: 'test_id', client_secret: 'test_secret') }
 
   before do
@@ -14,15 +14,15 @@ RSpec.describe OmniAuth::Strategies::Events360 do
 
   describe 'client options' do
     it 'has correct site' do
-      expect(strategy.options.client_options.site).to eq(Constants::Events360::URL)
+      expect(strategy.options.client_options.site).to eq(Constants::EVENTS360::URL)
     end
 
     it 'has correct authorize url' do
-      expect(strategy.options.client_options.authorize_url).to eq("#{Constants::Events360::URL}/oauth/authorize")
+      expect(strategy.options.client_options.authorize_url).to eq("#{Constants::EVENTS360::URL}/oauth/authorize")
     end
 
     it 'has correct token url' do
-      expect(strategy.options.client_options.token_url).to eq("#{Constants::Events360::URL}/oauth/token")
+      expect(strategy.options.client_options.token_url).to eq("#{Constants::EVENTS360::URL}/oauth/token")
     end
   end
 

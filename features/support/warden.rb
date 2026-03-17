@@ -10,7 +10,7 @@ World Warden::Test::Helpers
 Warden.test_mode!
 
 Before('@pre_authenticated') do
-  @user = create(:user, Constants::Events360::SYM)
+  @user = create(:user, Constants::EVENTS360::SYM)
   login_as(@user, scope: :user)
 end
 

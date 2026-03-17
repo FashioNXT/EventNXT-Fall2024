@@ -116,3 +116,4 @@ gem 'monetize'
 
 # Offers enhanced formatting options and structured logging capabilities.
 gem 'semantic_logger'
+gem 'doorkeeper'

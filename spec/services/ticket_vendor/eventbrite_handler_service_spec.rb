@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe TicketVendor::EventbriteHandlerService do
-  let(:user) { create(:user, Constants::Eventbrite::SYM) }
+  let(:user) { create(:user, Constants::EVENTS360::Eventbrite::SYM) }
   let(:config) do
     OpenStruct.new(
       event_id: '12345',

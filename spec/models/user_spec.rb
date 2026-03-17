@@ -49,7 +49,7 @@ RSpec.describe User, type: :model do
       allow(user).to receive(:from_omniauth_eventbrite)
     end
 
-    context  'when no current user and the provider is Events360' do
+    context  'when no current user and the provider is EVENTS360' do
       let(:auth) { mock_auth(user) }
 
       it 'should call from_omniauth_events360' do
@@ -58,8 +58,8 @@ RSpec.describe User, type: :model do
       end
     end
 
-    context  'when no current user and the provider is not Events360' do
-      let(:auth) { mock_auth(user, provider: Constants::Eventbrite::NAME) }
+    context  'when no current user and the provider is not EVENTS360' do
+      let(:auth) { mock_auth(user, provider: Constants::EVENTS360::Eventbrite::NAME) }
 
       it 'should return nil without further callings' do
         result_user =  described_class.from_omniauth(auth)
@@ -70,7 +70,7 @@ RSpec.describe User, type: :model do
     end
 
     context 'when auth provider is Eventbrite' do
-      let(:auth) { mock_auth(user, provider: Constants::Eventbrite::NAME) }
+      let(:auth) { mock_auth(user, provider: Constants::EVENTS360::Eventbrite::NAME) }
       
       it 'should call from_omniauth_eventbrite' do
         described_class.from_omniauth(auth, user)
@@ -136,7 +136,7 @@ RSpec.describe User, type: :model do
         mock_auth(
           user, 
           uid: eventbrite_uid, 
-          provider: Constants::Eventbrite::NAME, 
+          provider: Constants::EVENTS360::Eventbrite::NAME, 
           token: eventbrite_token
         ) 
       }
@@ -158,7 +158,7 @@ RSpec.describe User, type: :model do
 
       let(:user) do
         create(:user, 
-          Constants::Eventbrite::SYM, 
+          Constants::EVENTS360::Eventbrite::SYM, 
           eventbrite_uid: old_uid, 
           eventbrite_token: old_token
         ) 
@@ -168,7 +168,7 @@ RSpec.describe User, type: :model do
         mock_auth(
           user, 
           uid: new_uid,
-          provider: Constants::Eventbrite::NAME, 
+          provider: Constants::EVENTS360::Eventbrite::NAME, 
           token: new_token
         ) 
       }

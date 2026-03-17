@@ -14,15 +14,15 @@ RSpec.describe OmniAuth::Strategies::Eventbrite do
 
   describe 'client options' do
     it 'has correct site' do
-      expect(strategy.options.client_options.site).to eq(Constants::Eventbrite::API_URL)
+      expect(strategy.options.client_options.site).to eq(Constants::EVENTS360::Eventbrite::API_URL)
     end
 
     it 'has correct authorize url' do
-      expect(strategy.options.client_options.authorize_url).to eq("#{Constants::Eventbrite::URL}/oauth/authorize")
+      expect(strategy.options.client_options.authorize_url).to eq("#{Constants::EVENTS360::Eventbrite::URL}/oauth/authorize")
     end
 
     it 'has correct token url' do
-      expect(strategy.options.client_options.token_url).to eq("#{Constants::Eventbrite::URL}/oauth/token")
+      expect(strategy.options.client_options.token_url).to eq("#{Constants::EVENTS360::Eventbrite::URL}/oauth/token")
     end
   end
 

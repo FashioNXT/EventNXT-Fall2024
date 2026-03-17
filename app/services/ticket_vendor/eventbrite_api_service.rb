@@ -20,11 +20,11 @@ module TicketVendor
     def initialize(user)
       @user = user
       @client = OAuth2::Client.new(
-        Constants::Eventbrite::CLIENT_ID,
-        Constants::Eventbrite::CLIENT_SECRET,
-        site: Constants::Eventbrite::API_URL,
-        authorize_url: "#{Constants::Eventbrite::URL}/oauth/authorize",
-        token_url: "#{Constants::Eventbrite::URL}/oauth/token"
+        Constants::EVENTS360::Eventbrite::CLIENT_ID,
+        Constants::EVENTS360::Eventbrite::CLIENT_SECRET,
+        site: Constants::EVENTS360::Eventbrite::API_URL,
+        authorize_url: "#{Constants::EVENTS360::Eventbrite::URL}/oauth/authorize",
+        token_url: "#{Constants::EVENTS360::Eventbrite::URL}/oauth/token"
       )
       @access_token = OAuth2::AccessToken.new(
         @client,
@@ -86,7 +86,7 @@ module TicketVendor
     def get(endpoint, opts: {})
       # For Unknown reason omniauth2 fails to concat client.site + endpoint
       # So I expilicity set the api url here
-      full_url = "#{Constants::Eventbrite::API_URL}#{endpoint}"
+      full_url = "#{Constants::EVENTS360::Eventbrite::API_URL}#{endpoint}"
       response = @access_token.get(full_url, opts)
       data = JSON.parse(response.body)
       Rails.logger.info("Eventbrite Response for #{endpoint}: #{data}")

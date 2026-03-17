@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 require 'omniauth-oauth2'
 
 module OmniAuth
   module Strategies
-    class PlaNxt < OmniAuth::Strategies::OAuth2
-      # Custom OAuth Strategy for PlaNXT
-      option :name, "planxt"
+    class CastNxt < OmniAuth::Strategies::OAuth2
+      # The internal name for the provider
+      option :name, "castnxt"
 
       option :client_options, {
-        site: "https://planxt.com",
+        site: "https://castnxt.com",
         authorize_url: "/oauth/authorize",
         token_url: "/oauth/token"
       }
@@ -23,6 +25,8 @@ module OmniAuth
 
       def raw_info
         @raw_info ||= access_token.get('/api/v1/me').parsed
+      rescue StandardError
+        {}
       end
     end
   end

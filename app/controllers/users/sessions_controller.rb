@@ -1,10 +1,10 @@
 module Users
-  # Manully handle user sessions because devise::database_authenticatable
-  # requires password column, which is not needed with OAuth.
-  class SessionsController < ApplicationController
-    def destroy
-      sign_out(current_user)
-      redirect_to root_path, notice: 'Signed out successfully.'
+  class SessionsController < Devise::SessionsController
+    def new
+      self.resource = resource_class.new
+      clean_up_passwords(resource)
+      yield resource if block_given?
+      respond_with(resource)
     end
   end
 end

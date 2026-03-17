@@ -12,7 +12,7 @@ def mock_pagination_responses(service, endpoint, response_bodies)
 end
 
 RSpec.describe TicketVendor::EventbriteApiService do
-  let(:user) { create(:user, Constants::Eventbrite::SYM) }
+  let(:user) { create(:user, Constants::EVENTS360::Eventbrite::SYM) }
   let(:client) { instance_double(OAuth2::Client) }
   let(:access_token) { instance_double(OAuth2::AccessToken) }
   let(:service) { described_class.new(user) }
@@ -163,7 +163,7 @@ RSpec.describe TicketVendor::EventbriteApiService do
 
   describe '#get' do
     let(:endpoint) { '/resource/endpoint' }
-    let(:full_url) { "#{Constants::Eventbrite::API_URL}#{endpoint}" }
+    let(:full_url) { "#{Constants::EVENTS360::Eventbrite::API_URL}#{endpoint}" }
     let(:opts) { { params: { param1: 'value' } } }
     let(:response_body) do
       {
